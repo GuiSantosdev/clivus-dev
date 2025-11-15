@@ -1,7 +1,7 @@
 
 "use client";
 
-import { AlertTriangle, Users, TrendingDown, AlertCircle, CreditCard, FileX } from "lucide-react";
+import { AlertTriangle, Scale, TrendingDown, ShieldAlert, FileWarning, Lock } from "lucide-react";
 import { motion } from "framer-motion";
 import { useInView } from "react-intersection-observer";
 
@@ -13,40 +13,40 @@ export function ProblemSection() {
 
   const problems = [
     {
-      icon: AlertTriangle,
-      title: "Mistura das Contas",
-      description: "Usar a conta pessoal para despesas da empresa ou vice-versa",
-      impact: "Dificulta controle e pode gerar problemas com Receita Federal"
+      icon: Scale,
+      title: "Violação da Legislação",
+      description: "Misturar finanças PF e PJ viola a separação patrimonial exigida por lei",
+      impact: "Você pode estar descumprindo normas legais sem nem saber"
     },
     {
-      icon: FileX,
-      title: "Falta de Organização",
-      description: "Documentos e comprovantes espalhados sem controle",
-      impact: "Impossibilita análise real da situação financeira"
+      icon: ShieldAlert,
+      title: "Risco Fiscal Iminente",
+      description: "Receita Federal pode caracterizar isso como desvio de recursos",
+      impact: "Multas, autuações e problemas graves com o fisco"
+    },
+    {
+      icon: Lock,
+      title: "Barreira ao Crescimento",
+      description: "Investidores e bancos não confiam em empresas com finanças misturadas",
+      impact: "Impossível escalar e crescer de verdade o negócio"
+    },
+    {
+      icon: FileWarning,
+      title: "Declarações Comprometidas",
+      description: "IRPF e IRPJ ficam incorretos quando as contas estão misturadas",
+      impact: "Alto risco de cair na malha fina e enfrentar fiscalização"
     },
     {
       icon: TrendingDown,
-      title: "Decisões sem Base",
-      description: "Não saber quanto realmente sobra do negócio",
-      impact: "Investimentos errados e gastos desnecessários"
+      title: "Lucro Real Invisível",
+      description: "Você não sabe quanto a empresa realmente lucra",
+      impact: "Decisões erradas que impedem o crescimento sustentável"
     },
     {
-      icon: AlertCircle,
-      title: "Problemas Fiscais",
-      description: "Declarações incorretas por falta de separação",
-      impact: "Risco de multas e autuações da Receita Federal"
-    },
-    {
-      icon: CreditCard,
-      title: "Fluxo de Caixa Confuso",
-      description: "Não saber quando o dinheiro é da empresa ou pessoal",
-      impact: "Dificuldade para planejar investimentos e crescimento"
-    },
-    {
-      icon: Users,
-      title: "Stress Familiar",
-      description: "Conflitos em casa por misturar finanças pessoais e profissionais",
-      impact: "Tensões que afetam tanto a vida pessoal quanto o negócio"
+      icon: AlertTriangle,
+      title: "Perda de Credibilidade",
+      description: "Negócios sérios precisam ter finanças organizadas e separadas",
+      impact: "Seu negócio é visto como amador e não profissional"
     }
   ];
 
@@ -60,11 +60,11 @@ export function ProblemSection() {
           className="text-center mb-16"
         >
           <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
-            Você Reconhece Esses <span className="text-red-600">Problemas</span>?
+            Os <span className="text-red-600">Riscos Reais</span> de Misturar PF e PJ
           </h2>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-            A maioria dos empreendedores brasileiros enfrenta essas dificuldades diariamente. 
-            E o pior: isso está custando dinheiro e criando riscos desnecessários para o seu negócio.
+            Muitos empresários nem sabem, mas estão correndo sérios riscos legais e fiscais. 
+            <span className="font-semibold text-gray-900"> E isso impede totalmente o crescimento real do negócio.</span>
           </p>
         </motion.div>
 
@@ -108,10 +108,10 @@ export function ProblemSection() {
           className="text-center mt-12 bg-gradient-to-r from-red-500 to-red-600 rounded-xl p-8 text-white"
         >
           <h3 className="text-2xl font-bold mb-4">
-            Não deixe esses problemas afundarem seu negócio!
+            ⚠️ A boa notícia: tudo isso tem solução!
           </h3>
           <p className="text-lg opacity-90">
-            Cada dia que passa sem uma organização adequada é dinheiro perdido e risco acumulado.
+            Você não precisa ser refém desses riscos. Existe uma forma simples, prática e objetiva de resolver isso de uma vez por todas.
           </p>
         </motion.div>
       </div>

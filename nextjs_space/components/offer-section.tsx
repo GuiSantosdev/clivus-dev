@@ -25,16 +25,16 @@ export function OfferSection() {
   };
 
   const includes = [
-    "Ferramenta Clivus completa",
-    "Acesso vitalício à plataforma",
-    "Dashboard executivo personalizado",
-    "Relatórios automáticos ilimitados",
-    "Calculadora de pró-labore",
-    "Suporte técnico por 12 meses",
-    "Atualizações gratuitas por 2 anos",
-    "Garantia de satisfação de 30 dias",
-    "Bônus: E-book 'Planejamento Fiscal'",
-    "Bônus: Planilha de controle financeiro"
+    "✅ 100% conforme a legislação brasileira",
+    "✅ Proteção total contra problemas fiscais",
+    "✅ Separa PF e PJ automaticamente",
+    "✅ Dashboard executivo personalizado",
+    "✅ Relatórios automáticos ilimitados",
+    "✅ Calculadora de pró-labore legal",
+    "✅ Acesso vitalício à plataforma",
+    "✅ Funciona para qualquer tamanho de empresa",
+    "✅ Atualizações gratuitas por 2 anos",
+    "✅ Garantia incondicional de 30 dias"
   ];
 
   const bonuses = [
@@ -65,11 +65,11 @@ export function OfferSection() {
           className="text-center mb-16"
         >
           <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
-            Oferta <span className="text-green-600">Especial</span> de Lançamento
+            Mude Sua Empresa <span className="text-green-600">de Uma Vez Por Todas</span>
           </h2>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-            Por tempo limitado, você pode ter acesso completo ao Clivus 
-            com condições exclusivas que não vão durar para sempre.
+            Regularize sua situação legal, elimine riscos fiscais e desbloqueie o crescimento real do seu negócio. 
+            <span className="font-semibold text-gray-900"> Investimento único de apenas R$ 97,00.</span>
           </p>
         </motion.div>
 
@@ -208,14 +208,14 @@ export function OfferSection() {
           className="text-center mt-16 bg-red-50 border border-red-200 rounded-xl p-8"
         >
           <h3 className="text-2xl font-bold text-gray-900 mb-4">
-            ⚠️ ATENÇÃO: Esta oferta expira em breve!
+            ⚠️ Cada dia sem regularização é um risco
           </h3>
           <p className="text-gray-700 mb-4">
-            Após o período promocional, o Clivus voltará ao preço normal de R$ 297,00. 
-            Esta é sua única chance de garantir acesso com 67% de desconto.
+            Quanto mais tempo você fica com finanças PF e PJ misturadas, maior o risco de problemas legais e fiscais. 
+            <span className="font-semibold"> E pior: sua empresa continua sem poder crescer de verdade.</span>
           </p>
           <p className="text-red-600 font-semibold">
-            Não perca essa oportunidade única!
+            Por apenas R$ 97,00, você resolve isso de uma vez por todas. Não deixe para depois!
           </p>
         </motion.div>
       </div>

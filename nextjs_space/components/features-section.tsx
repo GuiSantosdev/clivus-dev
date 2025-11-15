@@ -80,11 +80,12 @@ export function FeaturesSection() {
           className="text-center mb-16"
         >
           <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
-            Funcionalidades <span className="text-blue-600">Completas</span>
+            Simples. <span className="text-blue-600">Prático. Objetivo.</span>
           </h2>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-            Tudo que você precisa para ter controle total das suas finanças 
-            pessoais e empresariais em uma única ferramenta.
+            Uma ferramenta completa mas <span className="font-semibold">descomplicada</span>. 
+            Funciona perfeitamente para <span className="font-semibold text-blue-600">qualquer tamanho de empresa</span> — 
+            de MEI a médio porte.
           </p>
         </motion.div>
 

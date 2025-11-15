@@ -1,7 +1,7 @@
 
 "use client";
 
-import { CheckCircle, Target, Shield, TrendingUp, DollarSign, BarChart3, Users, Clock } from "lucide-react";
+import { CheckCircle, Scale, ShieldCheck, TrendingUp, Rocket, Building2, Sparkles } from "lucide-react";
 import { motion } from "framer-motion";
 import { useInView } from "react-intersection-observer";
 import { Button } from "@/components/ui/button";
@@ -19,34 +19,34 @@ export function SolutionSection() {
 
   const benefits = [
     {
-      icon: Target,
-      title: "Separação Automática",
-      description: "Sistema inteligente que separa automaticamente suas finanças PF das PJ"
+      icon: Scale,
+      title: "100% Conforme a Legislação",
+      description: "Atenda todas as exigências legais de separação patrimonial entre PF e PJ"
     },
     {
-      icon: Shield,
-      title: "Conformidade Fiscal",
-      description: "Garante que você esteja sempre em conformidade com a Receita Federal"
+      icon: ShieldCheck,
+      title: "Proteção Fiscal Total",
+      description: "Evite problemas com a Receita Federal e elimine riscos de autuações"
     },
     {
-      icon: BarChart3,
-      title: "Relatórios Inteligentes",
-      description: "Dashboards e relatórios que mostram a real situação do seu negócio"
+      icon: TrendingUp,
+      title: "Crescimento Real Desbloqueado",
+      description: "Finanças organizadas atraem investidores e abrem portas para escalar"
     },
     {
-      icon: DollarSign,
-      title: "Maximiza Lucros",
-      description: "Identifica oportunidades de economia e otimização de recursos"
+      icon: Rocket,
+      title: "Escalabilidade Garantida",
+      description: "Organize sua empresa para crescer de forma sustentável e profissional"
     },
     {
-      icon: Clock,
-      title: "Economia de Tempo",
-      description: "Automatiza processos que hoje você faz manualmente por horas"
+      icon: Building2,
+      title: "Para Qualquer Tamanho",
+      description: "Funciona perfeitamente desde MEI até empresas de médio porte"
     },
     {
-      icon: Users,
-      title: "Paz em Casa",
-      description: "Elimina conflitos familiares causados pela mistura de finanças"
+      icon: Sparkles,
+      title: "Simples e Prático",
+      description: "Interface objetiva que transforma gestão financeira em algo fácil"
     }
   ];
 
@@ -60,11 +60,12 @@ export function SolutionSection() {
           className="text-center mb-16"
         >
           <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
-            A <span className="text-blue-600">Solução</span> que Você Precisa
+            Conheça o <span className="text-blue-600">Clivus</span>
           </h2>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-            O Clivus foi desenvolvido especificamente para resolver os problemas financeiros 
-            que você enfrenta todos os dias. Transforme o caos em organização.
+            A ferramenta <span className="font-semibold">simples, prática e objetiva</span> que vai regularizar sua situação, 
+            proteger você do fisco e <span className="font-semibold text-blue-600">desbloquear o crescimento real do seu negócio</span> — 
+            independente do tamanho da sua empresa.
           </p>
         </motion.div>
 
@@ -75,7 +76,7 @@ export function SolutionSection() {
             transition={{ duration: 0.8 }}
           >
             <h3 className="text-3xl font-bold text-gray-900 mb-8">
-              Como o Clivus Transforma sua Vida Financeira
+              Como o Clivus Muda de Vez Sua Empresa
             </h3>
             
             <div className="space-y-6">
@@ -118,20 +119,20 @@ export function SolutionSection() {
                 <div className="bg-white/10 rounded-lg p-4">
                   <div className="flex items-center justify-between mb-2">
                     <span className="text-red-300">❌ ANTES</span>
-                    <span className="text-red-300 font-bold">Caos Total</span>
+                    <span className="text-red-300 font-bold">Risco e Estagnação</span>
                   </div>
                   <p className="text-sm opacity-90">
-                    Contas misturadas, documentos perdidos, stress constante
+                    Irregular com a lei, risco fiscal, sem credibilidade, crescimento bloqueado
                   </p>
                 </div>
                 
                 <div className="bg-white/10 rounded-lg p-4">
                   <div className="flex items-center justify-between mb-2">
                     <span className="text-green-300">✅ DEPOIS</span>
-                    <span className="text-green-300 font-bold">Organização Total</span>
+                    <span className="text-green-300 font-bold">Legal e Escalável</span>
                   </div>
                   <p className="text-sm opacity-90">
-                    Finanças separadas, relatórios automáticos, paz de espírito
+                    100% conforme a lei, protegido do fisco, pronto para crescer de verdade
                   </p>
                 </div>
               </div>
@@ -156,20 +157,20 @@ export function SolutionSection() {
         >
           <TrendingUp className="h-16 w-16 mx-auto mb-4" />
           <h3 className="text-2xl font-bold mb-4">
-            Resultados Comprovados
+            Transformação Garantida
           </h3>
           <div className="grid md:grid-cols-3 gap-6 mt-8">
             <div>
-              <div className="text-3xl font-bold">95%</div>
-              <div className="text-green-100">Redução no tempo gasto com finanças</div>
+              <div className="text-3xl font-bold">100%</div>
+              <div className="text-green-100">Conformidade com a legislação</div>
             </div>
             <div>
-              <div className="text-3xl font-bold">89%</div>
-              <div className="text-green-100">Aumento na clareza financeira</div>
+              <div className="text-3xl font-bold">Zero</div>
+              <div className="text-green-100">Risco de problemas fiscais</div>
             </div>
             <div>
-              <div className="text-3xl font-bold">78%</div>
-              <div className="text-green-100">Melhoria nos lucros</div>
+              <div className="text-3xl font-bold">∞</div>
+              <div className="text-green-100">Potencial de crescimento desbloqueado</div>
             </div>
           </div>
         </motion.div>
