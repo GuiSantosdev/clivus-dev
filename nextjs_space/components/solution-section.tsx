@@ -60,12 +60,14 @@ export function SolutionSection() {
           className="text-center mb-16"
         >
           <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
-            Conheça o <span className="text-blue-600">Clivus</span>
+            Apresentando o <span className="text-blue-600">Clivus</span>
           </h2>
-          <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-            A ferramenta <span className="font-semibold">simples, prática e objetiva</span> que vai regularizar sua situação, 
-            proteger você do fisco e <span className="font-semibold text-blue-600">desbloquear o crescimento real do seu negócio</span> — 
-            independente do tamanho da sua empresa.
+          <p className="text-xl md:text-2xl text-gray-700 max-w-3xl mx-auto font-medium">
+            A ferramenta que <span className="font-bold text-blue-600">separa CPF e CNPJ de forma automática</span>,{" "}
+            regulariza sua empresa e <span className="font-bold">libera seu crescimento</span>.
+          </p>
+          <p className="text-lg text-gray-600 max-w-2xl mx-auto mt-4">
+            Simples, prático e definitivo — funciona em qualquer empresa.
           </p>
         </motion.div>
 
@@ -76,7 +78,7 @@ export function SolutionSection() {
             transition={{ duration: 0.8 }}
           >
             <h3 className="text-3xl font-bold text-gray-900 mb-8">
-              Como o Clivus Muda de Vez Sua Empresa
+              O Que Você Ganha Com o Clivus
             </h3>
             
             <div className="space-y-6">
@@ -140,9 +142,10 @@ export function SolutionSection() {
               <div className="mt-8 text-center">
                 <Button
                   onClick={scrollToOffer}
-                  className="bg-white text-blue-600 hover:bg-gray-100 font-bold px-8 py-3"
+                  size="lg"
+                  className="bg-white text-blue-600 hover:bg-gray-100 font-bold px-10 py-4 text-lg shadow-xl"
                 >
-                  Quero Essa Transformação
+                  Regularizar Agora por R$ 97
                 </Button>
               </div>
             </div>

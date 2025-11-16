@@ -65,11 +65,12 @@ export function OfferSection() {
           className="text-center mb-16"
         >
           <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
-            Mude Sua Empresa <span className="text-green-600">de Uma Vez Por Todas</span>
+            Regularize Seu Negócio{" "}
+            <span className="text-green-600">Agora por R$ 97</span>
           </h2>
-          <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-            Regularize sua situação legal, elimine riscos fiscais e desbloqueie o crescimento real do seu negócio. 
-            <span className="font-semibold text-gray-900"> Investimento único de apenas R$ 97,00.</span>
+          <p className="text-xl text-gray-700 max-w-3xl mx-auto font-medium">
+            <span className="font-bold">Pagamento único</span> • Sem mensalidades •{" "}
+            <span className="font-bold text-green-600">Acesso imediato</span>
           </p>
         </motion.div>
 
@@ -100,11 +101,16 @@ export function OfferSection() {
                   </div>
                 </div>
 
-                <div className="flex items-center justify-center space-x-2 mb-6">
-                  <Clock className="h-5 w-5 text-red-500" />
-                  <span className="text-red-500 font-semibold">
-                    Oferta válida por apenas 48 horas!
-                  </span>
+                <div className="bg-red-100 border border-red-300 rounded-lg p-4 mb-6">
+                  <div className="flex items-center justify-center space-x-2">
+                    <Clock className="h-5 w-5 text-red-600" />
+                    <span className="text-red-600 font-bold">
+                      Última chance: Oferta expira em breve!
+                    </span>
+                  </div>
+                  <p className="text-sm text-red-700 mt-2 text-center">
+                    Valor promocional válido apenas para os primeiros compradores
+                  </p>
                 </div>
               </div>
 
@@ -120,17 +126,20 @@ export function OfferSection() {
               <Button
                 onClick={handlePurchase}
                 disabled={isLoading}
-                className="w-full bg-green-600 hover:bg-green-700 text-white text-lg font-bold py-4 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
+                className="w-full bg-green-600 hover:bg-green-700 text-white text-xl font-bold py-6 rounded-lg shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:scale-105 animate-pulse"
               >
                 {isLoading ? (
                   "Processando..."
                 ) : (
                   <>
-                    Quero o Clivus Agora
-                    <ArrowRight className="ml-2 h-5 w-5" />
+                    SIM! Quero Regularizar por R$ 97
+                    <ArrowRight className="ml-2 h-6 w-6" />
                   </>
                 )}
               </Button>
+              <p className="text-center text-sm text-gray-600 mt-3 font-medium">
+                🚀 Acesso liberado em menos de 2 minutos
+              </p>
 
               <div className="flex items-center justify-center space-x-4 mt-6 text-sm text-gray-600">
                 <div className="flex items-center space-x-1">
@@ -205,18 +214,26 @@ export function OfferSection() {
           initial={{ opacity: 0, y: 30 }}
           animate={inView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.8, delay: 1 }}
-          className="text-center mt-16 bg-red-50 border border-red-200 rounded-xl p-8"
+          className="text-center mt-16 bg-gradient-to-r from-red-500 to-red-600 rounded-xl p-10 text-white shadow-2xl"
         >
-          <h3 className="text-2xl font-bold text-gray-900 mb-4">
-            ⚠️ Cada dia sem regularização é um risco
+          <h3 className="text-3xl font-bold mb-4">
+            ⚠️ Não Espere a Receita Federal Bater na Sua Porta
           </h3>
-          <p className="text-gray-700 mb-4">
-            Quanto mais tempo você fica com finanças PF e PJ misturadas, maior o risco de problemas legais e fiscais. 
-            <span className="font-semibold"> E pior: sua empresa continua sem poder crescer de verdade.</span>
+          <p className="text-xl mb-4 opacity-95">
+            Cada dia com CPF e CNPJ misturados{" "}
+            <span className="font-bold">aumenta seu risco fiscal</span> e{" "}
+            <span className="font-bold">impede seu crescimento</span>.
           </p>
-          <p className="text-red-600 font-semibold">
-            Por apenas R$ 97,00, você resolve isso de uma vez por todas. Não deixe para depois!
+          <p className="text-2xl font-bold mb-6">
+            Por R$ 97, você resolve AGORA e dorme tranquilo.
           </p>
+          <Button
+            onClick={handlePurchase}
+            size="lg"
+            className="bg-white text-red-600 hover:bg-gray-100 font-bold px-12 py-6 text-xl shadow-xl"
+          >
+            Regularizar Meu Negócio Agora
+          </Button>
         </motion.div>
       </div>
     </section>

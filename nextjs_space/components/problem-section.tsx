@@ -60,11 +60,12 @@ export function ProblemSection() {
           className="text-center mb-16"
         >
           <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
-            Os <span className="text-red-600">Riscos Reais</span> de Misturar PF e PJ
+            Por Que Você Está Colocando{" "}
+            <span className="text-red-600">Seu Negócio em Risco</span>
           </h2>
-          <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-            Muitos empresários nem sabem, mas estão correndo sérios riscos legais e fiscais. 
-            <span className="font-semibold text-gray-900"> E isso impede totalmente o crescimento real do negócio.</span>
+          <p className="text-xl text-gray-700 max-w-3xl mx-auto font-medium">
+            Cada dia que passa com as finanças do CPF e CNPJ misturadas{" "}
+            <span className="text-red-600 font-bold">aumenta suas chances</span> de enfrentar:
           </p>
         </motion.div>
 
@@ -105,13 +106,13 @@ export function ProblemSection() {
           initial={{ opacity: 0, y: 30 }}
           animate={inView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.8, delay: 0.8 }}
-          className="text-center mt-12 bg-gradient-to-r from-red-500 to-red-600 rounded-xl p-8 text-white"
+          className="text-center mt-12 bg-gradient-to-r from-red-500 to-red-600 rounded-xl p-8 text-white shadow-xl"
         >
-          <h3 className="text-2xl font-bold mb-4">
-            ⚠️ A boa notícia: tudo isso tem solução!
+          <h3 className="text-2xl md:text-3xl font-bold mb-4">
+            ⚠️ Existe uma forma simples de resolver isso AGORA
           </h3>
-          <p className="text-lg opacity-90">
-            Você não precisa ser refém desses riscos. Existe uma forma simples, prática e objetiva de resolver isso de uma vez por todas.
+          <p className="text-lg md:text-xl opacity-95 font-medium">
+            E você não precisa de contador, consultor ou planilhas complicadas...
           </p>
         </motion.div>
       </div>

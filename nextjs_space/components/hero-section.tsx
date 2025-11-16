@@ -38,41 +38,34 @@ export function HeroSection() {
             </div>
             
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 mb-6 leading-tight">
-              Você Está Misturando{" "}
-              <span className="text-red-600">Suas Finanças PF e PJ?</span>
+              Você Está Misturando as Finanças do{" "}
+              <span className="text-red-600">CPF e CNPJ?</span>
             </h1>
             
-            <p className="text-xl text-gray-700 mb-4 leading-relaxed max-w-2xl">
-              <span className="font-bold text-red-600">Atenção:</span> Muitos empresários nem sabem, mas essa prática coloca você em risco com o fisco, 
-              compromete sua conformidade legal e <span className="font-semibold text-gray-900">impede o crescimento real do seu negócio.</span>
+            <div className="bg-red-50 border-l-4 border-red-600 p-4 mb-6 max-w-2xl mx-auto lg:mx-0">
+              <p className="text-lg font-semibold text-gray-800">
+                Isso coloca você <span className="text-red-600">em risco com o fisco</span> e{" "}
+                <span className="text-red-600">impede seu negócio de crescer.</span>
+              </p>
+            </div>
+            
+            <p className="text-xl text-gray-700 mb-8 leading-relaxed max-w-2xl font-medium">
+              O <span className="font-bold text-blue-600">Clivus</span> separa tudo de forma{" "}
+              <span className="font-bold">simples e definitiva.</span>
             </p>
             
-            <p className="text-lg text-blue-700 mb-8 leading-relaxed max-w-2xl font-medium">
-              O Clivus é a ferramenta <span className="font-bold">simples, prática e objetiva</span> que vai mudar de uma vez por todas 
-              sua empresa — independente do tamanho dela.
-            </p>
-            
-            <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
+            <div className="flex flex-col gap-4 justify-center lg:justify-start">
               <Button
                 onClick={scrollToOffer}
                 size="lg"
-                className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-4 text-lg font-semibold rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
+                className="bg-green-600 hover:bg-green-700 text-white px-10 py-6 text-xl font-bold rounded-lg shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:scale-105"
               >
-                Quero o Clivus Agora
-                <ArrowRight className="ml-2 h-5 w-5" />
+                Regularizar Agora por R$ 97
+                <ArrowRight className="ml-2 h-6 w-6" />
               </Button>
-              
-              <Button
-                variant="outline"
-                size="lg"
-                className="border-2 border-blue-600 text-blue-600 hover:bg-blue-50 px-8 py-4 text-lg font-semibold rounded-lg"
-                onClick={() => {
-                  const leadForm = document.getElementById('lead-form');
-                  leadForm?.scrollIntoView({ behavior: 'smooth' });
-                }}
-              >
-                Saiba Mais
-              </Button>
+              <p className="text-sm text-gray-600 font-medium">
+                ✓ Acesso Imediato • ✓ Pagamento Único • ✓ Para Todas as Empresas
+              </p>
             </div>
             
             <div className="mt-12 grid grid-cols-3 gap-4 text-center">
