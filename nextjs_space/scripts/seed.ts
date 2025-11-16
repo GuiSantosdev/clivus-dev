@@ -284,27 +284,173 @@ async function main() {
   }
   console.log(`✅ ${leadsData.length} leads created`);
 
-  // Create a test payment for the client user
-  console.log("\n💳 Creating payment...");
+  // Create more test clients with different plans
+  console.log("\n👥 Creating additional test clients...");
   
-  const planForPayment = await prisma.plan.findUnique({ where: { slug: "intermediate" } });
+  const additionalClients = [
+    {
+      name: "Carlos Mendes",
+      email: "carlos@empresa.com",
+      password: "senha123",
+      cpf: "222.222.222-22",
+      cnpj: "22.222.222/0001-22",
+      businessArea: "Consultoria Financeira",
+      planSlug: "basic",
+    },
+    {
+      name: "Ana Paula Silva",
+      email: "ana.silva@loja.com",
+      password: "senha123",
+      cpf: "333.333.333-33",
+      cnpj: "33.333.333/0001-33",
+      businessArea: "E-commerce",
+      planSlug: "intermediate",
+    },
+    {
+      name: "Roberto Santos",
+      email: "roberto@agencia.com",
+      password: "senha123",
+      cpf: "444.444.444-44",
+      cnpj: "44.444.444/0001-44",
+      businessArea: "Marketing Digital",
+      planSlug: "advanced",
+    },
+    {
+      name: "Juliana Costa",
+      email: "juliana@design.com",
+      password: "senha123",
+      cpf: "555.555.555-55",
+      cnpj: "55.555.555/0001-55",
+      businessArea: "Design Gráfico",
+      planSlug: "basic",
+    },
+    {
+      name: "Fernando Lima",
+      email: "fernando@contabilidade.com",
+      password: "senha123",
+      cpf: "666.666.666-66",
+      cnpj: "66.666.666/0001-66",
+      businessArea: "Contabilidade",
+      planSlug: "intermediate",
+    },
+    {
+      name: "Patrícia Oliveira",
+      email: "patricia@advocacia.com",
+      password: "senha123",
+      cpf: "777.777.777-77",
+      cnpj: "77.777.777/0001-77",
+      businessArea: "Advocacia",
+      planSlug: "advanced",
+    },
+    {
+      name: "Ricardo Alves",
+      email: "ricardo@startup.com",
+      password: "senha123",
+      cpf: "888.888.888-88",
+      cnpj: "88.888.888/0001-88",
+      businessArea: "Tecnologia",
+      planSlug: "basic",
+    },
+    {
+      name: "Camila Rodrigues",
+      email: "camila@clinica.com",
+      password: "senha123",
+      cpf: "999.999.999-00",
+      cnpj: "99.999.999/0001-00",
+      businessArea: "Saúde",
+      planSlug: "intermediate",
+    },
+    {
+      name: "Bruno Ferreira",
+      email: "bruno@restaurante.com",
+      password: "senha123",
+      cpf: "101.101.101-01",
+      cnpj: "10.101.101/0001-01",
+      businessArea: "Alimentação",
+      planSlug: "basic",
+    },
+    {
+      name: "Mariana Santos",
+      email: "mariana@academia.com",
+      password: "senha123",
+      cpf: "202.202.202-02",
+      cnpj: "20.202.202/0001-02",
+      businessArea: "Fitness",
+      planSlug: "advanced",
+    },
+  ];
+
+  const createdClients = [];
+  for (const clientData of additionalClients) {
+    const hashedPassword = await bcrypt.hash(clientData.password, 10);
+    const client = await prisma.user.upsert({
+      where: { email: clientData.email },
+      update: {},
+      create: {
+        email: clientData.email,
+        password: hashedPassword,
+        name: clientData.name,
+        role: "user",
+        hasAccess: true,
+        cpf: clientData.cpf,
+        cnpj: clientData.cnpj,
+        businessArea: clientData.businessArea,
+      },
+    });
+    createdClients.push({ ...client, planSlug: clientData.planSlug });
+    console.log(`✅ Client created: ${client.name}`);
+  }
+
+  // Create payments for all test clients
+  console.log("\n💳 Creating payments...");
   
-  if (planForPayment) {
+  // Payment for admin user
+  const intermediatePlanForAdmin = await prisma.plan.findUnique({ where: { slug: "intermediate" } });
+  if (intermediatePlanForAdmin) {
     await prisma.payment.upsert({
       where: { 
-        stripeSessionId: "test_session_123",
+        stripeSessionId: "test_session_admin_123",
       },
       update: {},
       create: {
         userId: admin.id,
-        planId: planForPayment.id,
-        plan: planForPayment.slug,
-        amount: planForPayment.price,
+        planId: intermediatePlanForAdmin.id,
+        plan: intermediatePlanForAdmin.slug,
+        amount: intermediatePlanForAdmin.price,
         status: "completed",
-        stripeSessionId: "test_session_123",
+        stripeSessionId: "test_session_admin_123",
       },
     });
-    console.log("✅ Payment created for client user");
+    console.log(`✅ Payment created for ${admin.name}`);
+  }
+
+  // Payments for additional clients
+  for (let i = 0; i < createdClients.length; i++) {
+    const client = createdClients[i];
+    const plan = await prisma.plan.findUnique({ where: { slug: client.planSlug } });
+    
+    if (plan) {
+      // Create a mix of completed and pending payments
+      const statuses = ["completed", "completed", "completed", "pending", "failed"];
+      const status = statuses[i % statuses.length];
+      
+      await prisma.payment.upsert({
+        where: { 
+          stripeSessionId: `test_session_${client.id}_${i}`,
+        },
+        update: {},
+        create: {
+          userId: client.id,
+          planId: plan.id,
+          plan: plan.slug,
+          amount: plan.price,
+          status,
+          stripeSessionId: `test_session_${client.id}_${i}`,
+          createdAt: new Date(2024, 10, Math.floor(Math.random() * 15) + 1), // Random date in November
+        },
+      });
+      console.log(`✅ Payment (${status}) created for ${client.name} - ${plan.name}`);
+    }
   }
 
   console.log("\n🌱 Seed completed successfully!");

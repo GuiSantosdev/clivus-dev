@@ -49,10 +49,19 @@ interface DashboardStats {
   }>;
 }
 
+interface PlanLimits {
+  limits: {
+    [key: string]: number;
+  };
+  planName: string;
+  planSlug: string | null;
+}
+
 export default function DashboardPage() {
   const { data: session, status } = useSession();
   const router = useRouter();
   const [stats, setStats] = useState<DashboardStats | null>(null);
+  const [planLimits, setPlanLimits] = useState<PlanLimits | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -60,6 +69,7 @@ export default function DashboardPage() {
       router.push("/login");
     } else if (status === "authenticated") {
       fetchDashboardData();
+      fetchPlanLimits();
     }
   }, [status, router]);
 
@@ -76,6 +86,18 @@ export default function DashboardPage() {
       toast.error("Erro ao carregar dados");
     } finally {
       setLoading(false);
+    }
+  };
+
+  const fetchPlanLimits = async () => {
+    try {
+      const response = await fetch("/api/user/plan-limits");
+      if (response.ok) {
+        const data = await response.json();
+        setPlanLimits(data);
+      }
+    } catch (error) {
+      console.error("Erro ao carregar limites do plano:", error);
     }
   };
 
@@ -350,6 +372,168 @@ export default function DashboardPage() {
             </CardContent>
           </Card>
         </div>
+
+        {/* Plan Limits Section */}
+        {planLimits && (
+          <Card className="bg-gradient-to-br from-blue-50 to-indigo-50 border-indigo-200">
+            <CardHeader>
+              <CardTitle className="flex items-center justify-between">
+                <span>Seu Plano: {planLimits.planName}</span>
+                {planLimits.planSlug !== "advanced" && (
+                  <Link href="/#oferta">
+                    <Button size="sm" variant="outline" className="border-indigo-300 text-indigo-700 hover:bg-indigo-100">
+                      Fazer Upgrade
+                    </Button>
+                  </Link>
+                )}
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {/* Transações Mensais */}
+                {planLimits.limits.transactions_monthly !== undefined && (
+                  <div className="flex items-start space-x-3 p-3 bg-white rounded-lg border border-gray-200">
+                    <FileText className="h-5 w-5 text-blue-600 mt-0.5" />
+                    <div className="flex-1">
+                      <p className="font-medium text-gray-900 text-sm">Transações por Mês</p>
+                      <p className="text-xs text-gray-600">
+                        {planLimits.limits.transactions_monthly === -1 
+                          ? "Ilimitado" 
+                          : `Até ${planLimits.limits.transactions_monthly}`}
+                      </p>
+                    </div>
+                  </div>
+                )}
+
+                {/* Membros da Equipe */}
+                {planLimits.limits.team_members !== undefined && (
+                  <div className="flex items-start space-x-3 p-3 bg-white rounded-lg border border-gray-200">
+                    <Users className="h-5 w-5 text-purple-600 mt-0.5" />
+                    <div className="flex-1">
+                      <p className="font-medium text-gray-900 text-sm">Membros da Equipe</p>
+                      <p className="text-xs text-gray-600">
+                        {planLimits.limits.team_members === -1 
+                          ? "Ilimitado" 
+                          : planLimits.limits.team_members === 0 
+                          ? "Não disponível" 
+                          : `Até ${planLimits.limits.team_members}`}
+                      </p>
+                    </div>
+                  </div>
+                )}
+
+                {/* Relatórios DRE */}
+                {planLimits.limits.dre_reports_monthly !== undefined && (
+                  <div className="flex items-start space-x-3 p-3 bg-white rounded-lg border border-gray-200">
+                    <PieChart className="h-5 w-5 text-green-600 mt-0.5" />
+                    <div className="flex-1">
+                      <p className="font-medium text-gray-900 text-sm">Relatórios DRE/Mês</p>
+                      <p className="text-xs text-gray-600">
+                        {planLimits.limits.dre_reports_monthly === -1 
+                          ? "Ilimitado" 
+                          : planLimits.limits.dre_reports_monthly === 0 
+                          ? "Não disponível" 
+                          : `Até ${planLimits.limits.dre_reports_monthly}`}
+                      </p>
+                    </div>
+                  </div>
+                )}
+
+                {/* Calculadora de Pró-labore */}
+                {planLimits.limits.prolabore_calculator !== undefined && (
+                  <div className="flex items-start space-x-3 p-3 bg-white rounded-lg border border-gray-200">
+                    <Calculator className="h-5 w-5 text-orange-600 mt-0.5" />
+                    <div className="flex-1">
+                      <p className="font-medium text-gray-900 text-sm">Calculadora Pró-labore</p>
+                      <p className="text-xs text-gray-600">
+                        {planLimits.limits.prolabore_calculator === 0 
+                          ? "Não disponível" 
+                          : "Disponível"}
+                      </p>
+                    </div>
+                  </div>
+                )}
+
+                {/* Compliance Fiscal */}
+                {planLimits.limits.compliance_alerts !== undefined && (
+                  <div className="flex items-start space-x-3 p-3 bg-white rounded-lg border border-gray-200">
+                    <ShieldCheck className="h-5 w-5 text-red-600 mt-0.5" />
+                    <div className="flex-1">
+                      <p className="font-medium text-gray-900 text-sm">Alertas de Compliance</p>
+                      <p className="text-xs text-gray-600">
+                        {planLimits.limits.compliance_alerts === 0 
+                          ? "Não disponível" 
+                          : "Disponível"}
+                      </p>
+                    </div>
+                  </div>
+                )}
+
+                {/* Controle de Investimentos */}
+                {planLimits.limits.investment_tracking !== undefined && (
+                  <div className="flex items-start space-x-3 p-3 bg-white rounded-lg border border-gray-200">
+                    <TrendingUp className="h-5 w-5 text-teal-600 mt-0.5" />
+                    <div className="flex-1">
+                      <p className="font-medium text-gray-900 text-sm">Controle de Investimentos</p>
+                      <p className="text-xs text-gray-600">
+                        {planLimits.limits.investment_tracking === 0 
+                          ? "Não disponível" 
+                          : "Disponível"}
+                      </p>
+                    </div>
+                  </div>
+                )}
+
+                {/* Exportação PDF */}
+                {planLimits.limits.export_pdf !== undefined && (
+                  <div className="flex items-start space-x-3 p-3 bg-white rounded-lg border border-gray-200">
+                    <FileText className="h-5 w-5 text-pink-600 mt-0.5" />
+                    <div className="flex-1">
+                      <p className="font-medium text-gray-900 text-sm">Exportação PDF</p>
+                      <p className="text-xs text-gray-600">
+                        {planLimits.limits.export_pdf === 0 
+                          ? "Não disponível" 
+                          : "Disponível"}
+                      </p>
+                    </div>
+                  </div>
+                )}
+
+                {/* Categorias Personalizadas DRE */}
+                {planLimits.limits.custom_categories !== undefined && (
+                  <div className="flex items-start space-x-3 p-3 bg-white rounded-lg border border-gray-200">
+                    <PieChart className="h-5 w-5 text-indigo-600 mt-0.5" />
+                    <div className="flex-1">
+                      <p className="font-medium text-gray-900 text-sm">Categorias Personalizadas DRE</p>
+                      <p className="text-xs text-gray-600">
+                        {planLimits.limits.custom_categories === -1 
+                          ? "Ilimitado" 
+                          : planLimits.limits.custom_categories === 0 
+                          ? "Não disponível" 
+                          : `Até ${planLimits.limits.custom_categories}`}
+                      </p>
+                    </div>
+                  </div>
+                )}
+
+                {/* Suporte Prioritário */}
+                {planLimits.limits.priority_support !== undefined && (
+                  <div className="flex items-start space-x-3 p-3 bg-white rounded-lg border border-gray-200">
+                    <CheckCircle className="h-5 w-5 text-yellow-600 mt-0.5" />
+                    <div className="flex-1">
+                      <p className="font-medium text-gray-900 text-sm">Suporte Prioritário</p>
+                      <p className="text-xs text-gray-600">
+                        {planLimits.limits.priority_support === 0 
+                          ? "Não disponível" 
+                          : "Disponível"}
+                      </p>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </CardContent>
+          </Card>
+        )}
 
         {/* Recent Transactions */}
         <Card>

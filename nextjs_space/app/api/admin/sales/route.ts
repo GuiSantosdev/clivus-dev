@@ -20,7 +20,7 @@ export async function GET(req: NextRequest) {
       where: { email: session.user.email! },
     });
 
-    if (!user || user.role !== 'admin') {
+    if (!user || (user.role !== 'admin' && user.role !== 'superadmin')) {
       return NextResponse.json(
         { error: 'Acesso negado' },
         { status: 403 }
