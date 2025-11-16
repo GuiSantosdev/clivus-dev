@@ -2,8 +2,9 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Scale, TrendingUp, ShieldCheck, Monitor, Smartphone } from "lucide-react";
+import { ArrowRight, Scale, TrendingUp, ShieldCheck, Monitor, Smartphone, LogIn } from "lucide-react";
 import Image from "next/image";
+import Link from "next/link";
 import { motion } from "framer-motion";
 
 export function HeroSection() {
@@ -16,6 +17,19 @@ export function HeroSection() {
     <section className="relative min-h-screen bg-gradient-to-br from-blue-50 via-white to-blue-100 flex items-center">
       <div className="absolute inset-0 opacity-30">
         <div className="w-full h-full bg-gradient-to-br from-blue-100/20 to-transparent bg-[radial-gradient(circle_at_1px_1px,rgba(59,130,246,0.15)_1px,transparent_0)] bg-[length:60px_60px]"></div>
+      </div>
+
+      {/* Fixed Login Button */}
+      <div className="fixed top-4 right-4 z-50">
+        <Link href="/login">
+          <Button 
+            variant="outline" 
+            className="bg-white/95 hover:bg-white shadow-lg border-2 border-blue-600 text-blue-600 hover:text-blue-700 font-semibold"
+          >
+            <LogIn className="h-4 w-4 mr-2" />
+            Entrar no Sistema
+          </Button>
+        </Link>
       </div>
       
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">

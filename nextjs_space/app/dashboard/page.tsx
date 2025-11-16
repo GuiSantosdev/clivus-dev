@@ -16,7 +16,12 @@ import {
   Calendar,
   ArrowRight,
   CheckCircle,
-  XCircle
+  XCircle,
+  Calculator,
+  ShieldCheck,
+  PieChart,
+  Users,
+  FileText
 } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
@@ -248,48 +253,115 @@ export default function DashboardPage() {
         </div>
 
         {/* Quick Actions */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
-          <Link href="/transactions">
-            <Card className="hover:shadow-lg transition-shadow cursor-pointer">
+        <h2 className="text-xl font-bold text-gray-900 mb-4">Funcionalidades</h2>
+        <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4 mb-8">
+          <Link href="/prolabore">
+            <Card className="hover:shadow-lg transition-shadow cursor-pointer border-blue-200 hover:border-blue-400">
               <CardContent className="p-6">
-                <div className="flex items-center space-x-3">
-                  <Wallet className="h-8 w-8 text-blue-600" />
-                  <div>
-                    <h3 className="font-semibold text-gray-900">Transações</h3>
-                    <p className="text-sm text-gray-600">Gerenciar entradas e saídas</p>
+                <div className="flex flex-col items-center text-center space-y-2">
+                  <div className="h-12 w-12 rounded-full bg-blue-100 flex items-center justify-center">
+                    <Calculator className="h-6 w-6 text-blue-600" />
                   </div>
+                  <h3 className="font-semibold text-gray-900">Calculadora de Pró-labore</h3>
+                  <p className="text-xs text-gray-600">Calcule automaticamente o pró-labore ideal</p>
                 </div>
               </CardContent>
             </Card>
           </Link>
 
           <Link href="/reports">
-            <Card className="hover:shadow-lg transition-shadow cursor-pointer">
+            <Card className="hover:shadow-lg transition-shadow cursor-pointer border-green-200 hover:border-green-400">
               <CardContent className="p-6">
-                <div className="flex items-center space-x-3">
-                  <DollarSign className="h-8 w-8 text-green-600" />
-                  <div>
-                    <h3 className="font-semibold text-gray-900">Relatórios</h3>
-                    <p className="text-sm text-gray-600">Visualizar análises</p>
+                <div className="flex flex-col items-center text-center space-y-2">
+                  <div className="h-12 w-12 rounded-full bg-green-100 flex items-center justify-center">
+                    <FileText className="h-6 w-6 text-green-600" />
                   </div>
+                  <h3 className="font-semibold text-gray-900">Gerador de Relatórios</h3>
+                  <p className="text-xs text-gray-600">DRE, fluxo de caixa e balanço</p>
                 </div>
               </CardContent>
             </Card>
           </Link>
 
-          <Link href="/admin">
-            <Card className="hover:shadow-lg transition-shadow cursor-pointer">
+          <Link href="/transactions">
+            <Card className="hover:shadow-lg transition-shadow cursor-pointer border-purple-200 hover:border-purple-400">
               <CardContent className="p-6">
-                <div className="flex items-center space-x-3">
-                  <Calendar className="h-8 w-8 text-purple-600" />
-                  <div>
-                    <h3 className="font-semibold text-gray-900">Configurações</h3>
-                    <p className="text-sm text-gray-600">Gerenciar conta</p>
+                <div className="flex flex-col items-center text-center space-y-2">
+                  <div className="h-12 w-12 rounded-full bg-purple-100 flex items-center justify-center">
+                    <Wallet className="h-6 w-6 text-purple-600" />
                   </div>
+                  <h3 className="font-semibold text-gray-900">Dashboard Executivo</h3>
+                  <p className="text-xs text-gray-600">Indicadores importantes do negócio</p>
                 </div>
               </CardContent>
             </Card>
           </Link>
+
+          <Link href="/compliance">
+            <Card className="hover:shadow-lg transition-shadow cursor-pointer border-yellow-200 hover:border-yellow-400">
+              <CardContent className="p-6">
+                <div className="flex flex-col items-center text-center space-y-2">
+                  <div className="h-12 w-12 rounded-full bg-yellow-100 flex items-center justify-center">
+                    <ShieldCheck className="h-6 w-6 text-yellow-600" />
+                  </div>
+                  <h3 className="font-semibold text-gray-900">Compliance Fiscal</h3>
+                  <p className="text-xs text-gray-600">Conformidade com obrigações fiscais</p>
+                </div>
+              </CardContent>
+            </Card>
+          </Link>
+
+          <Link href="/investments">
+            <Card className="hover:shadow-lg transition-shadow cursor-pointer border-indigo-200 hover:border-indigo-400">
+              <CardContent className="p-6">
+                <div className="flex flex-col items-center text-center space-y-2">
+                  <div className="h-12 w-12 rounded-full bg-indigo-100 flex items-center justify-center">
+                    <PieChart className="h-6 w-6 text-indigo-600" />
+                  </div>
+                  <h3 className="font-semibold text-gray-900">Controle de Investimentos</h3>
+                  <p className="text-xs text-gray-600">Investimentos pessoais e empresariais</p>
+                </div>
+              </CardContent>
+            </Card>
+          </Link>
+
+          <Link href="/team">
+            <Card className="hover:shadow-lg transition-shadow cursor-pointer border-pink-200 hover:border-pink-400">
+              <CardContent className="p-6">
+                <div className="flex flex-col items-center text-center space-y-2">
+                  <div className="h-12 w-12 rounded-full bg-pink-100 flex items-center justify-center">
+                    <Users className="h-6 w-6 text-pink-600" />
+                  </div>
+                  <h3 className="font-semibold text-gray-900">Multi-usuário</h3>
+                  <p className="text-xs text-gray-600">Acesso ao contador e sócios</p>
+                </div>
+              </CardContent>
+            </Card>
+          </Link>
+
+          <Card className="bg-gradient-to-br from-blue-50 to-blue-100 border-blue-300">
+            <CardContent className="p-6">
+              <div className="flex flex-col items-center text-center space-y-2">
+                <div className="h-12 w-12 rounded-full bg-white flex items-center justify-center">
+                  <CheckCircle className="h-6 w-6 text-blue-600" />
+                </div>
+                <h3 className="font-semibold text-gray-900">100% Online</h3>
+                <p className="text-xs text-gray-600">Acesse pelo computador ou celular</p>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card className="bg-gradient-to-br from-green-50 to-green-100 border-green-300">
+            <CardContent className="p-6">
+              <div className="flex flex-col items-center text-center space-y-2">
+                <div className="h-12 w-12 rounded-full bg-white flex items-center justify-center">
+                  <CheckCircle className="h-6 w-6 text-green-600" />
+                </div>
+                <h3 className="font-semibold text-gray-900">Backup Automático</h3>
+                <p className="text-xs text-gray-600">Seus dados sempre seguros na nuvem</p>
+              </div>
+            </CardContent>
+          </Card>
         </div>
 
         {/* Recent Transactions */}
