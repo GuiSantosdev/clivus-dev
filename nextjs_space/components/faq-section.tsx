@@ -5,6 +5,7 @@ import { ChevronDown, ChevronUp, HelpCircle } from "lucide-react";
 import { motion } from "framer-motion";
 import { useInView } from "react-intersection-observer";
 import { useState } from "react";
+import { CtaButton } from "./cta-button";
 
 export function FaqSection() {
   const [ref, inView] = useInView({
@@ -145,6 +146,16 @@ export function FaqSection() {
             </div>
           </div>
         </motion.div>
+
+        {/* CTA final antes do formulário */}
+        <div className="mt-12">
+          <CtaButton 
+            text="SIM, QUERO O CLIVUS AGORA"
+            subtext="Sem dúvidas restantes • Garantia de 30 dias"
+            href="#oferta"
+            variant="primary"
+          />
+        </div>
       </div>
     </section>
   );

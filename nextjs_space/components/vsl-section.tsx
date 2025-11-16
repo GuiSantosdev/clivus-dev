@@ -5,6 +5,7 @@
 import { motion } from "framer-motion";
 import { useInView } from "react-intersection-observer";
 import { Play } from "lucide-react";
+import { CtaButton } from "./cta-button";
 
 export function VslSection() {
   const [ref, inView] = useInView({
@@ -78,6 +79,15 @@ export function VslSection() {
             </div>
           </div>
         </motion.div>
+
+        {/* CTA após o vídeo */}
+        <div className="mt-10 sm:mt-12">
+          <CtaButton 
+            text="QUERO SEPARAR MINHAS FINANÇAS AGORA"
+            subtext="Acesso 100% online • Compra segura"
+            href="#oferta"
+          />
+        </div>
       </div>
     </section>
   );

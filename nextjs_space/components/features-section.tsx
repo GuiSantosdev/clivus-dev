@@ -15,6 +15,7 @@ import {
 } from "lucide-react";
 import { motion } from "framer-motion";
 import { useInView } from "react-intersection-observer";
+import { CtaButton } from "./cta-button";
 
 export function FeaturesSection() {
   const [ref, inView] = useInView({
@@ -141,6 +142,16 @@ export function FeaturesSection() {
             )) ?? []}
           </div>
         </motion.div>
+
+        {/* CTA após as funcionalidades */}
+        <div className="mt-12">
+          <CtaButton 
+            text="QUERO TODAS ESSAS FUNCIONALIDADES"
+            subtext="Comece hoje mesmo • Acesso imediato"
+            href="#oferta"
+            variant="secondary"
+          />
+        </div>
       </div>
     </section>
   );

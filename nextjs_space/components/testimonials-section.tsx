@@ -5,6 +5,7 @@ import { Star, Quote } from "lucide-react";
 import { motion } from "framer-motion";
 import { useInView } from "react-intersection-observer";
 import Image from "next/image";
+import { CtaButton } from "./cta-button";
 
 export function TestimonialsSection() {
   const [ref, inView] = useInView({
@@ -139,6 +140,16 @@ export function TestimonialsSection() {
             </div>
           </div>
         </motion.div>
+
+        {/* CTA após os depoimentos */}
+        <div className="mt-12">
+          <CtaButton 
+            text="QUERO FAZER PARTE DESSE GRUPO"
+            subtext="Junte-se a milhares de empreendedores de sucesso"
+            href="#oferta"
+            variant="primary"
+          />
+        </div>
       </div>
     </section>
   );

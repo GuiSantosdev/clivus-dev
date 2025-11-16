@@ -4,6 +4,7 @@
 import { AlertTriangle, Scale, TrendingDown, ShieldAlert, FileWarning, Lock } from "lucide-react";
 import { motion } from "framer-motion";
 import { useInView } from "react-intersection-observer";
+import { CtaButton } from "./cta-button";
 
 export function ProblemSection() {
   const [ref, inView] = useInView({
@@ -115,6 +116,16 @@ export function ProblemSection() {
             E você não precisa de contador, consultor ou planilhas complicadas...
           </p>
         </motion.div>
+
+        {/* CTA após os problemas */}
+        <div className="mt-12">
+          <CtaButton 
+            text="RESOLVER ISSO AGORA"
+            subtext="Proteja seu negócio • 100% seguro e legal"
+            href="#oferta"
+            variant="primary"
+          />
+        </div>
       </div>
     </section>
   );
