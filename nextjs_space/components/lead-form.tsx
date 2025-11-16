@@ -36,8 +36,8 @@ export function LeadForm() {
   const handleSubmit = async (e: React.FormEvent) => {
     e?.preventDefault?.();
     
-    if (!formData?.name || !formData?.email) {
-      toast?.error?.("Por favor, preencha nome e e-mail.");
+    if (!formData?.name || !formData?.email || !formData?.cnpj || !formData?.businessArea) {
+      toast?.error?.("Por favor, preencha todos os campos.");
       return;
     }
 
@@ -182,10 +182,11 @@ export function LeadForm() {
                     <Input
                       type="text"
                       name="cnpj"
-                      placeholder="CNPJ (opcional)"
+                      placeholder="CNPJ"
                       value={formData?.cnpj ?? ""}
                       onChange={handleInputChange}
                       className="pl-12 py-6 text-lg border-gray-300 focus:border-blue-500 focus:ring-blue-500"
+                      required
                     />
                   </div>
                   
@@ -194,10 +195,11 @@ export function LeadForm() {
                     <Input
                       type="text"
                       name="businessArea"
-                      placeholder="Ramo de atividade (opcional)"
+                      placeholder="Ramo de atividade"
                       value={formData?.businessArea ?? ""}
                       onChange={handleInputChange}
                       className="pl-12 py-6 text-lg border-gray-300 focus:border-blue-500 focus:ring-blue-500"
+                      required
                     />
                   </div>
                   
