@@ -5,7 +5,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Mail, User, ArrowRight, CheckCircle, Sparkles } from "lucide-react";
+import { Mail, User, ArrowRight, CheckCircle, Sparkles, Building2, Briefcase } from "lucide-react";
 import { motion } from "framer-motion";
 import { useInView } from "react-intersection-observer";
 import { toast } from "react-hot-toast";
@@ -18,7 +18,9 @@ export function LeadForm() {
 
   const [formData, setFormData] = useState({
     name: "",
-    email: ""
+    email: "",
+    cnpj: "",
+    businessArea: ""
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
@@ -35,7 +37,7 @@ export function LeadForm() {
     e?.preventDefault?.();
     
     if (!formData?.name || !formData?.email) {
-      toast?.error?.("Por favor, preencha todos os campos.");
+      toast?.error?.("Por favor, preencha nome e e-mail.");
       return;
     }
 
@@ -55,7 +57,7 @@ export function LeadForm() {
       if (response.ok) {
         setIsSubmitted(true);
         toast?.success?.("Informações enviadas com sucesso!");
-        setFormData({ name: "", email: "" });
+        setFormData({ name: "", email: "", cnpj: "", businessArea: "" });
       } else {
         toast?.error?.(result?.error ?? "Erro ao enviar informações. Tente novamente.");
       }
@@ -172,6 +174,30 @@ export function LeadForm() {
                       onChange={handleInputChange}
                       className="pl-12 py-6 text-lg border-gray-300 focus:border-blue-500 focus:ring-blue-500"
                       required
+                    />
+                  </div>
+                  
+                  <div className="relative">
+                    <Building2 className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
+                    <Input
+                      type="text"
+                      name="cnpj"
+                      placeholder="CNPJ (opcional)"
+                      value={formData?.cnpj ?? ""}
+                      onChange={handleInputChange}
+                      className="pl-12 py-6 text-lg border-gray-300 focus:border-blue-500 focus:ring-blue-500"
+                    />
+                  </div>
+                  
+                  <div className="relative">
+                    <Briefcase className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
+                    <Input
+                      type="text"
+                      name="businessArea"
+                      placeholder="Ramo de atividade (opcional)"
+                      value={formData?.businessArea ?? ""}
+                      onChange={handleInputChange}
+                      className="pl-12 py-6 text-lg border-gray-300 focus:border-blue-500 focus:ring-blue-500"
                     />
                   </div>
                   

@@ -60,8 +60,8 @@ export function FeaturesSection() {
     },
     {
       icon: Smartphone,
-      title: "Acesso Mobile",
-      description: "Acesse suas informações financeiras de qualquer lugar, a qualquer hora"
+      title: "100% Online - Mobile & Desktop",
+      description: "Ferramenta totalmente online. Acesse pelo computador ou celular, de qualquer lugar, a qualquer hora"
     },
     {
       icon: Users,

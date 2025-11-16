@@ -26,6 +26,7 @@ export function OfferSection() {
 
   const includes = [
     "✅ 100% conforme a legislação brasileira",
+    "✅ 100% online - Acesse do computador ou celular",
     "✅ Proteção total contra problemas fiscais",
     "✅ Separa PF e PJ automaticamente",
     "✅ Dashboard executivo personalizado",

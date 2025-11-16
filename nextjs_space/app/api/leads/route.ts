@@ -7,7 +7,7 @@ export const dynamic = "force-dynamic";
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { name, email } = body;
+    const { name, email, cnpj, businessArea } = body;
 
     // Validação básica
     if (!name || !email) {
@@ -43,6 +43,8 @@ export async function POST(request: NextRequest) {
       data: {
         name: name?.trim?.(),
         email: email?.toLowerCase?.()?.trim?.(),
+        cnpj: cnpj?.trim?.() || null,
+        businessArea: businessArea?.trim?.() || null,
         source: 'landing_page'
       }
     });

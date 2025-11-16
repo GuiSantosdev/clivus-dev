@@ -2,7 +2,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Scale, TrendingUp, ShieldCheck } from "lucide-react";
+import { ArrowRight, Scale, TrendingUp, ShieldCheck, Monitor, Smartphone } from "lucide-react";
 import Image from "next/image";
 import { motion } from "framer-motion";
 
@@ -35,6 +35,13 @@ export function HeroSection() {
                 className="mx-auto lg:mx-0"
                 priority
               />
+              <div className="mt-4 inline-flex items-center gap-2 bg-blue-100 text-blue-800 px-4 py-2 rounded-full font-semibold text-sm">
+                <Monitor className="h-4 w-4" />
+                <span>100% Online</span>
+                <span className="text-blue-600">•</span>
+                <Smartphone className="h-4 w-4" />
+                <span>Acesse de Qualquer Lugar</span>
+              </div>
             </div>
             
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 mb-6 leading-tight">
