@@ -13,23 +13,48 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
 
 export async function POST(request: Request) {
   try {
+    // Verificar se o Stripe está configurado
+    if (!process.env.STRIPE_SECRET_KEY || process.env.STRIPE_SECRET_KEY.includes("YOUR_STRIPE")) {
+      return NextResponse.json(
+        { error: "Sistema de pagamento não configurado. Por favor, configure as chaves do Stripe no painel administrativo." },
+        { status: 503 }
+      );
+    }
+
     const session = await getServerSession(authOptions);
 
     if (!session?.user) {
       return NextResponse.json({ error: "Não autorizado" }, { status: 401 });
     }
 
-    const origin = request.headers.get("origin") || "";
+    const body = await request.json();
+    const { plan: planSlug, amount } = body;
+
+    if (!planSlug) {
+      return NextResponse.json({ error: "Plano não especificado" }, { status: 400 });
+    }
+
+    // Buscar informações do plano no banco de dados
+    const plan = await prisma.plan.findUnique({
+      where: { slug: planSlug },
+    });
+
+    if (!plan || !plan.isActive) {
+      return NextResponse.json({ error: "Plano não encontrado ou inativo" }, { status: 404 });
+    }
+
+    const origin = request.headers.get("origin") || process.env.NEXT_PUBLIC_APP_URL || "";
     const userId = (session.user as any).id;
 
-    // Create payment record
+    // Create payment record with plan relationship
     const payment = await prisma.payment.create({
       data: {
         userId,
-        amount: 97.0,
+        amount: plan.price,
         currency: "brl",
         status: "pending",
-        plan: "lifetime_97",
+        plan: planSlug,
+        planId: plan.id,
       },
     });
 
@@ -41,20 +66,22 @@ export async function POST(request: Request) {
           price_data: {
             currency: "brl",
             product_data: {
-              name: "Clivus - Plano Vitalício",
-              description: "Acesso completo e vitalício ao Clivus",
+              name: `Clivus - ${plan.name}`,
+              description: `Acesso completo ao Clivus - Plano ${plan.name}`,
             },
-            unit_amount: 9700, // R$ 97,00 in cents
+            unit_amount: Math.round(plan.price * 100), // Convert to cents
           },
           quantity: 1,
         },
       ],
       mode: "payment",
       success_url: `${origin}/dashboard?payment=success`,
-      cancel_url: `${origin}/checkout?payment=canceled`,
+      cancel_url: `${origin}/checkout?plan=${planSlug}&payment=canceled`,
       metadata: {
         userId,
         paymentId: payment.id,
+        planId: plan.id,
+        planSlug: planSlug,
       },
     });
 
@@ -65,10 +92,20 @@ export async function POST(request: Request) {
     });
 
     return NextResponse.json({ url: checkoutSession.url });
-  } catch (error) {
+  } catch (error: any) {
     console.error("Checkout error:", error);
+    
+    // Mensagem de erro mais específica
+    let errorMessage = "Erro ao criar sessão de pagamento";
+    
+    if (error?.type === "StripeInvalidRequestError") {
+      errorMessage = "Erro na configuração do Stripe. Verifique suas credenciais.";
+    } else if (error?.code === "resource_missing") {
+      errorMessage = "Configuração de pagamento incompleta.";
+    }
+    
     return NextResponse.json(
-      { error: "Erro ao criar sessão de pagamento" },
+      { error: errorMessage, details: error.message },
       { status: 500 }
     );
   }

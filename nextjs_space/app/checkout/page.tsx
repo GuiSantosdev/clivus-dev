@@ -87,11 +87,22 @@ export default function CheckoutPage() {
       if (response.ok && data.url) {
         window.location.href = data.url;
       } else {
-        toast.error("Erro ao processar pagamento");
+        // Mensagens de erro específicas
+        if (response.status === 503) {
+          toast.error(
+            "⚠️ Sistema de pagamento ainda não configurado. Entre em contato com o suporte.",
+            { duration: 6000 }
+          );
+        } else if (data.error) {
+          toast.error(data.error);
+        } else {
+          toast.error("Erro ao processar pagamento. Tente novamente.");
+        }
         setLoading(false);
       }
     } catch (error) {
-      toast.error("Erro ao processar pagamento");
+      console.error("Checkout error:", error);
+      toast.error("Erro de conexão. Verifique sua internet e tente novamente.");
       setLoading(false);
     }
   };
@@ -215,7 +226,7 @@ export default function CheckoutPage() {
               <CardContent className="p-6">
                 <p className="text-center text-sm text-gray-700">
                   <strong>🔥 Oferta Especial:</strong> Este preço promocional pode acabar a qualquer momento. 
-                  Garanta seu acesso vitalício por apenas R$ 97 hoje!
+                  Garanta seu acesso vitalício agora antes que os preços aumentem!
                 </p>
               </CardContent>
             </Card>
