@@ -143,17 +143,35 @@ model Payment {
 
 // Plans Model
 model Plan {
-  id          String    @id @default(cuid())
-  name        String   // Básico, Intermediário, Avançado
-  slug        String   @unique // basic, intermediate, advanced
-  price       Float    // 97, 147, 297
-  currency    String   @default("brl")
-  isActive    Boolean  @default(true)
-  features    String[] // Array de funcionalidades
-  order       Int      @default(0) // Ordem de exibição
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id          String        @id @default(cuid())
+  name        String        // Básico, Intermediário, Avançado
+  slug        String        @unique // basic, intermediate, advanced
+  price       Float         // 97, 147, 297
+  currency    String        @default("brl")
+  isActive    Boolean       @default(true)
+  features    String[]      // Array de funcionalidades (texto para landing page)
+  order       Int           @default(0) // Ordem de exibição
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
   payments    Payment[]
+  planFeatures PlanFeature[]
 
   @@map("plans")
+}
+
+// Plan Features with Limits
+model PlanFeature {
+  id          String   @id @default(cuid())
+  planId      String
+  featureKey  String   // transactions, team_members, dre_reports, exports, etc.
+  featureName String   // Nome amigável da funcionalidade
+  limit       Int      // -1 = ilimitado, 0 = desabilitado, >0 = limite
+  enabled     Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  plan        Plan     @relation(fields: [planId], references: [id], onDelete: Cascade)
+
+  @@unique([planId, featureKey])
+  @@index([planId])
+  @@map("plan_features")
 }

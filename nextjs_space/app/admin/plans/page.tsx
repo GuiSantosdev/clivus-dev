@@ -4,6 +4,7 @@
 import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -18,6 +19,11 @@ import {
   X,
   DollarSign,
   List,
+  Settings,
+  CheckCircle,
+  XCircle,
+  ArrowLeft,
+  Infinity,
 } from "lucide-react";
 
 interface Plan {
@@ -30,6 +36,73 @@ interface Plan {
   isActive: boolean;
 }
 
+interface PlanFeature {
+  id?: string;
+  featureKey: string;
+  featureName: string;
+  limit: number;
+  enabled: boolean;
+}
+
+// Definição das funcionalidades disponíveis no sistema
+const AVAILABLE_FEATURES = [
+  {
+    key: "transactions_monthly",
+    name: "Transações por Mês",
+    description: "Número máximo de transações que podem ser criadas por mês",
+  },
+  {
+    key: "team_members",
+    name: "Membros da Equipe",
+    description: "Número máximo de usuários que podem acessar a conta",
+  },
+  {
+    key: "dre_reports_monthly",
+    name: "Relatórios DRE por Mês",
+    description: "Número máximo de relatórios DRE que podem ser gerados por mês",
+  },
+  {
+    key: "attachments_per_transaction",
+    name: "Anexos por Transação",
+    description: "Número máximo de arquivos que podem ser anexados por transação",
+  },
+  {
+    key: "export_csv",
+    name: "Exportação de Dados (CSV)",
+    description: "Permite exportar dados financeiros em formato CSV",
+  },
+  {
+    key: "export_pdf",
+    name: "Exportação de Dados (PDF)",
+    description: "Permite exportar relatórios em formato PDF",
+  },
+  {
+    key: "prolabore_calculator",
+    name: "Calculadora de Pró-labore",
+    description: "Acesso à calculadora de pró-labore com recomendações fiscais",
+  },
+  {
+    key: "compliance_alerts",
+    name: "Alertas de Compliance",
+    description: "Notificações automáticas sobre obrigações fiscais",
+  },
+  {
+    key: "investment_tracking",
+    name: "Controle de Investimentos",
+    description: "Gestão separada de investimentos CPF e CNPJ",
+  },
+  {
+    key: "custom_categories",
+    name: "Categorias Personalizadas no DRE",
+    description: "Permite criar categorias personalizadas no plano de contas do DRE",
+  },
+  {
+    key: "priority_support",
+    name: "Suporte Prioritário",
+    description: "Atendimento com prioridade por email",
+  },
+];
+
 export default function AdminPlansPage() {
   const { data: session, status } = useSession();
   const router = useRouter();
@@ -37,6 +110,10 @@ export default function AdminPlansPage() {
   const [loading, setLoading] = useState(true);
   const [editingPlan, setEditingPlan] = useState<Plan | null>(null);
   const [isCreating, setIsCreating] = useState(false);
+  const [showFeatureManager, setShowFeatureManager] = useState(false);
+  const [selectedPlanForFeatures, setSelectedPlanForFeatures] = useState<Plan | null>(null);
+  const [planFeatures, setPlanFeatures] = useState<PlanFeature[]>([]);
+  const [loadingFeatures, setLoadingFeatures] = useState(false);
 
   const [formData, setFormData] = useState({
     name: "",
@@ -50,30 +127,105 @@ export default function AdminPlansPage() {
   useEffect(() => {
     if (status === "unauthenticated") {
       router.push("/login");
-    } else if (status === "authenticated") {
+    } else if (session?.user?.role !== "admin" && session?.user?.role !== "superadmin") {
+      router.push("/dashboard");
+    }
+  }, [session, status, router]);
+
+  useEffect(() => {
+    if (session) {
       fetchPlans();
     }
-  }, [status, router]);
+  }, [session]);
 
   const fetchPlans = async () => {
     try {
       const response = await fetch("/api/admin/plans");
-      if (response.ok) {
-        const data = await response.json();
-        setPlans(data);
-      } else {
-        toast.error("Erro ao carregar planos");
-      }
+      const data = await response.json();
+      setPlans(data);
     } catch (error) {
-      console.error("Error fetching plans:", error);
       toast.error("Erro ao carregar planos");
     } finally {
       setLoading(false);
     }
   };
 
-  const handleEdit = (plan: Plan) => {
+  const fetchPlanFeatures = async (planId: string) => {
+    setLoadingFeatures(true);
+    try {
+      const response = await fetch(`/api/admin/plan-features?planId=${planId}`);
+      const data: PlanFeature[] = await response.json();
+      
+      // Criar um mapa com as funcionalidades existentes
+      const existingFeatures = new Map<string, PlanFeature>(
+        data.map((f) => [f.featureKey, f])
+      );
+      
+      // Criar array completo com todas as funcionalidades disponíveis
+      const allFeatures: PlanFeature[] = [];
+      
+      for (const af of AVAILABLE_FEATURES) {
+        const existing = existingFeatures.get(af.key);
+        if (existing) {
+          allFeatures.push(existing);
+        } else {
+          allFeatures.push({
+            featureKey: af.key,
+            featureName: af.name,
+            limit: 0,
+            enabled: false,
+          });
+        }
+      }
+      
+      setPlanFeatures(allFeatures);
+    } catch (error) {
+      toast.error("Erro ao carregar funcionalidades");
+    } finally {
+      setLoadingFeatures(false);
+    }
+  };
+
+  const savePlanFeatures = async () => {
+    if (!selectedPlanForFeatures) return;
+
+    try {
+      const response = await fetch("/api/admin/plan-features", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          planId: selectedPlanForFeatures.id,
+          features: planFeatures,
+        }),
+      });
+
+      if (response.ok) {
+        toast.success("Funcionalidades atualizadas com sucesso!");
+        setShowFeatureManager(false);
+      } else {
+        toast.error("Erro ao salvar funcionalidades");
+      }
+    } catch (error) {
+      toast.error("Erro ao salvar funcionalidades");
+    }
+  };
+
+  const handleCreatePlan = () => {
+    setIsCreating(true);
+    setEditingPlan(null);
+    setFormData({
+      name: "",
+      slug: "",
+      price: "",
+      features: "",
+      order: "",
+      isActive: true,
+    });
+  };
+
+  const handleEditPlan = (plan: Plan) => {
     setEditingPlan(plan);
+    setIsCreating(false);
     setFormData({
       name: plan.name,
       slug: plan.slug,
@@ -82,48 +234,22 @@ export default function AdminPlansPage() {
       order: plan.order.toString(),
       isActive: plan.isActive,
     });
-    setIsCreating(false);
   };
 
-  const handleCreate = () => {
-    setEditingPlan(null);
-    setFormData({
-      name: "",
-      slug: "",
-      price: "",
-      features: "",
-      order: "0",
-      isActive: true,
-    });
-    setIsCreating(true);
+  const handleManageFeatures = async (plan: Plan) => {
+    setSelectedPlanForFeatures(plan);
+    setShowFeatureManager(true);
+    await fetchPlanFeatures(plan.id);
   };
 
-  const handleCancel = () => {
-    setEditingPlan(null);
-    setIsCreating(false);
-    setFormData({
-      name: "",
-      slug: "",
-      price: "",
-      features: "",
-      order: "0",
-      isActive: true,
-    });
-  };
-
-  const handleSave = async () => {
+  const handleSavePlan = async () => {
     try {
-      if (!formData.name || !formData.slug || !formData.price) {
-        toast.error("Preencha todos os campos obrigatórios");
-        return;
-      }
-
       const featuresArray = formData.features
         .split("\n")
-        .map((f) => f.trim())
-        .filter((f) => f.length > 0);
+        .filter((f) => f.trim())
+        .map((f) => f.trim());
 
-      const payload = {
+      const planData = {
         name: formData.name,
         slug: formData.slug,
         price: parseFloat(formData.price),
@@ -132,41 +258,34 @@ export default function AdminPlansPage() {
         isActive: formData.isActive,
       };
 
-      let response;
-      if (isCreating) {
-        response = await fetch("/api/admin/plans", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(payload),
-        });
-      } else if (editingPlan) {
-        response = await fetch(`/api/admin/plans/${editingPlan.id}`, {
-          method: "PUT",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(payload),
-        });
-      }
+      const url = editingPlan
+        ? `/api/admin/plans/${editingPlan.id}`
+        : "/api/admin/plans";
+      const method = editingPlan ? "PUT" : "POST";
 
-      if (response && response.ok) {
+      const response = await fetch(url, {
+        method,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(planData),
+      });
+
+      if (response.ok) {
         toast.success(
-          isCreating ? "Plano criado com sucesso!" : "Plano atualizado com sucesso!"
+          editingPlan ? "Plano atualizado!" : "Plano criado com sucesso!"
         );
+        setEditingPlan(null);
+        setIsCreating(false);
         fetchPlans();
-        handleCancel();
       } else {
-        const data = await response?.json();
-        toast.error(data?.error || "Erro ao salvar plano");
+        toast.error("Erro ao salvar plano");
       }
     } catch (error) {
-      console.error("Error saving plan:", error);
       toast.error("Erro ao salvar plano");
     }
   };
 
-  const handleDelete = async (planId: string) => {
-    if (!confirm("Tem certeza que deseja excluir este plano?")) {
-      return;
-    }
+  const handleDeletePlan = async (planId: string) => {
+    if (!confirm("Tem certeza que deseja excluir este plano?")) return;
 
     try {
       const response = await fetch(`/api/admin/plans/${planId}`, {
@@ -180,112 +299,243 @@ export default function AdminPlansPage() {
         toast.error("Erro ao excluir plano");
       }
     } catch (error) {
-      console.error("Error deleting plan:", error);
       toast.error("Erro ao excluir plano");
     }
   };
 
-  if (status === "loading" || loading) {
+  const updateFeatureLimit = (featureKey: string, limit: number) => {
+    setPlanFeatures(prev =>
+      prev.map(f =>
+        f.featureKey === featureKey ? { ...f, limit } : f
+      )
+    );
+  };
+
+  const toggleFeatureEnabled = (featureKey: string) => {
+    setPlanFeatures(prev =>
+      prev.map(f =>
+        f.featureKey === featureKey ? { ...f, enabled: !f.enabled } : f
+      )
+    );
+  };
+
+  if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <p className="text-gray-600">Carregando...</p>
+      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 p-8">
+        <div className="max-w-7xl mx-auto">
+          <p className="text-gray-600">Carregando...</p>
+        </div>
       </div>
     );
   }
 
-  return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="bg-white border-b">
-        <div className="container mx-auto px-4 py-6">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-3">
-              <Package className="h-8 w-8 text-green-600" />
-              <h1 className="text-3xl font-bold text-gray-900">
-                Gerenciar Planos
-              </h1>
+  // Modal de gerenciamento de funcionalidades
+  if (showFeatureManager && selectedPlanForFeatures) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 p-8">
+        <div className="max-w-7xl mx-auto">
+          <div className="flex items-center justify-between mb-8">
+            <div className="flex items-center gap-4">
+              <Button
+                onClick={() => setShowFeatureManager(false)}
+                variant="outline"
+                size="sm"
+              >
+                <ArrowLeft className="w-4 h-4 mr-2" />
+                Voltar
+              </Button>
+              <div>
+                <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-3">
+                  <Settings className="w-8 h-8 text-blue-600" />
+                  Gerenciar Funcionalidades
+                </h1>
+                <p className="text-gray-600 mt-1">
+                  Plano: <span className="font-semibold">{selectedPlanForFeatures.name}</span> 
+                  {" "}(R$ {selectedPlanForFeatures.price.toFixed(2)})
+                </p>
+              </div>
             </div>
-            <Button
-              onClick={() => router.push("/admin")}
-              variant="outline"
-            >
-              Voltar ao Admin
+            <Button onClick={savePlanFeatures} className="bg-green-600 hover:bg-green-700">
+              <Save className="w-4 h-4 mr-2" />
+              Salvar Funcionalidades
             </Button>
+          </div>
+
+          {loadingFeatures ? (
+            <Card className="p-8 text-center">
+              <p className="text-gray-600">Carregando funcionalidades...</p>
+            </Card>
+          ) : (
+            <div className="space-y-4">
+              {AVAILABLE_FEATURES.map((feature) => {
+                const planFeature = planFeatures.find(
+                  (pf) => pf.featureKey === feature.key
+                );
+                
+                return (
+                  <Card key={feature.key} className="p-6">
+                    <div className="flex items-start justify-between gap-4">
+                      <div className="flex-1">
+                        <h3 className="text-lg font-semibold text-gray-900 mb-1">
+                          {feature.name}
+                        </h3>
+                        <p className="text-sm text-gray-600">{feature.description}</p>
+                      </div>
+
+                      <div className="flex items-center gap-4">
+                        <div className="flex flex-col gap-2">
+                          <Label htmlFor={`limit-${feature.key}`} className="text-sm">
+                            Limite
+                          </Label>
+                          <div className="flex items-center gap-2">
+                            <Input
+                              id={`limit-${feature.key}`}
+                              type="number"
+                              min="-1"
+                              value={planFeature?.limit ?? 0}
+                              onChange={(e) =>
+                                updateFeatureLimit(
+                                  feature.key,
+                                  parseInt(e.target.value) || 0
+                                )
+                              }
+                              className="w-24"
+                            />
+                            {planFeature?.limit === -1 && (
+                              <Infinity className="w-5 h-5 text-green-600" />
+                            )}
+                          </div>
+                          <p className="text-xs text-gray-500">
+                            -1 = Ilimitado | 0 = Desabilitado
+                          </p>
+                        </div>
+
+                        <div className="flex flex-col gap-2">
+                          <Label className="text-sm">Status</Label>
+                          <Button
+                            onClick={() => toggleFeatureEnabled(feature.key)}
+                            variant={planFeature?.enabled ? "default" : "outline"}
+                            size="sm"
+                            className={
+                              planFeature?.enabled
+                                ? "bg-green-600 hover:bg-green-700"
+                                : ""
+                            }
+                          >
+                            {planFeature?.enabled ? (
+                              <>
+                                <CheckCircle className="w-4 h-4 mr-2" />
+                                Ativado
+                              </>
+                            ) : (
+                              <>
+                                <XCircle className="w-4 h-4 mr-2" />
+                                Desativado
+                              </>
+                            )}
+                          </Button>
+                        </div>
+                      </div>
+                    </div>
+                  </Card>
+                );
+              })}
+            </div>
+          )}
+
+          <div className="mt-8 bg-blue-50 border border-blue-200 rounded-lg p-4">
+            <h4 className="font-semibold text-blue-900 mb-2">💡 Dicas:</h4>
+            <ul className="text-sm text-blue-800 space-y-1">
+              <li>• <strong>-1</strong> = Ilimitado (sem restrições)</li>
+              <li>• <strong>0</strong> = Desabilitado (funcionalidade não disponível)</li>
+              <li>• <strong>&gt;0</strong> = Limite específico (ex: 50 transações por mês)</li>
+              <li>• Use o botão de status para ativar/desativar funcionalidades rapidamente</li>
+            </ul>
           </div>
         </div>
       </div>
+    );
+  }
 
-      <div className="container mx-auto px-4 py-8 max-w-6xl">
-        <div className="mb-6">
-          <Button onClick={handleCreate} className="bg-green-600 hover:bg-green-700">
-            <Plus className="h-4 w-4 mr-2" />
-            Criar Novo Plano
-          </Button>
-        </div>
-
-        {(isCreating || editingPlan) && (
-          <Card className="p-6 mb-6">
+  // Modo de criação/edição de plano
+  if (isCreating || editingPlan) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 p-8">
+        <div className="max-w-4xl mx-auto">
+          <Card className="p-8">
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-2xl font-bold text-gray-900">
-                {isCreating ? "Criar Novo Plano" : "Editar Plano"}
+                {editingPlan ? "Editar Plano" : "Criar Novo Plano"}
               </h2>
-              <Button onClick={handleCancel} variant="ghost" size="sm">
-                <X className="h-4 w-4" />
+              <Button
+                onClick={() => {
+                  setIsCreating(false);
+                  setEditingPlan(null);
+                }}
+                variant="ghost"
+                size="sm"
+              >
+                <X className="w-5 h-5" />
               </Button>
             </div>
 
-            <div className="grid md:grid-cols-2 gap-6">
-              <div>
-                <Label htmlFor="name">Nome do Plano *</Label>
-                <Input
-                  id="name"
-                  value={formData.name}
-                  onChange={(e) =>
-                    setFormData({ ...formData, name: e.target.value })
-                  }
-                  placeholder="Ex: Básico, Intermediário, Avançado"
-                />
+            <div className="space-y-6">
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <Label htmlFor="name">Nome do Plano *</Label>
+                  <Input
+                    id="name"
+                    value={formData.name}
+                    onChange={(e) =>
+                      setFormData({ ...formData, name: e.target.value })
+                    }
+                    placeholder="Ex: Básico"
+                  />
+                </div>
+
+                <div>
+                  <Label htmlFor="slug">Slug (identificador único) *</Label>
+                  <Input
+                    id="slug"
+                    value={formData.slug}
+                    onChange={(e) =>
+                      setFormData({ ...formData, slug: e.target.value })
+                    }
+                    placeholder="Ex: basic"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <Label htmlFor="price">Preço (R$) *</Label>
+                  <Input
+                    id="price"
+                    type="number"
+                    step="0.01"
+                    value={formData.price}
+                    onChange={(e) =>
+                      setFormData({ ...formData, price: e.target.value })
+                    }
+                    placeholder="97.00"
+                  />
+                </div>
+
+                <div>
+                  <Label htmlFor="order">Ordem de Exibição</Label>
+                  <Input
+                    id="order"
+                    type="number"
+                    value={formData.order}
+                    onChange={(e) =>
+                      setFormData({ ...formData, order: e.target.value })
+                    }
+                    placeholder="0"
+                  />
+                </div>
               </div>
 
               <div>
-                <Label htmlFor="slug">Slug (identificador único) *</Label>
-                <Input
-                  id="slug"
-                  value={formData.slug}
-                  onChange={(e) =>
-                    setFormData({ ...formData, slug: e.target.value })
-                  }
-                  placeholder="Ex: basic, intermediate, advanced"
-                />
-              </div>
-
-              <div>
-                <Label htmlFor="price">Preço (R$) *</Label>
-                <Input
-                  id="price"
-                  type="number"
-                  step="0.01"
-                  value={formData.price}
-                  onChange={(e) =>
-                    setFormData({ ...formData, price: e.target.value })
-                  }
-                  placeholder="Ex: 97.00"
-                />
-              </div>
-
-              <div>
-                <Label htmlFor="order">Ordem de Exibição</Label>
-                <Input
-                  id="order"
-                  type="number"
-                  value={formData.order}
-                  onChange={(e) =>
-                    setFormData({ ...formData, order: e.target.value })
-                  }
-                  placeholder="0"
-                />
-              </div>
-
-              <div className="md:col-span-2">
                 <Label htmlFor="features">Funcionalidades (uma por linha)</Label>
                 <textarea
                   id="features"
@@ -293,12 +543,15 @@ export default function AdminPlansPage() {
                   onChange={(e) =>
                     setFormData({ ...formData, features: e.target.value })
                   }
-                  className="w-full min-h-[200px] px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
-                  placeholder="Digite cada funcionalidade em uma linha separada..."
+                  placeholder="Separação completa entre CPF e CNPJ&#10;Controle de receitas e despesas&#10;Relatórios financeiros mensais"
+                  className="w-full min-h-[200px] px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
+                <p className="text-sm text-gray-500 mt-1">
+                  Estas funcionalidades aparecerão na landing page como texto descritivo.
+                </p>
               </div>
 
-              <div className="md:col-span-2 flex items-center space-x-2">
+              <div className="flex items-center gap-2">
                 <input
                   type="checkbox"
                   id="isActive"
@@ -306,103 +559,167 @@ export default function AdminPlansPage() {
                   onChange={(e) =>
                     setFormData({ ...formData, isActive: e.target.checked })
                   }
-                  className="h-4 w-4 text-green-600 focus:ring-green-500 border-gray-300 rounded"
+                  className="w-4 h-4"
                 />
                 <Label htmlFor="isActive" className="cursor-pointer">
                   Plano Ativo (visível na landing page)
                 </Label>
               </div>
-            </div>
 
-            <div className="flex space-x-4 mt-6">
-              <Button onClick={handleSave} className="bg-green-600 hover:bg-green-700">
-                <Save className="h-4 w-4 mr-2" />
-                Salvar
-              </Button>
-              <Button onClick={handleCancel} variant="outline">
-                Cancelar
-              </Button>
+              <div className="flex gap-3 pt-4">
+                <Button
+                  onClick={handleSavePlan}
+                  className="flex-1 bg-green-600 hover:bg-green-700"
+                >
+                  <Save className="w-4 h-4 mr-2" />
+                  Salvar
+                </Button>
+                <Button
+                  onClick={() => {
+                    setIsCreating(false);
+                    setEditingPlan(null);
+                  }}
+                  variant="outline"
+                  className="flex-1"
+                >
+                  Cancelar
+                </Button>
+              </div>
             </div>
           </Card>
-        )}
+        </div>
+      </div>
+    );
+  }
 
-        <div className="grid gap-6">
-          {plans.length === 0 ? (
-            <Card className="p-8 text-center">
-              <Package className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-              <p className="text-gray-600">Nenhum plano cadastrado ainda.</p>
-              <p className="text-gray-500 text-sm mt-2">
-                Clique em "Criar Novo Plano" para começar.
-              </p>
-            </Card>
-          ) : (
-            plans.map((plan) => (
-              <Card key={plan.id} className="p-6">
+  // Lista de planos
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 p-8">
+      <div className="max-w-7xl mx-auto">
+        <div className="flex items-center justify-between mb-8">
+          <div className="flex items-center gap-4">
+            <Link href="/admin">
+              <Button variant="outline" size="sm">
+                <ArrowLeft className="w-4 h-4 mr-2" />
+                Voltar ao Admin
+              </Button>
+            </Link>
+            <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-3">
+              <Package className="w-8 h-8 text-blue-600" />
+              Gerenciar Planos
+            </h1>
+          </div>
+          <Button
+            onClick={handleCreatePlan}
+            className="bg-blue-600 hover:bg-blue-700"
+          >
+            <Plus className="w-4 h-4 mr-2" />
+            Criar Novo Plano
+          </Button>
+        </div>
+
+        {plans.length === 0 ? (
+          <Card className="p-12 text-center">
+            <Package className="w-16 h-16 text-gray-400 mx-auto mb-4" />
+            <h3 className="text-xl font-semibold text-gray-900 mb-2">
+              Nenhum plano cadastrado
+            </h3>
+            <p className="text-gray-600 mb-4">
+              Comece criando seu primeiro plano de assinatura.
+            </p>
+            <Button onClick={handleCreatePlan} className="bg-blue-600 hover:bg-blue-700">
+              <Plus className="w-4 h-4 mr-2" />
+              Criar Primeiro Plano
+            </Button>
+          </Card>
+        ) : (
+          <div className="grid gap-6">
+            {plans.map((plan) => (
+              <Card key={plan.id} className="p-6 hover:shadow-lg transition-shadow">
                 <div className="flex items-start justify-between">
                   <div className="flex-1">
-                    <div className="flex items-center space-x-3 mb-2">
-                      <h3 className="text-2xl font-bold text-gray-900">
+                    <div className="flex items-center gap-3 mb-2">
+                      <h3 className="text-xl font-bold text-gray-900">
                         {plan.name}
                       </h3>
-                      {!plan.isActive && (
-                        <span className="px-2 py-1 bg-gray-200 text-gray-600 text-xs rounded-full">
+                      {plan.isActive ? (
+                        <span className="px-3 py-1 bg-green-100 text-green-800 text-xs font-semibold rounded-full">
+                          Ativo
+                        </span>
+                      ) : (
+                        <span className="px-3 py-1 bg-gray-100 text-gray-800 text-xs font-semibold rounded-full">
                           Inativo
                         </span>
                       )}
                     </div>
 
-                    <div className="flex items-center space-x-4 text-gray-600 text-sm mb-4">
-                      <div className="flex items-center space-x-1">
-                        <DollarSign className="h-4 w-4" />
-                        <span className="font-semibold">R$ {plan.price}</span>
+                    <div className="flex items-center gap-6 mb-4 text-sm text-gray-600">
+                      <div className="flex items-center gap-2">
+                        <DollarSign className="w-4 h-4" />
+                        <span className="font-semibold text-lg text-gray-900">
+                          R$ {plan.price.toFixed(2)}
+                        </span>
                       </div>
-                      <div className="flex items-center space-x-1">
-                        <List className="h-4 w-4" />
+                      <div className="flex items-center gap-2">
+                        <List className="w-4 h-4" />
                         <span>Slug: {plan.slug}</span>
                       </div>
-                      <span>Ordem: {plan.order}</span>
+                      <div className="flex items-center gap-2">
+                        <Package className="w-4 h-4" />
+                        <span>Ordem: {plan.order}</span>
+                      </div>
                     </div>
 
-                    <div className="space-y-2">
-                      <p className="text-sm font-semibold text-gray-700">
-                        Funcionalidades:
-                      </p>
-                      <ul className="grid md:grid-cols-2 gap-2">
-                        {plan.features.map((feature, idx) => (
+                    <div className="bg-gray-50 rounded-lg p-4">
+                      <h4 className="text-sm font-semibold text-gray-700 mb-2">
+                        Funcionalidades (Landing Page):
+                      </h4>
+                      <ul className="space-y-1">
+                        {plan.features.map((feature, index) => (
                           <li
-                            key={idx}
-                            className="text-sm text-gray-600 flex items-start space-x-2"
+                            key={index}
+                            className="text-sm text-gray-600 flex items-start gap-2"
                           >
-                            <span className="text-green-600 mt-1">✓</span>
-                            <span>{feature}</span>
+                            <CheckCircle className="w-4 h-4 text-green-600 mt-0.5 flex-shrink-0" />
+                            {feature}
                           </li>
                         ))}
                       </ul>
                     </div>
                   </div>
 
-                  <div className="flex space-x-2 ml-4">
+                  <div className="flex flex-col gap-2 ml-6">
                     <Button
-                      onClick={() => handleEdit(plan)}
+                      onClick={() => handleManageFeatures(plan)}
+                      className="bg-purple-600 hover:bg-purple-700"
+                      size="sm"
+                    >
+                      <Settings className="w-4 h-4 mr-2" />
+                      Gerenciar Limites
+                    </Button>
+                    <Button
+                      onClick={() => handleEditPlan(plan)}
                       variant="outline"
                       size="sm"
                     >
-                      <Edit className="h-4 w-4" />
+                      <Edit className="w-4 h-4 mr-2" />
+                      Editar
                     </Button>
                     <Button
-                      onClick={() => handleDelete(plan.id)}
+                      onClick={() => handleDeletePlan(plan.id)}
                       variant="outline"
                       size="sm"
                       className="text-red-600 hover:text-red-700 hover:bg-red-50"
                     >
-                      <Trash2 className="h-4 w-4" />
+                      <Trash2 className="w-4 h-4 mr-2" />
+                      Excluir
                     </Button>
                   </div>
                 </div>
               </Card>
-            ))
-          )}
-        </div>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );

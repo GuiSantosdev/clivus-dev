@@ -119,13 +119,123 @@ async function main() {
     },
   ];
 
+  const createdPlans = [];
   for (const planData of plansData) {
     const plan = await prisma.plan.upsert({
       where: { slug: planData.slug },
       update: {},
       create: planData,
     });
+    createdPlans.push(plan);
     console.log(`✅ Plan created: ${plan.name} - R$ ${plan.price}`);
+  }
+
+  // Create plan features with limits
+  console.log("\n🎯 Creating plan features...");
+  
+  // Funcionalidades para o Plano Básico
+  const basicPlan = createdPlans.find(p => p.slug === "basic");
+  if (basicPlan) {
+    const basicFeatures = [
+      { featureKey: "transactions_monthly", featureName: "Transações por Mês", limit: 50, enabled: true },
+      { featureKey: "team_members", featureName: "Membros da Equipe", limit: 1, enabled: true },
+      { featureKey: "dre_reports_monthly", featureName: "Relatórios DRE por Mês", limit: 2, enabled: true },
+      { featureKey: "attachments_per_transaction", featureName: "Anexos por Transação", limit: 2, enabled: true },
+      { featureKey: "export_csv", featureName: "Exportação de Dados (CSV)", limit: -1, enabled: true },
+      { featureKey: "export_pdf", featureName: "Exportação de Dados (PDF)", limit: 0, enabled: false },
+      { featureKey: "prolabore_calculator", featureName: "Calculadora de Pró-labore", limit: 0, enabled: false },
+      { featureKey: "compliance_alerts", featureName: "Alertas de Compliance", limit: 0, enabled: false },
+      { featureKey: "investment_tracking", featureName: "Controle de Investimentos", limit: -1, enabled: true },
+      { featureKey: "custom_categories", featureName: "Categorias Personalizadas no DRE", limit: 0, enabled: false },
+      { featureKey: "priority_support", featureName: "Suporte Prioritário", limit: 0, enabled: false },
+    ];
+    
+    for (const feature of basicFeatures) {
+      await prisma.planFeature.upsert({
+        where: {
+          planId_featureKey: {
+            planId: basicPlan.id,
+            featureKey: feature.featureKey,
+          },
+        },
+        update: {},
+        create: {
+          planId: basicPlan.id,
+          ...feature,
+        },
+      });
+    }
+    console.log(`✅ Features created for ${basicPlan.name}`);
+  }
+
+  // Funcionalidades para o Plano Intermediário
+  const intermediatePlan = createdPlans.find(p => p.slug === "intermediate");
+  if (intermediatePlan) {
+    const intermediateFeatures = [
+      { featureKey: "transactions_monthly", featureName: "Transações por Mês", limit: 200, enabled: true },
+      { featureKey: "team_members", featureName: "Membros da Equipe", limit: 3, enabled: true },
+      { featureKey: "dre_reports_monthly", featureName: "Relatórios DRE por Mês", limit: 10, enabled: true },
+      { featureKey: "attachments_per_transaction", featureName: "Anexos por Transação", limit: 5, enabled: true },
+      { featureKey: "export_csv", featureName: "Exportação de Dados (CSV)", limit: -1, enabled: true },
+      { featureKey: "export_pdf", featureName: "Exportação de Dados (PDF)", limit: -1, enabled: true },
+      { featureKey: "prolabore_calculator", featureName: "Calculadora de Pró-labore", limit: -1, enabled: true },
+      { featureKey: "compliance_alerts", featureName: "Alertas de Compliance", limit: -1, enabled: true },
+      { featureKey: "investment_tracking", featureName: "Controle de Investimentos", limit: -1, enabled: true },
+      { featureKey: "custom_categories", featureName: "Categorias Personalizadas no DRE", limit: 5, enabled: true },
+      { featureKey: "priority_support", featureName: "Suporte Prioritário", limit: 0, enabled: false },
+    ];
+    
+    for (const feature of intermediateFeatures) {
+      await prisma.planFeature.upsert({
+        where: {
+          planId_featureKey: {
+            planId: intermediatePlan.id,
+            featureKey: feature.featureKey,
+          },
+        },
+        update: {},
+        create: {
+          planId: intermediatePlan.id,
+          ...feature,
+        },
+      });
+    }
+    console.log(`✅ Features created for ${intermediatePlan.name}`);
+  }
+
+  // Funcionalidades para o Plano Avançado
+  const advancedPlan = createdPlans.find(p => p.slug === "advanced");
+  if (advancedPlan) {
+    const advancedFeatures = [
+      { featureKey: "transactions_monthly", featureName: "Transações por Mês", limit: -1, enabled: true },
+      { featureKey: "team_members", featureName: "Membros da Equipe", limit: 10, enabled: true },
+      { featureKey: "dre_reports_monthly", featureName: "Relatórios DRE por Mês", limit: -1, enabled: true },
+      { featureKey: "attachments_per_transaction", featureName: "Anexos por Transação", limit: -1, enabled: true },
+      { featureKey: "export_csv", featureName: "Exportação de Dados (CSV)", limit: -1, enabled: true },
+      { featureKey: "export_pdf", featureName: "Exportação de Dados (PDF)", limit: -1, enabled: true },
+      { featureKey: "prolabore_calculator", featureName: "Calculadora de Pró-labore", limit: -1, enabled: true },
+      { featureKey: "compliance_alerts", featureName: "Alertas de Compliance", limit: -1, enabled: true },
+      { featureKey: "investment_tracking", featureName: "Controle de Investimentos", limit: -1, enabled: true },
+      { featureKey: "custom_categories", featureName: "Categorias Personalizadas no DRE", limit: -1, enabled: true },
+      { featureKey: "priority_support", featureName: "Suporte Prioritário", limit: -1, enabled: true },
+    ];
+    
+    for (const feature of advancedFeatures) {
+      await prisma.planFeature.upsert({
+        where: {
+          planId_featureKey: {
+            planId: advancedPlan.id,
+            featureKey: feature.featureKey,
+          },
+        },
+        update: {},
+        create: {
+          planId: advancedPlan.id,
+          ...feature,
+        },
+      });
+    }
+    console.log(`✅ Features created for ${advancedPlan.name}`);
   }
 
   // Create transactions for test client (admin)
@@ -177,9 +287,9 @@ async function main() {
   // Create a test payment for the client user
   console.log("\n💳 Creating payment...");
   
-  const basicPlan = await prisma.plan.findUnique({ where: { slug: "intermediate" } });
+  const planForPayment = await prisma.plan.findUnique({ where: { slug: "intermediate" } });
   
-  if (basicPlan) {
+  if (planForPayment) {
     await prisma.payment.upsert({
       where: { 
         stripeSessionId: "test_session_123",
@@ -187,9 +297,9 @@ async function main() {
       update: {},
       create: {
         userId: admin.id,
-        planId: basicPlan.id,
-        plan: basicPlan.slug,
-        amount: basicPlan.price,
+        planId: planForPayment.id,
+        plan: planForPayment.slug,
+        amount: planForPayment.price,
         status: "completed",
         stripeSessionId: "test_session_123",
       },
