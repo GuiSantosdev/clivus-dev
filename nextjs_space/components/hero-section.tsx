@@ -26,67 +26,71 @@ export function HeroSection() {
             transition={{ duration: 0.8 }}
             className="text-center lg:text-left"
           >
-            <div className="mb-8">
+            <div className="mb-6">
               <Image
                 src="/logo-clivus.png"
                 alt="Clivus - Ferramenta Financeira"
-                width={280}
-                height={120}
-                className="mx-auto lg:mx-0"
+                width={200}
+                height={85}
+                className="mx-auto lg:mx-0 w-auto h-16 sm:h-20"
                 priority
               />
-              <div className="mt-4 inline-flex items-center gap-2 bg-blue-100 text-blue-800 px-4 py-2 rounded-full font-semibold text-sm">
-                <Monitor className="h-4 w-4" />
-                <span>100% Online</span>
-                <span className="text-blue-600">•</span>
-                <Smartphone className="h-4 w-4" />
-                <span>Acesse de Qualquer Lugar</span>
+              <div className="mt-4 inline-flex flex-wrap items-center justify-center lg:justify-start gap-2 bg-blue-100 text-blue-800 px-3 py-2 rounded-full font-semibold text-xs sm:text-sm">
+                <div className="flex items-center gap-1">
+                  <Monitor className="h-3 w-3 sm:h-4 sm:w-4" />
+                  <span>100% Online</span>
+                </div>
+                <span className="text-blue-600 hidden sm:inline">•</span>
+                <div className="flex items-center gap-1">
+                  <Smartphone className="h-3 w-3 sm:h-4 sm:w-4" />
+                  <span>Acesse de Qualquer Lugar</span>
+                </div>
               </div>
             </div>
             
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 mb-6 leading-tight">
+            <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 mb-4 sm:mb-6 leading-tight">
               Você Está Misturando as Finanças do{" "}
               <span className="text-red-600">CPF e CNPJ?</span>
             </h1>
             
-            <div className="bg-red-50 border-l-4 border-red-600 p-4 mb-6 max-w-2xl mx-auto lg:mx-0">
-              <p className="text-lg font-semibold text-gray-800">
+            <div className="bg-red-50 border-l-4 border-red-600 p-3 sm:p-4 mb-4 sm:mb-6 max-w-2xl mx-auto lg:mx-0">
+              <p className="text-sm sm:text-base md:text-lg font-semibold text-gray-800">
                 Isso coloca você <span className="text-red-600">em risco com o fisco</span> e{" "}
                 <span className="text-red-600">impede seu negócio de crescer.</span>
               </p>
             </div>
             
-            <p className="text-xl text-gray-700 mb-8 leading-relaxed max-w-2xl font-medium">
+            <p className="text-base sm:text-lg md:text-xl text-gray-700 mb-6 sm:mb-8 leading-relaxed max-w-2xl font-medium mx-auto lg:mx-0">
               O <span className="font-bold text-blue-600">Clivus</span> separa tudo de forma{" "}
               <span className="font-bold">simples e definitiva.</span>
             </p>
             
-            <div className="flex flex-col gap-4 justify-center lg:justify-start">
+            <div className="flex flex-col gap-3 sm:gap-4 justify-center lg:justify-start">
               <Button
                 onClick={scrollToOffer}
                 size="lg"
-                className="bg-green-600 hover:bg-green-700 text-white px-10 py-6 text-xl font-bold rounded-lg shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:scale-105"
+                className="bg-green-600 hover:bg-green-700 text-white px-6 sm:px-8 md:px-10 py-4 sm:py-5 md:py-6 text-base sm:text-lg md:text-xl font-bold rounded-lg shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:scale-105 w-full sm:w-auto"
               >
                 Regularizar Agora por R$ 97
-                <ArrowRight className="ml-2 h-6 w-6" />
+                <ArrowRight className="ml-2 h-5 w-5 sm:h-6 sm:w-6" />
               </Button>
-              <p className="text-sm text-gray-600 font-medium">
+              <p className="text-xs sm:text-sm text-gray-600 font-medium text-center lg:text-left">
                 ✓ Acesso Imediato • ✓ Pagamento Único • ✓ Para Todas as Empresas
               </p>
             </div>
             
-            <div className="mt-12 grid grid-cols-3 gap-4 text-center">
+            <div className="mt-8 sm:mt-12 grid grid-cols-3 gap-2 sm:gap-4 text-center">
               <div className="flex flex-col items-center">
-                <Scale className="h-8 w-8 text-blue-600 mb-2" />
-                <span className="text-sm font-medium text-gray-700">Conformidade Legal</span>
+                <Scale className="h-6 w-6 sm:h-8 sm:w-8 text-blue-600 mb-1 sm:mb-2" />
+                <span className="text-xs sm:text-sm font-medium text-gray-700">Conformidade Legal</span>
               </div>
               <div className="flex flex-col items-center">
-                <ShieldCheck className="h-8 w-8 text-blue-600 mb-2" />
-                <span className="text-sm font-medium text-gray-700">Segurança Fiscal</span>
+                <ShieldCheck className="h-6 w-6 sm:h-8 sm:w-8 text-blue-600 mb-1 sm:mb-2" />
+                <span className="text-xs sm:text-sm font-medium text-gray-700">Segurança Fiscal</span>
               </div>
               <div className="flex flex-col items-center">
-                <TrendingUp className="h-8 w-8 text-blue-600 mb-2" />
-                <span className="text-sm font-medium text-gray-700">Crescimento Real</span>
+                <TrendingUp className="h-6 w-6 sm:h-8 sm:w-8 text-blue-600 mb-1 sm:mb-2" />
+                <span className="text-xs sm:text-sm font-medium text-gray-700">Crescimento Real</span>
               </div>
             </div>
           </motion.div>

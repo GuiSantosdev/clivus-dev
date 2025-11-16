@@ -1,5 +1,6 @@
 
 import { HeroSection } from "@/components/hero-section";
+import { VslSection } from "@/components/vsl-section";
 import { ProblemSection } from "@/components/problem-section";
 import { SolutionSection } from "@/components/solution-section";
 import { FeaturesSection } from "@/components/features-section";
@@ -13,6 +14,7 @@ export default function HomePage() {
   return (
     <main className="min-h-screen">
       <HeroSection />
+      <VslSection />
       <ProblemSection />
       <SolutionSection />
       <FeaturesSection />
