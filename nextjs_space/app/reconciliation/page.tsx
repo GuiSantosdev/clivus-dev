@@ -71,9 +71,12 @@ export default function ReconciliationPage() {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    // Verifica se é CSV
-    if (!file.name.endsWith('.csv')) {
-      toast.error("Por favor, envie um arquivo CSV");
+    // Verifica se é CSV ou OFX
+    const isCSV = file.name.toLowerCase().endsWith('.csv');
+    const isOFX = file.name.toLowerCase().endsWith('.ofx');
+    
+    if (!isCSV && !isOFX) {
+      toast.error("Por favor, envie um arquivo CSV ou OFX");
       return;
     }
 
@@ -92,7 +95,8 @@ export default function ReconciliationPage() {
       if (response.ok) {
         const data = await response.json();
         setParsedTransactions(data.transactions || []);
-        toast.success(`${data.transactions?.length || 0} transações encontradas no extrato`);
+        const format = data.format || (isOFX ? "OFX" : "CSV");
+        toast.success(`✓ ${data.transactions?.length || 0} transações encontradas (formato ${format})`);
       } else {
         const error = await response.json();
         toast.error(error.message || "Erro ao processar arquivo");
@@ -218,10 +222,14 @@ export default function ReconciliationPage() {
   return (
     <ProtectedLayout>
       <div className="mb-6">
-        <h1 className="text-3xl font-bold text-gray-900">Conciliação Bancária</h1>
+        <h1 className="text-3xl font-bold text-gray-900">Conciliação Bancária Automática</h1>
         <p className="text-gray-600 mt-2">
-          Importe extratos bancários e categorize automaticamente suas transações
+          Importe extratos bancários em CSV ou OFX e categorize automaticamente suas transações
         </p>
+        <div className="mt-2 inline-flex items-center gap-2 px-3 py-1 bg-green-50 border border-green-200 rounded-full">
+          <CheckCircle className="h-4 w-4 text-green-600" />
+          <span className="text-sm text-green-700 font-medium">Suporte a OFX de todos os bancos brasileiros</span>
+        </div>
       </div>
 
       {/* Upload Section */}
@@ -252,21 +260,29 @@ export default function ReconciliationPage() {
 
             <div>
               <label className="block text-sm font-medium mb-2">
-                Arquivo do Extrato (CSV)
+                Arquivo do Extrato (CSV ou OFX)
               </label>
               <div className="flex items-center gap-4">
                 <Input
                   type="file"
-                  accept=".csv"
+                  accept=".csv,.ofx"
                   onChange={handleFileUpload}
                   disabled={processing}
                   className="flex-1"
                 />
                 <FileSpreadsheet className="h-6 w-6 text-gray-400" />
               </div>
-              <p className="text-xs text-gray-500 mt-2">
-                Formato esperado: Data, Descrição, Valor (use vírgula como separador)
-              </p>
+              <div className="mt-2 space-y-1">
+                <p className="text-xs text-gray-500">
+                  <strong>CSV:</strong> Data, Descrição, Valor (separado por vírgula)
+                </p>
+                <p className="text-xs text-gray-500">
+                  <strong>OFX:</strong> Formato padrão de bancos (Bradesco, Itaú, Santander, etc.)
+                </p>
+                <p className="text-xs text-green-600 font-medium">
+                  ✓ OFX oferece maior precisão e previne duplicatas automaticamente
+                </p>
+              </div>
             </div>
           </div>
         </CardContent>

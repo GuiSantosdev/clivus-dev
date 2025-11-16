@@ -29,18 +29,34 @@ export async function POST(request: Request) {
     let skipped = 0;
 
     for (const trans of transactions) {
-      // Verifica se já existe transação similar (mesmo valor, data e descrição)
-      const existing = await prisma.transaction.findFirst({
-        where: {
-          userId,
-          date: new Date(trans.date),
-          amount: trans.amount,
-          description: {
-            contains: trans.description.substring(0, 20),
+      // Verifica duplicatas com prioridade para bankStatementId (OFX)
+      let existing = null;
+
+      // 1. Se tem bankStatementId (OFX), busca por ele primeiro
+      if (trans.bankStatementId) {
+        existing = await prisma.transaction.findFirst({
+          where: {
+            userId,
+            bankStatementId: trans.bankStatementId,
+            accountType,
           },
-          accountType,
-        },
-      });
+        });
+      }
+
+      // 2. Se não encontrou por bankStatementId, busca por similaridade
+      if (!existing) {
+        existing = await prisma.transaction.findFirst({
+          where: {
+            userId,
+            date: new Date(trans.date),
+            amount: trans.amount,
+            description: {
+              contains: trans.description.substring(0, 20),
+            },
+            accountType,
+          },
+        });
+      }
 
       if (existing) {
         skipped++;
@@ -60,6 +76,7 @@ export async function POST(request: Request) {
           autoImported: true,
           reconciled: true,
           reconciliationDate: new Date(),
+          bankStatementId: trans.bankStatementId || null,
         },
       });
 
