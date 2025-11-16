@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
 import toast from "react-hot-toast";
+import { User, Shield, Copy } from "lucide-react";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -40,6 +41,16 @@ export default function LoginPage() {
     } finally {
       setLoading(false);
     }
+  };
+
+  const copyToClipboard = (text: string, label: string) => {
+    navigator.clipboard.writeText(text);
+    toast.success(`${label} copiado!`);
+  };
+
+  const fillCredentials = (email: string, password: string) => {
+    setFormData({ email, password });
+    toast.success("Credenciais preenchidas!");
   };
 
   return (
@@ -99,6 +110,95 @@ export default function LoginPage() {
             Cadastre-se
           </Link>
         </p>
+
+        {/* Acessos de Teste */}
+        <div className="mt-6 pt-6 border-t border-gray-200">
+          <h3 className="text-sm font-semibold text-center mb-4 text-gray-700">
+            🔑 Acessos de Teste
+          </h3>
+          
+          {/* SuperAdmin */}
+          <div className="mb-4 p-4 bg-gradient-to-r from-purple-50 to-indigo-50 rounded-lg border border-purple-200">
+            <div className="flex items-center gap-2 mb-2">
+              <Shield className="w-4 h-4 text-purple-600" />
+              <span className="font-semibold text-purple-900">SuperAdmin</span>
+            </div>
+            <div className="space-y-2 text-sm">
+              <div className="flex items-center justify-between">
+                <span className="text-gray-700">Email:</span>
+                <div className="flex items-center gap-2">
+                  <code className="bg-white px-2 py-1 rounded text-xs">admin@clivus.com.br</code>
+                  <button
+                    onClick={() => copyToClipboard("admin@clivus.com.br", "Email")}
+                    className="text-purple-600 hover:text-purple-800"
+                  >
+                    <Copy className="w-3 h-3" />
+                  </button>
+                </div>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-gray-700">Senha:</span>
+                <div className="flex items-center gap-2">
+                  <code className="bg-white px-2 py-1 rounded text-xs">admin123</code>
+                  <button
+                    onClick={() => copyToClipboard("admin123", "Senha")}
+                    className="text-purple-600 hover:text-purple-800"
+                  >
+                    <Copy className="w-3 h-3" />
+                  </button>
+                </div>
+              </div>
+            </div>
+            <Button
+              onClick={() => fillCredentials("admin@clivus.com.br", "admin123")}
+              className="w-full mt-3 bg-purple-600 hover:bg-purple-700 text-white text-xs"
+              size="sm"
+            >
+              Preencher Credenciais
+            </Button>
+          </div>
+
+          {/* Cliente */}
+          <div className="p-4 bg-gradient-to-r from-blue-50 to-cyan-50 rounded-lg border border-blue-200">
+            <div className="flex items-center gap-2 mb-2">
+              <User className="w-4 h-4 text-blue-600" />
+              <span className="font-semibold text-blue-900">Cliente</span>
+            </div>
+            <div className="space-y-2 text-sm">
+              <div className="flex items-center justify-between">
+                <span className="text-gray-700">Email:</span>
+                <div className="flex items-center gap-2">
+                  <code className="bg-white px-2 py-1 rounded text-xs">teste@teste.com</code>
+                  <button
+                    onClick={() => copyToClipboard("teste@teste.com", "Email")}
+                    className="text-blue-600 hover:text-blue-800"
+                  >
+                    <Copy className="w-3 h-3" />
+                  </button>
+                </div>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-gray-700">Senha:</span>
+                <div className="flex items-center gap-2">
+                  <code className="bg-white px-2 py-1 rounded text-xs">senha123</code>
+                  <button
+                    onClick={() => copyToClipboard("senha123", "Senha")}
+                    className="text-blue-600 hover:text-blue-800"
+                  >
+                    <Copy className="w-3 h-3" />
+                  </button>
+                </div>
+              </div>
+            </div>
+            <Button
+              onClick={() => fillCredentials("teste@teste.com", "senha123")}
+              className="w-full mt-3 bg-blue-600 hover:bg-blue-700 text-white text-xs"
+              size="sm"
+            >
+              Preencher Credenciais
+            </Button>
+          </div>
+        </div>
       </Card>
     </div>
   );
