@@ -123,24 +123,27 @@ model Attachment {
 model Payment {
   id              String   @id @default(cuid())
   userId          String
+  planId          String?
   stripeSessionId String?  @unique
   stripePaymentId String?
   amount          Float
   currency        String   @default("brl")
   status          String // pending, completed, failed
-  plan            String   @default("lifetime_97") // lifetime_97, basic, intermediate, advanced
+  plan            String   @default("lifetime_97") // lifetime_97, basic, intermediate, advanced (slug)
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
   user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  planDetails     Plan?    @relation(fields: [planId], references: [id], onDelete: SetNull)
 
   @@index([userId])
   @@index([status])
+  @@index([planId])
   @@map("payments")
 }
 
 // Plans Model
 model Plan {
-  id          String   @id @default(cuid())
+  id          String    @id @default(cuid())
   name        String   // Básico, Intermediário, Avançado
   slug        String   @unique // basic, intermediate, advanced
   price       Float    // 97, 147, 297
@@ -150,6 +153,7 @@ model Plan {
   order       Int      @default(0) // Ordem de exibição
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+  payments    Payment[]
 
   @@map("plans")
 }

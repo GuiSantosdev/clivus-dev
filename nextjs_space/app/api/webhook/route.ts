@@ -4,6 +4,8 @@ export const dynamic = "force-dynamic";
 import { NextResponse } from "next/server";
 import Stripe from "stripe";
 import prisma from "@/lib/db";
+import { sendWelcomeEmail, sendAdminPurchaseNotification } from '@/lib/email';
+import bcrypt from 'bcryptjs';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
   apiVersion: "2025-10-29.clover",
@@ -47,7 +49,45 @@ export async function POST(request: Request) {
             data: { hasAccess: true },
           });
 
-          console.log(`✅ Payment completed for user ${userId}`);
+          // Get payment details with user and plan
+          const payment = await prisma.payment.findUnique({
+            where: { id: paymentId },
+            include: { 
+              user: true,
+              planDetails: true,
+            },
+          });
+
+          if (payment && payment.user) {
+            // Generate temporary password
+            const tempPassword = Math.random().toString(36).slice(-10) + Math.random().toString(36).slice(-10).toUpperCase();
+            
+            // Update user password
+            const hashedPassword = await bcrypt.hash(tempPassword, 10);
+            await prisma.user.update({
+              where: { id: payment.userId },
+              data: { password: hashedPassword },
+            });
+
+            // Send welcome email with credentials
+            await sendWelcomeEmail({
+              to: payment.user.email,
+              name: payment.user.name || 'Cliente',
+              email: payment.user.email,
+              password: tempPassword,
+              planName: payment.planDetails?.name || 'Clivus',
+            });
+
+            // Send admin notification
+            await sendAdminPurchaseNotification({
+              userName: payment.user.name || 'Cliente',
+              userEmail: payment.user.email,
+              planName: payment.planDetails?.name || 'Clivus',
+              planPrice: payment.amount,
+            });
+          }
+
+          console.log(`✅ Payment completed for user ${userId} - Credentials sent`);
         }
         break;
       }

@@ -103,11 +103,18 @@ export default function AdminPage() {
             </Link>
             <h1 className="text-3xl font-bold text-gray-900">Painel Administrativo</h1>
           </div>
-          <Link href="/admin/plans">
-            <Button className="bg-green-600 hover:bg-green-700">
-              Gerenciar Planos
-            </Button>
-          </Link>
+          <div className="flex space-x-3">
+            <Link href="/admin/sales">
+              <Button className="bg-blue-600 hover:bg-blue-700">
+                Gestão de Vendas
+              </Button>
+            </Link>
+            <Link href="/admin/plans">
+              <Button className="bg-green-600 hover:bg-green-700">
+                Gerenciar Planos
+              </Button>
+            </Link>
+          </div>
         </div>
 
         {/* Stats Cards */}
