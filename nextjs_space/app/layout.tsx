@@ -10,9 +10,9 @@ const inter = Inter({ subsets: ["latin"] });
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
-  metadataBase: new URL(process.env.NEXTAUTH_URL || "http://localhost:3000"),
+  metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || process.env.NEXTAUTH_URL || "http://localhost:3000"),
   title: "Clivus - Separe suas Finanças PF das PJ | Ferramenta Financeira Completa",
-  description: "O Clivus é a ferramenta definitiva para empreendedores separarem finanças pessoais das empresariais. Organize suas contas, evite problemas fiscais e maximize seus lucros por apenas R$ 97,00.",
+  description: "A ferramenta completa que todo empreendedor precisa para organizar finanças pessoais e empresariais. Por apenas R$ 97,00.",
   keywords: "finanças empresariais, finanças pessoais, separação PF PJ, ferramenta financeira, empreendedores, MEI, contabilidade, organização financeira",
   authors: [{ name: "Clivus" }],
   creator: "Clivus",
@@ -20,7 +20,7 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     locale: "pt_BR",
-    url: "/",
+    url: process.env.NEXT_PUBLIC_APP_URL || process.env.NEXTAUTH_URL || "http://localhost:3000",
     title: "Clivus - Separe suas Finanças PF das PJ",
     description: "A ferramenta completa que todo empreendedor precisa para organizar finanças pessoais e empresariais. Por apenas R$ 97,00.",
     siteName: "Clivus",
@@ -29,15 +29,17 @@ export const metadata: Metadata = {
         url: "/og-image.png",
         width: 1200,
         height: 630,
-        alt: "Clivus - Ferramenta Financeira para Empreendedores",
+        alt: "Clivus - Ferramenta Financeira",
+        type: "image/png",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
     title: "Clivus - Separe suas Finanças PF das PJ",
-    description: "Organize suas finanças pessoais e empresariais com a ferramenta mais completa do mercado.",
+    description: "A ferramenta completa que todo empreendedor precisa para organizar finanças pessoais e empresariais. Por apenas R$ 97,00.",
     images: ["/og-image.png"],
+    creator: "@clivus",
   },
   robots: {
     index: true,
