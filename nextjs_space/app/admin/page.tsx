@@ -11,28 +11,40 @@ import {
   DollarSign,
   TrendingUp,
   ArrowLeft,
-  UserCheck,
-  UserX
+  UserPlus,
+  ShoppingCart,
+  Target,
+  Percent,
+  Calendar,
+  BarChart3,
+  Crown,
+  Package
 } from "lucide-react";
 import Link from "next/link";
 import toast from "react-hot-toast";
+import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
 
 interface AdminStats {
   totalUsers: number;
-  activeUsers: number;
+  paidUsers: number;
+  freeUsers: number;
+  newUsersLast30Days: number;
+  newUsersLast7Days: number;
+  totalPayments: number;
+  salesLast30Days: number;
+  salesLast7Days: number;
   totalRevenue: number;
-  users: Array<{
-    id: string;
-    name: string;
-    email: string;
-    hasAccess: boolean;
-    createdAt: string;
-    _count: {
-      transactions: number;
-      payments: number;
-    };
-  }>;
+  revenueLast30Days: number;
+  revenueLast7Days: number;
+  avgSalesPerDay: number;
+  averageTicket: number;
+  conversionRate: number;
+  salesHistory: { date: string; sales: number; revenue: number }[];
+  salesByPlan: { plan: string; count: number; revenue: number }[];
+  totalLeads: number;
 }
+
+const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884D8'];
 
 export default function AdminPage() {
   const { data: session, status } = useSession();
@@ -45,8 +57,7 @@ export default function AdminPage() {
       router.push("/login");
     } else if (status === "authenticated") {
       // @ts-ignore
-      if (session?.user?.role !== "admin") {
-        // Se não for admin, redireciona para o dashboard
+      if (session?.user?.role !== "superadmin") {
         router.push("/dashboard");
       } else {
         fetchAdminData();
@@ -56,19 +67,11 @@ export default function AdminPage() {
 
   const fetchAdminData = async () => {
     try {
-      const [statsResponse, usersResponse] = await Promise.all([
-        fetch("/api/admin/stats"),
-        fetch("/api/admin/users"),
-      ]);
+      const response = await fetch("/api/admin/stats");
 
-      if (statsResponse.ok && usersResponse.ok) {
-        const statsData = await statsResponse.json();
-        const usersData = await usersResponse.json();
-        
-        setStats({
-          ...statsData,
-          users: usersData,
-        });
+      if (response.ok) {
+        const data = await response.json();
+        setStats(data.stats);
       } else {
         toast.error("Erro ao carregar dados administrativos");
       }
@@ -84,151 +87,332 @@ export default function AdminPage() {
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
-          <p className="mt-4 text-gray-600">Carregando...</p>
+          <p className="mt-4 text-gray-600">Carregando dados...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="container mx-auto px-4 py-8 max-w-7xl">
-        <div className="mb-6 flex items-center justify-between">
-          <div className="flex items-center space-x-4">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
+      <div className="container mx-auto px-4 py-8">
+        {/* Header */}
+        <div className="flex items-center justify-between mb-8">
+          <div className="flex items-center gap-3">
             <Link href="/dashboard">
-              <Button variant="outline" size="sm">
-                <ArrowLeft className="h-4 w-4 mr-2" />
-                Voltar
+              <Button variant="ghost" size="icon">
+                <ArrowLeft className="h-5 w-5" />
               </Button>
             </Link>
-            <h1 className="text-3xl font-bold text-gray-900">Painel Administrativo</h1>
+            <div>
+              <div className="flex items-center gap-2">
+                <Crown className="h-6 w-6 text-yellow-600" />
+                <h1 className="text-3xl font-bold text-gray-900">Dashboard SuperAdmin</h1>
+              </div>
+              <p className="text-gray-600">Visão completa do negócio Clivus</p>
+            </div>
           </div>
-          <div className="flex space-x-3">
-            <Link href="/admin/sales">
-              <Button className="bg-blue-600 hover:bg-blue-700">
-                Gestão de Vendas
-              </Button>
-            </Link>
-            <Link href="/admin/plans">
-              <Button className="bg-green-600 hover:bg-green-700">
-                Gerenciar Planos
-              </Button>
-            </Link>
+          <div className="text-right">
+            <p className="text-sm text-gray-600">Última atualização</p>
+            <p className="text-sm font-semibold">{new Date().toLocaleDateString('pt-BR')}</p>
           </div>
         </div>
 
-        {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-          <Card>
+        {/* Principais Indicadores - Linha 1 */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+          <Card className="hover:shadow-lg transition-shadow">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">
-                Total de Usuários
-              </CardTitle>
-              <Users className="h-4 w-4 text-muted-foreground" />
+              <CardTitle className="text-sm font-medium">Total de Clientes</CardTitle>
+              <Users className="h-4 w-4 text-blue-600" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{stats?.totalUsers ?? 0}</div>
+              <div className="text-2xl font-bold">{stats?.totalUsers || 0}</div>
+              <p className="text-xs text-green-600 mt-1">
+                +{stats?.newUsersLast30Days || 0} nos últimos 30 dias
+              </p>
               <p className="text-xs text-muted-foreground">
-                Cadastrados no sistema
+                {stats?.paidUsers || 0} pagos • {stats?.freeUsers || 0} gratuitos
               </p>
             </CardContent>
           </Card>
 
-          <Card>
+          <Card className="hover:shadow-lg transition-shadow">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">
-                Usuários Ativos
-              </CardTitle>
-              <UserCheck className="h-4 w-4 text-muted-foreground" />
+              <CardTitle className="text-sm font-medium">Novos Clientes (30d)</CardTitle>
+              <UserPlus className="h-4 w-4 text-green-600" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-green-600">
-                {stats?.activeUsers ?? 0}
-              </div>
+              <div className="text-2xl font-bold">{stats?.newUsersLast30Days || 0}</div>
+              <p className="text-xs text-green-600 mt-1">
+                {stats?.newUsersLast7Days || 0} nos últimos 7 dias
+              </p>
               <p className="text-xs text-muted-foreground">
-                Com acesso pago
+                Crescimento da base
               </p>
             </CardContent>
           </Card>
 
-          <Card>
+          <Card className="hover:shadow-lg transition-shadow">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">
-                Receita Total
-              </CardTitle>
-              <DollarSign className="h-4 w-4 text-muted-foreground" />
+              <CardTitle className="text-sm font-medium">Total de Vendas</CardTitle>
+              <ShoppingCart className="h-4 w-4 text-purple-600" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-blue-600">
-                R$ {stats?.totalRevenue?.toFixed(2) ?? "0,00"}
-              </div>
+              <div className="text-2xl font-bold">{stats?.totalPayments || 0}</div>
+              <p className="text-xs text-green-600 mt-1">
+                +{stats?.salesLast30Days || 0} nos últimos 30 dias
+              </p>
               <p className="text-xs text-muted-foreground">
-                Total arrecadado
+                Pagamentos completados
+              </p>
+            </CardContent>
+          </Card>
+
+          <Card className="hover:shadow-lg transition-shadow">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">Receita Total</CardTitle>
+              <DollarSign className="h-4 w-4 text-green-600" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">
+                R$ {(stats?.totalRevenue || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
+              </div>
+              <p className="text-xs text-green-600 mt-1">
+                +R$ {(stats?.revenueLast30Days || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2 })} (30d)
+              </p>
+              <p className="text-xs text-muted-foreground">
+                Receita acumulada
               </p>
             </CardContent>
           </Card>
         </div>
 
-        {/* Users Table */}
-        <Card>
+        {/* Indicadores de Performance - Linha 2 */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+          <Card className="hover:shadow-lg transition-shadow">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">Vendas/Dia (Média 30d)</CardTitle>
+              <Calendar className="h-4 w-4 text-orange-600" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">
+                {(stats?.avgSalesPerDay || 0).toFixed(1)}
+              </div>
+              <p className="text-xs text-muted-foreground mt-1">
+                {stats?.salesLast7Days || 0} vendas nos últimos 7 dias
+              </p>
+            </CardContent>
+          </Card>
+
+          <Card className="hover:shadow-lg transition-shadow">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">Ticket Médio</CardTitle>
+              <Target className="h-4 w-4 text-teal-600" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">
+                R$ {(stats?.averageTicket || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
+              </div>
+              <p className="text-xs text-muted-foreground mt-1">
+                Por transação
+              </p>
+            </CardContent>
+          </Card>
+
+          <Card className="hover:shadow-lg transition-shadow">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">Taxa de Conversão</CardTitle>
+              <Percent className="h-4 w-4 text-indigo-600" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">
+                {(stats?.conversionRate || 0).toFixed(1)}%
+              </div>
+              <p className="text-xs text-muted-foreground mt-1">
+                {stats?.totalLeads || 0} leads captados
+              </p>
+            </CardContent>
+          </Card>
+
+          <Card className="hover:shadow-lg transition-shadow">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">Receita (7 dias)</CardTitle>
+              <TrendingUp className="h-4 w-4 text-green-600" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">
+                R$ {(stats?.revenueLast7Days || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
+              </div>
+              <p className="text-xs text-muted-foreground mt-1">
+                Última semana
+              </p>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Gráficos */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+          {/* Histórico de Vendas (30 dias) */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <BarChart3 className="h-5 w-5 text-blue-600" />
+                Histórico de Vendas (30 dias)
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <ResponsiveContainer width="100%" height={300}>
+                <BarChart data={stats?.salesHistory || []}>
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis 
+                    dataKey="date" 
+                    tickFormatter={(value) => {
+                      const date = new Date(value);
+                      return `${date.getDate()}/${date.getMonth() + 1}`;
+                    }}
+                  />
+                  <YAxis />
+                  <Tooltip 
+                    labelFormatter={(value) => {
+                      const date = new Date(value as string);
+                      return date.toLocaleDateString('pt-BR');
+                    }}
+                  />
+                  <Legend />
+                  <Bar dataKey="sales" fill="#8884d8" name="Vendas" />
+                </BarChart>
+              </ResponsiveContainer>
+            </CardContent>
+          </Card>
+
+          {/* Receita por Dia (30 dias) */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <TrendingUp className="h-5 w-5 text-green-600" />
+                Receita Diária (30 dias)
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <ResponsiveContainer width="100%" height={300}>
+                <LineChart data={stats?.salesHistory || []}>
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis 
+                    dataKey="date" 
+                    tickFormatter={(value) => {
+                      const date = new Date(value);
+                      return `${date.getDate()}/${date.getMonth() + 1}`;
+                    }}
+                  />
+                  <YAxis />
+                  <Tooltip 
+                    labelFormatter={(value) => {
+                      const date = new Date(value as string);
+                      return date.toLocaleDateString('pt-BR');
+                    }}
+                    formatter={(value: number) => [`R$ ${value.toFixed(2)}`, 'Receita']}
+                  />
+                  <Legend />
+                  <Line type="monotone" dataKey="revenue" stroke="#82ca9d" name="Receita (R$)" />
+                </LineChart>
+              </ResponsiveContainer>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Vendas por Plano */}
+        <Card className="mb-6">
           <CardHeader>
-            <CardTitle>Lista de Usuários</CardTitle>
+            <CardTitle className="flex items-center gap-2">
+              <Package className="h-5 w-5 text-purple-600" />
+              Distribuição de Vendas por Plano
+            </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="overflow-x-auto">
-              <table className="w-full">
-                <thead>
-                  <tr className="border-b">
-                    <th className="text-left p-3 font-medium text-gray-700">Nome</th>
-                    <th className="text-left p-3 font-medium text-gray-700">Email</th>
-                    <th className="text-center p-3 font-medium text-gray-700">Status</th>
-                    <th className="text-center p-3 font-medium text-gray-700">Transações</th>
-                    <th className="text-center p-3 font-medium text-gray-700">Pagamentos</th>
-                    <th className="text-left p-3 font-medium text-gray-700">Cadastro</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {stats?.users && stats.users.length > 0 ? (
-                    stats.users.map((user) => (
-                      <tr key={user?.id} className="border-b hover:bg-gray-50">
-                        <td className="p-3 text-gray-900">{user?.name}</td>
-                        <td className="p-3 text-gray-600">{user?.email}</td>
-                        <td className="p-3 text-center">
-                          {user?.hasAccess ? (
-                            <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                              <UserCheck className="h-3 w-3 mr-1" />
-                              Ativo
-                            </span>
-                          ) : (
-                            <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
-                              <UserX className="h-3 w-3 mr-1" />
-                              Inativo
-                            </span>
-                          )}
-                        </td>
-                        <td className="p-3 text-center text-gray-900">
-                          {user?._count?.transactions ?? 0}
-                        </td>
-                        <td className="p-3 text-center text-gray-900">
-                          {user?._count?.payments ?? 0}
-                        </td>
-                        <td className="p-3 text-gray-600">
-                          {new Date(user?.createdAt).toLocaleDateString("pt-BR")}
-                        </td>
-                      </tr>
-                    ))
-                  ) : (
-                    <tr>
-                      <td colSpan={6} className="p-8 text-center text-gray-600">
-                        Nenhum usuário cadastrado ainda
-                      </td>
-                    </tr>
-                  )}
-                </tbody>
-              </table>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {/* Gráfico de Pizza */}
+              <ResponsiveContainer width="100%" height={300}>
+                <PieChart>
+                  <Pie
+                    data={stats?.salesByPlan || []}
+                    cx="50%"
+                    cy="50%"
+                    labelLine={false}
+                    label={(entry) => `${entry.plan}: ${entry.count}`}
+                    outerRadius={80}
+                    fill="#8884d8"
+                    dataKey="count"
+                  >
+                    {(stats?.salesByPlan || []).map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                    ))}
+                  </Pie>
+                  <Tooltip />
+                </PieChart>
+              </ResponsiveContainer>
+
+              {/* Tabela de Detalhes */}
+              <div className="space-y-3">
+                {(stats?.salesByPlan || []).map((plan, index) => (
+                  <div 
+                    key={plan.plan}
+                    className="flex items-center justify-between p-3 bg-gray-50 rounded-lg"
+                  >
+                    <div className="flex items-center gap-3">
+                      <div 
+                        className="w-4 h-4 rounded"
+                        style={{ backgroundColor: COLORS[index % COLORS.length] }}
+                      />
+                      <div>
+                        <p className="font-semibold capitalize">{plan.plan}</p>
+                        <p className="text-xs text-gray-600">{plan.count} vendas</p>
+                      </div>
+                    </div>
+                    <div className="text-right">
+                      <p className="font-bold text-green-600">
+                        R$ {plan.revenue.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
+                      </p>
+                      <p className="text-xs text-gray-600">
+                        {((plan.count / (stats?.totalPayments || 1)) * 100).toFixed(1)}%
+                      </p>
+                    </div>
+                  </div>
+                ))}
+              </div>
             </div>
           </CardContent>
         </Card>
+
+        {/* Quick Actions */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <Card className="hover:shadow-lg transition-shadow">
+            <CardHeader>
+              <CardTitle>Gerenciar Planos</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-sm text-gray-600 mb-4">
+                Configure os planos de assinatura, preços e recursos.
+              </p>
+              <Link href="/admin/plans">
+                <Button className="w-full">Acessar Planos</Button>
+              </Link>
+            </CardContent>
+          </Card>
+
+          <Card className="hover:shadow-lg transition-shadow">
+            <CardHeader>
+              <CardTitle>Gerenciar Vendas</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-sm text-gray-600 mb-4">
+                Visualize vendas, pagamentos e envie credenciais.
+              </p>
+              <Link href="/admin/sales">
+                <Button className="w-full">Acessar Vendas</Button>
+              </Link>
+            </CardContent>
+          </Card>
+        </div>
       </div>
     </div>
   );
