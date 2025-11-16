@@ -21,3 +21,119 @@ model Lead {
 
   @@map("leads")
 }
+
+// NextAuth Models
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@map("accounts")
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("sessions")
+}
+
+model User {
+  id            String        @id @default(cuid())
+  name          String
+  email         String        @unique
+  password      String
+  cpf           String?
+  cnpj          String?
+  businessArea  String?
+  emailVerified DateTime?
+  image         String?
+  role          String        @default("user") // user, admin
+  hasAccess     Boolean       @default(false)
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+  accounts      Account[]
+  sessions      Session[]
+  transactions  Transaction[]
+  payments      Payment[]
+
+  @@map("users")
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+  @@map("verification_tokens")
+}
+
+// Financial Models
+model Transaction {
+  id          String       @id @default(cuid())
+  userId      String
+  type        String // income, expense
+  category    String
+  description String
+  amount      Float
+  date        DateTime
+  accountType String // CPF, CNPJ
+  attachments Attachment[]
+  user        User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+
+  @@index([userId])
+  @@index([accountType])
+  @@index([date])
+  @@map("transactions")
+}
+
+model Attachment {
+  id            String      @id @default(cuid())
+  transactionId String
+  fileName      String
+  fileUrl       String
+  fileType      String
+  fileSize      Int
+  transaction   Transaction @relation(fields: [transactionId], references: [id], onDelete: Cascade)
+  createdAt     DateTime    @default(now())
+
+  @@index([transactionId])
+  @@map("attachments")
+}
+
+// Payment Models
+model Payment {
+  id              String   @id @default(cuid())
+  userId          String
+  stripeSessionId String?  @unique
+  stripePaymentId String?
+  amount          Float
+  currency        String   @default("brl")
+  status          String // pending, completed, failed
+  plan            String   @default("lifetime_97") // lifetime_97, basic, intermediate, advanced
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([status])
+  @@map("payments")
+}
