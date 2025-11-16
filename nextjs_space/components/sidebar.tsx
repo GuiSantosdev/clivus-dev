@@ -30,7 +30,7 @@ import { Button } from "@/components/ui/button";
 const clientMenuItems = [
   {
     title: "Início",
-    href: "/",
+    href: "/dashboard",
     icon: Home,
   },
   {
@@ -73,13 +73,18 @@ const clientMenuItems = [
     href: "/team",
     icon: Users,
   },
+  {
+    title: "Conciliação Bancária",
+    href: "/reconciliation",
+    icon: FileText,
+  },
 ];
 
 // Menu para SuperAdmin (gestão do negócio Clivus)
 const superAdminMenuItems = [
   {
     title: "Início",
-    href: "/",
+    href: "/admin",
     icon: Home,
   },
   {

@@ -57,7 +57,7 @@ export default function TransactionsPage() {
       const response = await fetch("/api/transactions");
       if (response.ok) {
         const data = await response.json();
-        setTransactions(data);
+        setTransactions(data.transactions || []);
       }
     } catch (error) {
       toast.error("Erro ao carregar transações");

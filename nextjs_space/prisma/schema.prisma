@@ -86,18 +86,22 @@ model VerificationToken {
 
 // Financial Models
 model Transaction {
-  id          String       @id @default(cuid())
-  userId      String
-  type        String // income, expense
-  category    String
-  description String
-  amount      Float
-  date        DateTime
-  accountType String // CPF, CNPJ
-  attachments Attachment[]
-  user        User         @relation(fields: [userId], references: [id], onDelete: Cascade)
-  createdAt   DateTime     @default(now())
-  updatedAt   DateTime     @updatedAt
+  id                 String       @id @default(cuid())
+  userId             String
+  type               String // income, expense
+  category           String
+  description        String
+  amount             Float
+  date               DateTime
+  accountType        String // CPF, CNPJ
+  attachments        Attachment[]
+  user               User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  reconciled         Boolean      @default(false)
+  reconciliationDate DateTime?
+  bankStatementId    String?
+  autoImported       Boolean      @default(false)
+  createdAt          DateTime     @default(now())
+  updatedAt          DateTime     @updatedAt
 
   @@index([userId])
   @@index([accountType])
