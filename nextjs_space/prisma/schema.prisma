@@ -179,3 +179,41 @@ model PlanFeature {
   @@index([planId])
   @@map("plan_features")
 }
+
+// Advertisement System
+model Advertisement {
+  id            String   @id @default(cuid())
+  title         String   // Nome do anúncio (interno)
+  type          String   // "adsense", "banner"
+  
+  // Para Google AdSense
+  adsenseCode   String?  @db.Text // Código do AdSense
+  
+  // Para banners próprios
+  bannerUrl     String?  // URL da imagem do banner
+  linkUrl       String?  // URL de destino ao clicar
+  
+  // Posicionamento
+  position      String   // "top", "sidebar", "between_content", "footer", "modal"
+  pages         String[] // Array de páginas onde exibir: ["dashboard", "transactions", "all"]
+  
+  // Segmentação por plano
+  targetPlans   String[] @default(["all"]) // ["all", "basic", "intermediate", "advanced"]
+  
+  // Status e controle
+  isActive      Boolean  @default(true)
+  priority      Int      @default(0) // Ordem de exibição (maior = prioridade)
+  startDate     DateTime?
+  endDate       DateTime?
+  
+  // Estatísticas
+  impressions   Int      @default(0)
+  clicks        Int      @default(0)
+  
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  
+  @@index([isActive])
+  @@index([position])
+  @@map("advertisements")
+}

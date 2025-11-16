@@ -26,6 +26,7 @@ import {
 import Link from "next/link";
 import toast from "react-hot-toast";
 import { ProtectedLayout } from "@/components/protected-layout";
+import { AdBanner } from "@/components/ads/ad-banner";
 
 interface DashboardStats {
   cpf: {
@@ -126,6 +127,9 @@ export default function DashboardPage() {
           Olá, {session?.user?.name}! Bem-vindo ao Clivus
         </p>
       </div>
+
+      {/* Anúncio Topo */}
+      <AdBanner position="top" className="mb-6" />
         {!hasAccess ? (
           <Card className="border-yellow-200 bg-yellow-50 mb-8">
             <CardContent className="p-6">
@@ -246,6 +250,9 @@ export default function DashboardPage() {
             </CardContent>
           </Card>
         </div>
+
+        {/* Anúncio Entre Conteúdo */}
+        <AdBanner position="between_content" className="my-8" />
 
         {/* Quick Actions */}
         <h2 className="text-xl font-bold text-gray-900 mb-4">Funcionalidades</h2>
@@ -594,6 +601,9 @@ export default function DashboardPage() {
             )}
           </CardContent>
         </Card>
+
+        {/* Anúncio Modal (Pop-up) */}
+        <AdBanner position="modal" />
     </ProtectedLayout>
   );
 }

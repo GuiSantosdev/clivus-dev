@@ -23,11 +23,26 @@ import {
   ShoppingCart,
   UserCog,
   Crown,
+  Monitor,
+  LucideIcon,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
-// Menu para clientes do Clivus (usuários normais)
-const clientMenuItems = [
+// Tipos para os itens do menu
+interface MenuItem {
+  title: string;
+  href?: string;
+  icon?: LucideIcon;
+  isGroup?: boolean;
+  items?: {
+    title: string;
+    href: string;
+    icon: LucideIcon;
+  }[];
+}
+
+// Menu para clientes do Clivus (usuários normais) - Agrupado por funcionalidade
+const clientMenuItems: MenuItem[] = [
   {
     title: "Início",
     href: "/dashboard",
@@ -39,34 +54,46 @@ const clientMenuItems = [
     icon: LayoutDashboard,
   },
   {
-    title: "Transações",
-    href: "/transactions",
-    icon: CreditCard,
+    title: "💰 Financeiro",
+    isGroup: true,
+    items: [
+      {
+        title: "Transações",
+        href: "/transactions",
+        icon: CreditCard,
+      },
+      {
+        title: "DRE",
+        href: "/dre",
+        icon: FileText,
+      },
+      {
+        title: "Conciliação Bancária",
+        href: "/reconciliation",
+        icon: FileText,
+      },
+    ],
   },
   {
-    title: "Relatórios",
-    href: "/reports",
-    icon: FileText,
-  },
-  {
-    title: "DRE",
-    href: "/dre",
-    icon: FileText,
-  },
-  {
-    title: "Pró-labore",
-    href: "/prolabore",
-    icon: Calculator,
-  },
-  {
-    title: "Compliance Fiscal",
-    href: "/compliance",
-    icon: ShieldCheck,
-  },
-  {
-    title: "Investimentos",
-    href: "/investments",
-    icon: TrendingUp,
+    title: "📈 Gestão",
+    isGroup: true,
+    items: [
+      {
+        title: "Pró-labore",
+        href: "/prolabore",
+        icon: Calculator,
+      },
+      {
+        title: "Investimentos",
+        href: "/investments",
+        icon: TrendingUp,
+      },
+      {
+        title: "Compliance Fiscal",
+        href: "/compliance",
+        icon: ShieldCheck,
+      },
+    ],
   },
   {
     title: "Equipe",
@@ -74,14 +101,14 @@ const clientMenuItems = [
     icon: Users,
   },
   {
-    title: "Conciliação Bancária",
-    href: "/reconciliation",
+    title: "Relatórios",
+    href: "/reports",
     icon: FileText,
   },
 ];
 
 // Menu para SuperAdmin (gestão do negócio Clivus)
-const superAdminMenuItems = [
+const superAdminMenuItems: MenuItem[] = [
   {
     title: "Início",
     href: "/admin",
@@ -101,6 +128,11 @@ const superAdminMenuItems = [
     title: "Gestão de Vendas",
     href: "/admin/sales",
     icon: ShoppingCart,
+  },
+  {
+    title: "Anúncios",
+    href: "/admin/ads",
+    icon: Monitor,
   },
   {
     title: "Usuários do Sistema",
@@ -177,7 +209,45 @@ export function Sidebar() {
 
         {/* Navigation Menu */}
         <nav className="flex-1 p-4 space-y-2 overflow-y-auto">
-          {menuItems.map((item) => {
+          {menuItems.map((item, index) => {
+            // Se for um grupo de itens
+            if (item.isGroup && item.items) {
+              return (
+                <div key={`group-${index}`} className="space-y-1">
+                  <div className="px-4 py-2 text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                    {item.title}
+                  </div>
+                  {item.items.map((subItem) => {
+                    const SubIcon = subItem.icon;
+                    const isActive = pathname === subItem.href;
+
+                    return (
+                      <Link
+                        key={subItem.href}
+                        href={subItem.href}
+                        onClick={() => setIsMobileMenuOpen(false)}
+                        className={`
+                          flex items-center gap-3 px-4 py-2.5 rounded-lg ml-2
+                          transition-colors duration-200
+                          ${
+                            isActive
+                              ? "bg-blue-50 text-blue-600 font-medium"
+                              : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
+                          }
+                        `}
+                      >
+                        <SubIcon className="h-4 w-4" />
+                        <span className="text-sm">{subItem.title}</span>
+                      </Link>
+                    );
+                  })}
+                </div>
+              );
+            }
+
+            // Se for um item normal
+            if (!item.href || !item.icon) return null;
+            
             const Icon = item.icon;
             const isActive = pathname === item.href;
 

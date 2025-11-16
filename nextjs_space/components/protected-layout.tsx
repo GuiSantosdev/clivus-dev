@@ -5,6 +5,7 @@ import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { Sidebar } from "./sidebar";
+import { AdBanner } from "./ads/ad-banner";
 
 interface ProtectedLayoutProps {
   children: React.ReactNode;
@@ -53,7 +54,15 @@ export function ProtectedLayout({
     <div className="flex min-h-screen bg-gray-50">
       <Sidebar />
       <main className="flex-1 lg:ml-64 p-4 md:p-8">
-        <div className="max-w-7xl mx-auto">{children}</div>
+        <div className="flex gap-6">
+          <div className="flex-1 max-w-7xl">{children}</div>
+          {/* Anúncio Sidebar (visível apenas em telas grandes) */}
+          <div className="hidden xl:block w-64 flex-shrink-0">
+            <div className="sticky top-4">
+              <AdBanner position="sidebar" />
+            </div>
+          </div>
+        </div>
       </main>
     </div>
   );
