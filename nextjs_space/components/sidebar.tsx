@@ -4,7 +4,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { signOut } from "next-auth/react";
+import { signOut, useSession } from "next-auth/react";
 import Image from "next/image";
 import {
   LayoutDashboard,
@@ -19,10 +19,15 @@ import {
   Menu,
   X,
   Home,
+  Package,
+  ShoppingCart,
+  UserCog,
+  Crown,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
-const menuItems = [
+// Menu para clientes do Clivus (usuários normais)
+const clientMenuItems = [
   {
     title: "Início",
     href: "/",
@@ -65,9 +70,43 @@ const menuItems = [
   },
 ];
 
+// Menu para SuperAdmin (gestão do negócio Clivus)
+const superAdminMenuItems = [
+  {
+    title: "Início",
+    href: "/",
+    icon: Home,
+  },
+  {
+    title: "Painel Admin",
+    href: "/admin",
+    icon: Crown,
+  },
+  {
+    title: "Gerenciar Planos",
+    href: "/admin/plans",
+    icon: Package,
+  },
+  {
+    title: "Gestão de Vendas",
+    href: "/admin/sales",
+    icon: ShoppingCart,
+  },
+  {
+    title: "Usuários do Sistema",
+    href: "/admin",
+    icon: UserCog,
+  },
+];
+
 export function Sidebar() {
   const pathname = usePathname();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const { data: session } = useSession();
+
+  // Determina qual menu mostrar baseado na role do usuário
+  const userRole = session?.user?.role || "user";
+  const menuItems = userRole === "superadmin" ? superAdminMenuItems : clientMenuItems;
 
   const handleLogout = async () => {
     await signOut({ callbackUrl: "/" });
@@ -115,7 +154,14 @@ export function Sidebar() {
                 className="object-contain"
               />
             </div>
-            <span className="font-bold text-xl text-gray-800">Clivus</span>
+            <div className="flex flex-col">
+              <span className="font-bold text-xl text-gray-800">Clivus</span>
+              {userRole === "superadmin" && (
+                <span className="text-xs font-semibold text-purple-600 bg-purple-100 px-2 py-0.5 rounded-full inline-block w-fit">
+                  🔐 SuperAdmin
+                </span>
+              )}
+            </div>
           </Link>
         </div>
 

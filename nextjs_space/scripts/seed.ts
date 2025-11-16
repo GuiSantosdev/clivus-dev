@@ -7,7 +7,27 @@ const prisma = new PrismaClient();
 async function main() {
   console.log("🌱 Starting seed...");
 
-  // Create test admin user
+  // Create SuperAdmin user (manages the Clivus business)
+  const hashedSuperAdminPassword = await bcrypt.hash("superadmin123", 10);
+  
+  const superAdmin = await prisma.user.upsert({
+    where: { email: "superadmin@clivus.com" },
+    update: {},
+    create: {
+      email: "superadmin@clivus.com",
+      password: hashedSuperAdminPassword,
+      name: "Super Admin",
+      role: "superadmin",
+      hasAccess: true,
+      cpf: "999.999.999-99",
+      cnpj: "99.999.999/0001-99",
+      businessArea: "Gestão de Sistema",
+    },
+  });
+
+  console.log("✅ SuperAdmin user created:", superAdmin.email);
+
+  // Create test client user (Clivus customer with access)
   const hashedAdminPassword = await bcrypt.hash("johndoe123", 10);
   
   const admin = await prisma.user.upsert({
@@ -17,7 +37,7 @@ async function main() {
       email: "john@doe.com",
       password: hashedAdminPassword,
       name: "Admin User",
-      role: "admin",
+      role: "user",
       hasAccess: true,
       cpf: "000.000.000-00",
       cnpj: "00.000.000/0001-00",
@@ -25,7 +45,7 @@ async function main() {
     },
   });
 
-  console.log("✅ Admin user created:", admin.email);
+  console.log("✅ Client user created:", admin.email);
 
   // Create test user for authentication testing
   const hashedTestPassword = await bcrypt.hash("senha123", 10);
