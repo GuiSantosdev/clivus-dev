@@ -8,13 +8,17 @@ async function main() {
   console.log("🌱 Starting seed...");
 
   // Create SuperAdmin user (manages the Clivus business)
-  const hashedSuperAdminPassword = await bcrypt.hash("superadmin123", 10);
+  const hashedSuperAdminPassword = await bcrypt.hash("admin123", 10);
   
   const superAdmin = await prisma.user.upsert({
-    where: { email: "superadmin@clivus.com" },
-    update: {},
+    where: { email: "admin@clivus.com.br" },
+    update: {
+      password: hashedSuperAdminPassword,
+      role: "superadmin",
+      hasAccess: true,
+    },
     create: {
-      email: "superadmin@clivus.com",
+      email: "admin@clivus.com.br",
       password: hashedSuperAdminPassword,
       name: "Super Admin",
       role: "superadmin",
@@ -28,44 +32,28 @@ async function main() {
   console.log("✅ SuperAdmin user created:", superAdmin.email);
 
   // Create test client user (Clivus customer with access)
-  const hashedAdminPassword = await bcrypt.hash("johndoe123", 10);
-  
-  const admin = await prisma.user.upsert({
-    where: { email: "john@doe.com" },
-    update: {},
-    create: {
-      email: "john@doe.com",
-      password: hashedAdminPassword,
-      name: "Admin User",
-      role: "user",
-      hasAccess: true,
-      cpf: "000.000.000-00",
-      cnpj: "00.000.000/0001-00",
-      businessArea: "Tecnologia",
-    },
-  });
-
-  console.log("✅ Client user created:", admin.email);
-
-  // Create test user for authentication testing
   const hashedTestPassword = await bcrypt.hash("senha123", 10);
   
   const testUser = await prisma.user.upsert({
-    where: { email: "usuario@exemplo.com" },
-    update: {},
-    create: {
-      email: "usuario@exemplo.com",
+    where: { email: "teste@teste.com" },
+    update: {
       password: hashedTestPassword,
-      name: "Usuario Teste",
       role: "user",
-      hasAccess: false,
+      hasAccess: true,
+    },
+    create: {
+      email: "teste@teste.com",
+      password: hashedTestPassword,
+      name: "Cliente Teste",
+      role: "user",
+      hasAccess: true,
       cpf: "111.111.111-11",
       cnpj: "11.111.111/0001-11",
       businessArea: "Comércio",
     },
   });
 
-  console.log("✅ Test user created:", testUser.email);
+  console.log("✅ Client user created:", testUser.email);
 
   // Create plans
   const plansData = [
@@ -243,21 +231,21 @@ async function main() {
   
   const transactionsData = [
     // CPF Transactions (Personal)
-    { userId: admin.id, accountType: "cpf", type: "income", category: "Salário", amount: 5000, description: "Salário mensal", date: new Date("2024-11-01") },
-    { userId: admin.id, accountType: "cpf", type: "income", category: "Freelance", amount: 1500, description: "Projeto freelance web design", date: new Date("2024-11-05") },
-    { userId: admin.id, accountType: "cpf", type: "expense", category: "Moradia", amount: -1200, description: "Aluguel apartamento", date: new Date("2024-11-05") },
-    { userId: admin.id, accountType: "cpf", type: "expense", category: "Alimentação", amount: -800, description: "Compras supermercado", date: new Date("2024-11-10") },
-    { userId: admin.id, accountType: "cpf", type: "expense", category: "Transporte", amount: -300, description: "Combustível e manutenção", date: new Date("2024-11-12") },
-    { userId: admin.id, accountType: "cpf", type: "expense", category: "Lazer", amount: -450, description: "Cinema, restaurantes e entretenimento", date: new Date("2024-11-15") },
+    { userId: testUser.id, accountType: "cpf", type: "income", category: "Salário", amount: 5000, description: "Salário mensal", date: new Date("2024-11-01") },
+    { userId: testUser.id, accountType: "cpf", type: "income", category: "Freelance", amount: 1500, description: "Projeto freelance web design", date: new Date("2024-11-05") },
+    { userId: testUser.id, accountType: "cpf", type: "expense", category: "Moradia", amount: -1200, description: "Aluguel apartamento", date: new Date("2024-11-05") },
+    { userId: testUser.id, accountType: "cpf", type: "expense", category: "Alimentação", amount: -800, description: "Compras supermercado", date: new Date("2024-11-10") },
+    { userId: testUser.id, accountType: "cpf", type: "expense", category: "Transporte", amount: -300, description: "Combustível e manutenção", date: new Date("2024-11-12") },
+    { userId: testUser.id, accountType: "cpf", type: "expense", category: "Lazer", amount: -450, description: "Cinema, restaurantes e entretenimento", date: new Date("2024-11-15") },
     
     // CNPJ Transactions (Business)
-    { userId: admin.id, accountType: "cnpj", type: "income", category: "Vendas", amount: 12000, description: "Vendas de produtos digitais", date: new Date("2024-11-02") },
-    { userId: admin.id, accountType: "cnpj", type: "income", category: "Serviços", amount: 8500, description: "Consultoria empresarial", date: new Date("2024-11-08") },
-    { userId: admin.id, accountType: "cnpj", type: "expense", category: "Fornecedores", amount: -3500, description: "Compra de matéria-prima", date: new Date("2024-11-03") },
-    { userId: admin.id, accountType: "cnpj", type: "expense", category: "Marketing", amount: -2200, description: "Anúncios Google Ads e Facebook", date: new Date("2024-11-06") },
-    { userId: admin.id, accountType: "cnpj", type: "expense", category: "Infraestrutura", amount: -800, description: "Servidor, domínio e ferramentas SaaS", date: new Date("2024-11-07") },
-    { userId: admin.id, accountType: "cnpj", type: "expense", category: "Impostos", amount: -1800, description: "DAS MEI mensal", date: new Date("2024-11-10") },
-    { userId: admin.id, accountType: "cnpj", type: "expense", category: "Pró-labore", amount: -3000, description: "Retirada pró-labore", date: new Date("2024-11-15") },
+    { userId: testUser.id, accountType: "cnpj", type: "income", category: "Vendas", amount: 12000, description: "Vendas de produtos digitais", date: new Date("2024-11-02") },
+    { userId: testUser.id, accountType: "cnpj", type: "income", category: "Serviços", amount: 8500, description: "Consultoria empresarial", date: new Date("2024-11-08") },
+    { userId: testUser.id, accountType: "cnpj", type: "expense", category: "Fornecedores", amount: -3500, description: "Compra de matéria-prima", date: new Date("2024-11-03") },
+    { userId: testUser.id, accountType: "cnpj", type: "expense", category: "Marketing", amount: -2200, description: "Anúncios Google Ads e Facebook", date: new Date("2024-11-06") },
+    { userId: testUser.id, accountType: "cnpj", type: "expense", category: "Infraestrutura", amount: -800, description: "Servidor, domínio e ferramentas SaaS", date: new Date("2024-11-07") },
+    { userId: testUser.id, accountType: "cnpj", type: "expense", category: "Impostos", amount: -1800, description: "DAS MEI mensal", date: new Date("2024-11-10") },
+    { userId: testUser.id, accountType: "cnpj", type: "expense", category: "Pró-labore", amount: -3000, description: "Retirada pró-labore", date: new Date("2024-11-15") },
   ];
 
   for (const txData of transactionsData) {
@@ -413,7 +401,7 @@ async function main() {
       },
       update: {},
       create: {
-        userId: admin.id,
+        userId: testUser.id,
         planId: intermediatePlanForAdmin.id,
         plan: intermediatePlanForAdmin.slug,
         amount: intermediatePlanForAdmin.price,
@@ -421,7 +409,7 @@ async function main() {
         stripeSessionId: "test_session_admin_123",
       },
     });
-    console.log(`✅ Payment created for ${admin.name}`);
+    console.log(`✅ Payment created for ${testUser.name}`);
   }
 
   // Payments for additional clients
@@ -455,9 +443,8 @@ async function main() {
 
   console.log("\n🌱 Seed completed successfully!");
   console.log("\n📝 Test credentials:");
-  console.log("   SuperAdmin: superadmin@clivus.com / superadmin123");
-  console.log("   Client: john@doe.com / johndoe123");
-  console.log("   Test User: usuario@exemplo.com / senha123");
+  console.log("   SuperAdmin: admin@clivus.com.br / admin123");
+  console.log("   Client: teste@teste.com / senha123");
 }
 
 main()
