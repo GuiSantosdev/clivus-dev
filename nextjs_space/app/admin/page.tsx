@@ -93,14 +93,21 @@ export default function AdminPage() {
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="container mx-auto px-4 py-8 max-w-7xl">
-        <div className="mb-6 flex items-center space-x-4">
-          <Link href="/dashboard">
-            <Button variant="outline" size="sm">
-              <ArrowLeft className="h-4 w-4 mr-2" />
-              Voltar
+        <div className="mb-6 flex items-center justify-between">
+          <div className="flex items-center space-x-4">
+            <Link href="/dashboard">
+              <Button variant="outline" size="sm">
+                <ArrowLeft className="h-4 w-4 mr-2" />
+                Voltar
+              </Button>
+            </Link>
+            <h1 className="text-3xl font-bold text-gray-900">Painel Administrativo</h1>
+          </div>
+          <Link href="/admin/plans">
+            <Button className="bg-green-600 hover:bg-green-700">
+              Gerenciar Planos
             </Button>
           </Link>
-          <h1 className="text-3xl font-bold text-gray-900">Painel Administrativo</h1>
         </div>
 
         {/* Stats Cards */}

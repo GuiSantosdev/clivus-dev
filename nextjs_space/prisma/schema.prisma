@@ -137,3 +137,19 @@ model Payment {
   @@index([status])
   @@map("payments")
 }
+
+// Plans Model
+model Plan {
+  id          String   @id @default(cuid())
+  name        String   // Básico, Intermediário, Avançado
+  slug        String   @unique // basic, intermediate, advanced
+  price       Float    // 97, 147, 297
+  currency    String   @default("brl")
+  isActive    Boolean  @default(true)
+  features    String[] // Array de funcionalidades
+  order       Int      @default(0) // Ordem de exibição
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("plans")
+}

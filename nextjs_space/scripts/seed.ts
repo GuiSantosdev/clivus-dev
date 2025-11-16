@@ -46,6 +46,68 @@ async function main() {
   });
 
   console.log("✅ Test user created:", testUser.email);
+
+  // Create plans
+  const plansData = [
+    {
+      name: "Básico",
+      slug: "basic",
+      price: 97,
+      order: 0,
+      features: [
+        "Separação completa entre CPF e CNPJ",
+        "Controle de receitas e despesas",
+        "Relatórios financeiros mensais",
+        "Acesso 100% online (web e mobile)",
+        "Organização por categorias",
+        "Suporte por email",
+        "Conformidade com a legislação brasileira",
+      ],
+    },
+    {
+      name: "Intermediário",
+      slug: "intermediate",
+      price: 147,
+      order: 1,
+      features: [
+        "Tudo do Plano Básico",
+        "Calculadora de pró-labore automatizada",
+        "Relatórios financeiros semanais",
+        "Dashboard executivo avançado",
+        "Controle de investimentos PF e PJ",
+        "Alertas de compliance fiscal",
+        "Suporte prioritário por email",
+        "Exportação de dados em Excel/PDF",
+      ],
+    },
+    {
+      name: "Avançado",
+      slug: "advanced",
+      price: 297,
+      order: 2,
+      features: [
+        "Tudo do Plano Intermediário",
+        "Acesso multi-usuário (até 5 membros)",
+        "Gestão de equipe com permissões",
+        "Relatórios personalizados ilimitados",
+        "Integração com contadores",
+        "Análise preditiva de fluxo de caixa",
+        "Suporte prioritário por WhatsApp",
+        "Consultoria fiscal mensal incluída",
+        "Atualizações e novos recursos em primeira mão",
+      ],
+    },
+  ];
+
+  for (const planData of plansData) {
+    const plan = await prisma.plan.upsert({
+      where: { slug: planData.slug },
+      update: {},
+      create: planData,
+    });
+    console.log(`✅ Plan created: ${plan.name} - R$ ${plan.price}`);
+  }
+
   console.log("🌱 Seed completed!");
 }
 

@@ -1,8 +1,7 @@
-
 "use client";
 
 import { useSession } from "next-auth/react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -15,18 +14,60 @@ import Link from "next/link";
 import Image from "next/image";
 import toast from "react-hot-toast";
 
+interface Plan {
+  id: string;
+  name: string;
+  slug: string;
+  price: number;
+  features: string[];
+}
+
 export default function CheckoutPage() {
   const { data: session, status } = useSession();
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [loading, setLoading] = useState(false);
+  const [plan, setPlan] = useState<Plan | null>(null);
+  const [loadingPlan, setLoadingPlan] = useState(true);
+
+  const planSlug = searchParams.get("plan") || "basic";
 
   useEffect(() => {
     if (status === "unauthenticated") {
       router.push("/login");
+    } else if (status === "authenticated") {
+      fetchPlan();
     }
-  }, [status, router]);
+  }, [status, router, planSlug]);
+
+  const fetchPlan = async () => {
+    try {
+      const response = await fetch("/api/plans");
+      if (response.ok) {
+        const plans: Plan[] = await response.json();
+        const selectedPlan = plans.find((p) => p.slug === planSlug);
+        
+        if (selectedPlan) {
+          setPlan(selectedPlan);
+        } else if (plans.length > 0) {
+          // Se não encontrar o plano pelo slug, pega o primeiro
+          setPlan(plans[0]);
+        }
+      }
+    } catch (error) {
+      console.error("Error fetching plan:", error);
+      toast.error("Erro ao carregar plano");
+    } finally {
+      setLoadingPlan(false);
+    }
+  };
 
   const handleCheckout = async () => {
+    if (!plan) {
+      toast.error("Plano não selecionado");
+      return;
+    }
+
     setLoading(true);
     
     try {
@@ -36,7 +77,8 @@ export default function CheckoutPage() {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          plan: "lifetime_97",
+          plan: plan.slug,
+          amount: plan.price,
         }),
       });
 
@@ -54,7 +96,7 @@ export default function CheckoutPage() {
     }
   };
 
-  if (status === "loading") {
+  if (status === "loading" || loadingPlan) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
@@ -65,16 +107,18 @@ export default function CheckoutPage() {
     );
   }
 
-  const features = [
-    "Separação completa entre CPF e CNPJ",
-    "Controle de receitas e despesas ilimitado",
-    "Relatórios financeiros detalhados",
-    "Acesso 100% online (web e mobile)",
-    "Organização por categorias personalizadas",
-    "Suporte prioritário por email",
-    "Conformidade com a legislação brasileira",
-    "Atualizações gratuitas para sempre",
-  ];
+  if (!plan) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <p className="text-gray-600 mb-4">Plano não encontrado</p>
+          <Link href="/">
+            <Button>Voltar para a home</Button>
+          </Link>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-gray-100">
@@ -97,7 +141,7 @@ export default function CheckoutPage() {
             className="h-16 w-auto mx-auto mb-4"
           />
           <h1 className="text-4xl font-bold text-gray-900 mb-2">
-            Libere Acesso Total ao Clivus
+            Plano {plan.name}
           </h1>
           <p className="text-lg text-gray-600">
             Organize suas finanças pessoais e empresariais de forma profissional
@@ -111,12 +155,12 @@ export default function CheckoutPage() {
             </CardHeader>
             <CardContent className="p-6">
               <ul className="space-y-3">
-                {features.map((feature, index) => (
+                {plan.features?.map?.((feature, index) => (
                   <li key={index} className="flex items-start space-x-3">
                     <Check className="h-5 w-5 text-green-600 flex-shrink-0 mt-0.5" />
                     <span className="text-gray-700">{feature}</span>
                   </li>
-                ))}
+                )) ?? []}
               </ul>
             </CardContent>
           </Card>
@@ -125,12 +169,9 @@ export default function CheckoutPage() {
             <Card className="shadow-xl border-blue-200">
               <CardHeader className="text-center">
                 <CardTitle className="text-3xl mb-2">Pagamento Único</CardTitle>
-                <div className="flex items-center justify-center space-x-2">
-                  <span className="text-sm text-gray-500 line-through">
-                    R$ 297,00
-                  </span>
+                <div className="flex items-center justify-center">
                   <span className="text-5xl font-bold text-blue-600">
-                    R$ 97
+                    R$ {plan.price}
                   </span>
                 </div>
                 <p className="text-sm text-gray-600 mt-2">
