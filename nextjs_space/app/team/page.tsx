@@ -20,6 +20,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import toast from "react-hot-toast";
+import { ProtectedLayout } from "@/components/protected-layout";
 
 interface TeamMember {
   id: string;
@@ -137,21 +138,15 @@ export default function TeamPage() {
   const pendingMembers = teamMembers.filter((m) => m.status === "pending").length;
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="container mx-auto px-4 py-8 max-w-6xl">
-        <div className="mb-6 flex items-center justify-between">
-          <div className="flex items-center space-x-4">
-            <Link href="/dashboard">
-              <Button variant="outline" size="sm">
-                <ArrowLeft className="h-4 w-4 mr-2" />
-                Voltar
-              </Button>
-            </Link>
-            <h1 className="text-3xl font-bold text-gray-900">Gerenciar Equipe</h1>
-          </div>
-          <Button
-            onClick={() => setShowForm(!showForm)}
-            className="bg-blue-600 hover:bg-blue-700"
+    <ProtectedLayout>
+      <div className="mb-6 flex items-center justify-between">
+        <div>
+          <h1 className="text-3xl font-bold text-gray-900">Gerenciar Equipe</h1>
+          <p className="text-gray-600 mt-2">Controle de acesso multi-usuário</p>
+        </div>
+        <Button
+          onClick={() => setShowForm(!showForm)}
+          className="bg-blue-600 hover:bg-blue-700"
           >
             <Plus className="h-4 w-4 mr-2" />
             Convidar Membro
@@ -402,7 +397,6 @@ export default function TeamPage() {
             </div>
           </CardContent>
         </Card>
-      </div>
-    </div>
+    </ProtectedLayout>
   );
 }

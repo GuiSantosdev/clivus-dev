@@ -24,8 +24,8 @@ import {
   FileText
 } from "lucide-react";
 import Link from "next/link";
-import Image from "next/image";
 import toast from "react-hot-toast";
+import { ProtectedLayout } from "@/components/protected-layout";
 
 interface DashboardStats {
   cpf: {
@@ -79,10 +79,7 @@ export default function DashboardPage() {
     }
   };
 
-  const handleLogout = async () => {
-    const { signOut } = await import("next-auth/react");
-    await signOut({ redirect: true, callbackUrl: "/" });
-  };
+
 
   if (loading || status === "loading") {
     return (
@@ -99,38 +96,14 @@ export default function DashboardPage() {
   const hasAccess = session?.user?.hasAccess;
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <header className="bg-white shadow-sm">
-        <div className="container mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-4">
-              <Image
-                src="/logo-clivus.png"
-                alt="Clivus"
-                width={120}
-                height={51}
-                className="h-12 w-auto"
-              />
-            </div>
-            <div className="flex items-center space-x-4">
-              <span className="text-sm text-gray-600">
-                Olá, {session?.user?.name}
-              </span>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={handleLogout}
-              >
-                Sair
-              </Button>
-            </div>
-          </div>
-        </div>
-      </header>
-
-      {/* Main Content */}
-      <main className="container mx-auto px-4 py-8">
+    <ProtectedLayout>
+      {/* Page Header */}
+      <div className="mb-8">
+        <h1 className="text-3xl font-bold text-gray-900">Dashboard</h1>
+        <p className="text-gray-600 mt-2">
+          Olá, {session?.user?.name}! Bem-vindo ao Clivus
+        </p>
+      </div>
         {!hasAccess ? (
           <Card className="border-yellow-200 bg-yellow-50 mb-8">
             <CardContent className="p-6">
@@ -423,7 +396,6 @@ export default function DashboardPage() {
             )}
           </CardContent>
         </Card>
-      </main>
-    </div>
+    </ProtectedLayout>
   );
 }

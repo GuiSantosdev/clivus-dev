@@ -10,6 +10,7 @@ import { Input } from "@/components/ui/input";
 import { Calculator, ArrowLeft, TrendingUp, AlertCircle, CheckCircle } from "lucide-react";
 import Link from "next/link";
 import toast from "react-hot-toast";
+import { ProtectedLayout } from "@/components/protected-layout";
 
 export default function ProlaborePage() {
   const { data: session, status } = useSession();
@@ -91,17 +92,11 @@ export default function ProlaborePage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="container mx-auto px-4 py-8 max-w-4xl">
-        <div className="mb-6 flex items-center space-x-4">
-          <Link href="/dashboard">
-            <Button variant="outline" size="sm">
-              <ArrowLeft className="h-4 w-4 mr-2" />
-              Voltar
-            </Button>
-          </Link>
-          <h1 className="text-3xl font-bold text-gray-900">Calculadora de Pró-labore</h1>
-        </div>
+    <ProtectedLayout>
+      <div className="mb-6">
+        <h1 className="text-3xl font-bold text-gray-900">Calculadora de Pró-labore</h1>
+        <p className="text-gray-600 mt-2">Calcule o pró-labore ideal conforme a legislação brasileira</p>
+      </div>
 
         <Card className="mb-6 border-blue-200 bg-blue-50">
           <CardContent className="p-4">
@@ -294,7 +289,6 @@ export default function ProlaborePage() {
             </div>
           </CardContent>
         </Card>
-      </div>
-    </div>
+    </ProtectedLayout>
   );
 }

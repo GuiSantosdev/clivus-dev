@@ -17,6 +17,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import toast from "react-hot-toast";
+import { ProtectedLayout } from "@/components/protected-layout";
 
 interface Transaction {
   id: string;
@@ -131,26 +132,17 @@ export default function TransactionsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="container mx-auto px-4 py-8 max-w-6xl">
-        <div className="mb-6 flex items-center justify-between">
-          <div className="flex items-center space-x-4">
-            <Link href="/dashboard">
-              <Button variant="outline" size="sm">
-                <ArrowLeft className="h-4 w-4 mr-2" />
-                Voltar
-              </Button>
-            </Link>
-            <h1 className="text-3xl font-bold text-gray-900">Transações</h1>
-          </div>
-          <Button
-            onClick={() => setShowForm(!showForm)}
-            className="bg-blue-600 hover:bg-blue-700"
-          >
-            <Plus className="h-4 w-4 mr-2" />
-            Nova Transação
-          </Button>
-        </div>
+    <ProtectedLayout>
+      <div className="mb-6 flex items-center justify-between">
+        <h1 className="text-3xl font-bold text-gray-900">Transações</h1>
+        <Button
+          onClick={() => setShowForm(!showForm)}
+          className="bg-blue-600 hover:bg-blue-700"
+        >
+          <Plus className="h-4 w-4 mr-2" />
+          Nova Transação
+        </Button>
+      </div>
 
         {showForm && (
           <Card className="mb-6">
@@ -339,7 +331,6 @@ export default function TransactionsPage() {
             )}
           </CardContent>
         </Card>
-      </div>
-    </div>
+    </ProtectedLayout>
   );
 }

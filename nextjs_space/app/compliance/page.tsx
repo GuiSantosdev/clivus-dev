@@ -17,6 +17,7 @@ import {
   Scale
 } from "lucide-react";
 import Link from "next/link";
+import { ProtectedLayout } from "@/components/protected-layout";
 
 interface ComplianceItem {
   id: string;
@@ -118,17 +119,11 @@ export default function CompliancePage() {
   const compliancePercentage = Math.round((okCount / totalCount) * 100);
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="container mx-auto px-4 py-8 max-w-6xl">
-        <div className="mb-6 flex items-center space-x-4">
-          <Link href="/dashboard">
-            <Button variant="outline" size="sm">
-              <ArrowLeft className="h-4 w-4 mr-2" />
-              Voltar
-            </Button>
-          </Link>
-          <h1 className="text-3xl font-bold text-gray-900">Compliance Fiscal</h1>
-        </div>
+    <ProtectedLayout>
+      <div className="mb-6">
+        <h1 className="text-3xl font-bold text-gray-900">Compliance Fiscal</h1>
+        <p className="text-gray-600 mt-2">Monitore suas obrigações fiscais e mantenha-se em conformidade</p>
+      </div>
 
         <div className="grid md:grid-cols-3 gap-6 mb-8">
           <Card>
@@ -287,7 +282,6 @@ export default function CompliancePage() {
             </div>
           </CardContent>
         </Card>
-      </div>
-    </div>
+    </ProtectedLayout>
   );
 }
