@@ -128,7 +128,80 @@ async function main() {
     console.log(`✅ Plan created: ${plan.name} - R$ ${plan.price}`);
   }
 
-  console.log("🌱 Seed completed!");
+  // Create transactions for test client (admin)
+  console.log("\n📊 Creating transactions...");
+  
+  const transactionsData = [
+    // CPF Transactions (Personal)
+    { userId: admin.id, accountType: "cpf", type: "income", category: "Salário", amount: 5000, description: "Salário mensal", date: new Date("2024-11-01") },
+    { userId: admin.id, accountType: "cpf", type: "income", category: "Freelance", amount: 1500, description: "Projeto freelance web design", date: new Date("2024-11-05") },
+    { userId: admin.id, accountType: "cpf", type: "expense", category: "Moradia", amount: -1200, description: "Aluguel apartamento", date: new Date("2024-11-05") },
+    { userId: admin.id, accountType: "cpf", type: "expense", category: "Alimentação", amount: -800, description: "Compras supermercado", date: new Date("2024-11-10") },
+    { userId: admin.id, accountType: "cpf", type: "expense", category: "Transporte", amount: -300, description: "Combustível e manutenção", date: new Date("2024-11-12") },
+    { userId: admin.id, accountType: "cpf", type: "expense", category: "Lazer", amount: -450, description: "Cinema, restaurantes e entretenimento", date: new Date("2024-11-15") },
+    
+    // CNPJ Transactions (Business)
+    { userId: admin.id, accountType: "cnpj", type: "income", category: "Vendas", amount: 12000, description: "Vendas de produtos digitais", date: new Date("2024-11-02") },
+    { userId: admin.id, accountType: "cnpj", type: "income", category: "Serviços", amount: 8500, description: "Consultoria empresarial", date: new Date("2024-11-08") },
+    { userId: admin.id, accountType: "cnpj", type: "expense", category: "Fornecedores", amount: -3500, description: "Compra de matéria-prima", date: new Date("2024-11-03") },
+    { userId: admin.id, accountType: "cnpj", type: "expense", category: "Marketing", amount: -2200, description: "Anúncios Google Ads e Facebook", date: new Date("2024-11-06") },
+    { userId: admin.id, accountType: "cnpj", type: "expense", category: "Infraestrutura", amount: -800, description: "Servidor, domínio e ferramentas SaaS", date: new Date("2024-11-07") },
+    { userId: admin.id, accountType: "cnpj", type: "expense", category: "Impostos", amount: -1800, description: "DAS MEI mensal", date: new Date("2024-11-10") },
+    { userId: admin.id, accountType: "cnpj", type: "expense", category: "Pró-labore", amount: -3000, description: "Retirada pró-labore", date: new Date("2024-11-15") },
+  ];
+
+  for (const txData of transactionsData) {
+    await prisma.transaction.create({ data: txData });
+  }
+  console.log(`✅ ${transactionsData.length} transactions created`);
+
+  // Create test leads
+  console.log("\n📧 Creating leads...");
+  
+  const leadsData = [
+    { name: "Maria Silva", email: "maria@exemplo.com", cnpj: "12.345.678/0001-90", businessArea: "E-commerce" },
+    { name: "Pedro Santos", email: "pedro@exemplo.com", cnpj: "23.456.789/0001-01", businessArea: "Consultoria" },
+    { name: "Ana Costa", email: "ana@exemplo.com", cnpj: "34.567.890/0001-12", businessArea: "Serviços" },
+    { name: "Carlos Oliveira", email: "carlos@exemplo.com", cnpj: "45.678.901/0001-23", businessArea: "Tecnologia" },
+  ];
+
+  for (const leadData of leadsData) {
+    await prisma.lead.upsert({
+      where: { email: leadData.email },
+      update: {},
+      create: leadData,
+    });
+  }
+  console.log(`✅ ${leadsData.length} leads created`);
+
+  // Create a test payment for the client user
+  console.log("\n💳 Creating payment...");
+  
+  const basicPlan = await prisma.plan.findUnique({ where: { slug: "intermediate" } });
+  
+  if (basicPlan) {
+    await prisma.payment.upsert({
+      where: { 
+        stripeSessionId: "test_session_123",
+      },
+      update: {},
+      create: {
+        userId: admin.id,
+        planId: basicPlan.id,
+        plan: basicPlan.slug,
+        amount: basicPlan.price,
+        status: "completed",
+        stripeSessionId: "test_session_123",
+      },
+    });
+    console.log("✅ Payment created for client user");
+  }
+
+  console.log("\n🌱 Seed completed successfully!");
+  console.log("\n📝 Test credentials:");
+  console.log("   SuperAdmin: superadmin@clivus.com / superadmin123");
+  console.log("   Client: john@doe.com / johndoe123");
+  console.log("   Test User: usuario@exemplo.com / senha123");
 }
 
 main()

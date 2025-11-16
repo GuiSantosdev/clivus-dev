@@ -16,12 +16,12 @@ export async function PUT(
       return NextResponse.json({ error: 'Não autenticado' }, { status: 401 });
     }
 
-    // Verificar se é admin
+    // Verificar se é admin ou superadmin
     const user = await prisma.user.findUnique({
       where: { email: session.user.email! },
     });
 
-    if (!user || user.role !== 'admin') {
+    if (!user || (user.role !== 'admin' && user.role !== 'superadmin')) {
       return NextResponse.json(
         { error: 'Acesso negado' },
         { status: 403 }
@@ -80,12 +80,12 @@ export async function DELETE(
       return NextResponse.json({ error: 'Não autenticado' }, { status: 401 });
     }
 
-    // Verificar se é admin
+    // Verificar se é admin ou superadmin
     const user = await prisma.user.findUnique({
       where: { email: session.user.email! },
     });
 
-    if (!user || user.role !== 'admin') {
+    if (!user || (user.role !== 'admin' && user.role !== 'superadmin')) {
       return NextResponse.json(
         { error: 'Acesso negado' },
         { status: 403 }

@@ -256,6 +256,20 @@ export default function DashboardPage() {
             </Card>
           </Link>
 
+          <Link href="/dre">
+            <Card className="hover:shadow-lg transition-shadow cursor-pointer border-teal-200 hover:border-teal-400">
+              <CardContent className="p-6">
+                <div className="flex flex-col items-center text-center space-y-2">
+                  <div className="h-12 w-12 rounded-full bg-teal-100 flex items-center justify-center">
+                    <FileText className="h-6 w-6 text-teal-600" />
+                  </div>
+                  <h3 className="font-semibold text-gray-900">DRE</h3>
+                  <p className="text-xs text-gray-600">Demonstração do Resultado do Exercício</p>
+                </div>
+              </CardContent>
+            </Card>
+          </Link>
+
           <Link href="/transactions">
             <Card className="hover:shadow-lg transition-shadow cursor-pointer border-purple-200 hover:border-purple-400">
               <CardContent className="p-6">

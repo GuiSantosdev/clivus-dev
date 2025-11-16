@@ -49,6 +49,11 @@ const clientMenuItems = [
     icon: FileText,
   },
   {
+    title: "DRE",
+    href: "/dre",
+    icon: FileText,
+  },
+  {
     title: "Pró-labore",
     href: "/prolabore",
     icon: Calculator,
