@@ -25,6 +25,8 @@ import {
   Crown,
   Monitor,
   LucideIcon,
+  Briefcase,
+  DollarSign,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
@@ -82,6 +84,16 @@ const clientMenuItems: MenuItem[] = [
         title: "Pró-labore",
         href: "/prolabore",
         icon: Calculator,
+      },
+      {
+        title: "Precificação",
+        href: "/pricing",
+        icon: DollarSign,
+      },
+      {
+        title: "Custo de Funcionário",
+        href: "/employee-cost",
+        icon: Briefcase,
       },
       {
         title: "Investimentos",
