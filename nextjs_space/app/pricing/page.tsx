@@ -10,7 +10,24 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { ProtectedLayout } from "@/components/protected-layout";
-import { Calculator, DollarSign, TrendingUp, Package, AlertCircle, Save, Plus, Trash2 } from "lucide-react";
+import { 
+  Calculator, 
+  DollarSign, 
+  TrendingUp, 
+  Package, 
+  AlertCircle, 
+  Save, 
+  Trash2,
+  Building2,
+  Zap,
+  Wifi,
+  Phone,
+  Droplet,
+  Users,
+  Car,
+  ChevronDown,
+  ChevronUp
+} from "lucide-react";
 import toast from "react-hot-toast";
 
 interface SavedProduct {
@@ -21,6 +38,30 @@ interface SavedProduct {
   margin: number;
 }
 
+interface FixedCosts {
+  aluguel: string;
+  energia: string;
+  internet: string;
+  telefone: string;
+  agua: string;
+  gas: string;
+  iptu: string;
+  condominio: string;
+  contabilidade: string;
+  marketing: string;
+  software: string;
+  seguro: string;
+  manutencao: string;
+  gasolina: string;
+  outros: string;
+}
+
+interface Employee {
+  id: string;
+  salary: string;
+  workDays: string;
+}
+
 export default function PricingPage() {
   const { data: session, status } = useSession();
   const router = useRouter();
@@ -29,12 +70,39 @@ export default function PricingPage() {
   const [productName, setProductName] = useState("");
   const [productType, setProductType] = useState<"product" | "service">("product");
   const [cost, setCost] = useState("");
-  const [fixedCosts, setFixedCosts] = useState("");
   const [expectedSales, setExpectedSales] = useState("");
   const [variableExpenses, setVariableExpenses] = useState("5");
   const [taxRegime, setTaxRegime] = useState("simples_nacional");
   const [taxRate, setTaxRate] = useState("6");
   const [desiredMargin, setDesiredMargin] = useState("30");
+
+  // Custos fixos detalhados
+  const [fixedCosts, setFixedCosts] = useState<FixedCosts>({
+    aluguel: "",
+    energia: "",
+    internet: "",
+    telefone: "",
+    agua: "",
+    gas: "",
+    iptu: "",
+    condominio: "",
+    contabilidade: "",
+    marketing: "",
+    software: "",
+    seguro: "",
+    manutencao: "",
+    gasolina: "",
+    outros: "",
+  });
+
+  // Funcionários
+  const [employees, setEmployees] = useState<Employee[]>([]);
+  const [showEmployeeForm, setShowEmployeeForm] = useState(false);
+  const [newEmployeeSalary, setNewEmployeeSalary] = useState("");
+  const [newEmployeeWorkDays, setNewEmployeeWorkDays] = useState("22");
+
+  // Controle de expansão dos custos fixos
+  const [showFixedCosts, setShowFixedCosts] = useState(true);
 
   // Estados calculados
   const [costPerUnit, setCostPerUnit] = useState(0);
@@ -42,6 +110,7 @@ export default function PricingPage() {
   const [suggestedPrice, setSuggestedPrice] = useState(0);
   const [netProfit, setNetProfit] = useState(0);
   const [breakEven, setBreakEven] = useState(0);
+  const [totalFixedCosts, setTotalFixedCosts] = useState(0);
 
   // Produtos salvos
   const [savedProducts, setSavedProducts] = useState<SavedProduct[]>([]);
@@ -52,21 +121,59 @@ export default function PricingPage() {
     }
   }, [status, router]);
 
+  // Calcular custo real do funcionário
+  const calculateEmployeeCost = (salary: string, workDays: string = "22") => {
+    const salaryValue = parseFloat(salary) || 0;
+    
+    // Encargos obrigatórios
+    const inss = salaryValue * 0.20; // INSS Patronal (20%)
+    const fgts = salaryValue * 0.08; // FGTS (8%)
+    const vacation = salaryValue * (1/12) * (1 + 1/3); // Férias + 1/3 rateado
+    const thirteenthSalary = salaryValue * (1/12); // 13º Salário rateado
+    const rat = salaryValue * 0.03; // RAT (3%)
+    const educationSalary = salaryValue * 0.025; // Salário Educação (2,5%)
+    const systemS = salaryValue * 0.0358; // Sistema S (3,58%)
+
+    // Custo mensal total (soma de todos os encargos + salário)
+    const monthlyCost = salaryValue + inss + fgts + vacation + thirteenthSalary + rat + educationSalary + systemS;
+    
+    return monthlyCost;
+  };
+
+  // Calcular total de custos fixos
+  const calculateTotalFixedCosts = () => {
+    // Soma dos custos fixos do formulário
+    const costsSum = Object.values(fixedCosts).reduce((sum, value) => {
+      return sum + (parseFloat(value) || 0);
+    }, 0);
+
+    // Soma dos custos de funcionários
+    const employeesCostsSum = employees.reduce((sum, employee) => {
+      return sum + calculateEmployeeCost(employee.salary, employee.workDays);
+    }, 0);
+
+    return costsSum + employeesCostsSum;
+  };
+
+  useEffect(() => {
+    const total = calculateTotalFixedCosts();
+    setTotalFixedCosts(total);
+  }, [fixedCosts, employees]); // eslint-disable-line react-hooks/exhaustive-deps
+
   useEffect(() => {
     calculatePricing();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [cost, fixedCosts, expectedSales, variableExpenses, taxRate, desiredMargin]);
+  }, [cost, totalFixedCosts, expectedSales, variableExpenses, taxRate, desiredMargin]);
 
   const calculatePricing = () => {
     const costValue = parseFloat(cost) || 0;
-    const fixedCostsValue = parseFloat(fixedCosts) || 0;
     const expectedSalesValue = parseFloat(expectedSales) || 1;
     const variableExpensesValue = parseFloat(variableExpenses) || 0;
     const taxRateValue = parseFloat(taxRate) || 0;
     const desiredMarginValue = parseFloat(desiredMargin) || 0;
 
     // Custo por unidade (inclui rateio dos custos fixos)
-    const fixedCostPerUnit = fixedCostsValue / expectedSalesValue;
+    const fixedCostPerUnit = totalFixedCosts / expectedSalesValue;
     const totalCostPerUnit = costValue + fixedCostPerUnit;
     setCostPerUnit(totalCostPerUnit);
 
@@ -89,8 +196,41 @@ export default function PricingPage() {
     setNetProfit(profit);
 
     // Break-even (quantas vendas para cobrir custos fixos)
-    const breakEvenUnits = profit > 0 ? fixedCostsValue / profit : 0;
+    const breakEvenUnits = profit > 0 ? totalFixedCosts / profit : 0;
     setBreakEven(breakEvenUnits);
+  };
+
+  const handleFixedCostChange = (key: keyof FixedCosts, value: string) => {
+    setFixedCosts(prev => ({
+      ...prev,
+      [key]: value
+    }));
+  };
+
+  const handleAddEmployee = () => {
+    if (!newEmployeeSalary) {
+      toast.error("Digite o salário do funcionário");
+      return;
+    }
+
+    const newEmployee: Employee = {
+      id: Date.now().toString(),
+      salary: newEmployeeSalary,
+      workDays: newEmployeeWorkDays,
+    };
+
+    setEmployees([...employees, newEmployee]);
+    toast.success("Funcionário adicionado!");
+    
+    // Limpar formulário
+    setNewEmployeeSalary("");
+    setNewEmployeeWorkDays("22");
+    setShowEmployeeForm(false);
+  };
+
+  const handleDeleteEmployee = (id: string) => {
+    setEmployees(employees.filter(e => e.id !== id));
+    toast.success("Funcionário removido");
   };
 
   const handleSaveProduct = () => {
@@ -139,7 +279,7 @@ export default function PricingPage() {
           </div>
           <div>
             <h1 className="text-3xl font-bold text-gray-900">Precificação Inteligente</h1>
-            <p className="text-gray-600">Calcule o preço ideal para seus produtos e serviços</p>
+            <p className="text-gray-600">Calcule o preço ideal considerando TODOS os seus custos</p>
           </div>
         </div>
 
@@ -194,19 +334,6 @@ export default function PricingPage() {
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="fixedCosts">Custos Fixos Mensais (R$)</Label>
-                    <Input
-                      id="fixedCosts"
-                      type="number"
-                      step="0.01"
-                      value={fixedCosts}
-                      onChange={(e) => setFixedCosts(e.target.value)}
-                      placeholder="0.00"
-                    />
-                    <p className="text-xs text-gray-500">Aluguel, salários, contas, etc.</p>
-                  </div>
-
-                  <div className="space-y-2">
                     <Label htmlFor="expectedSales">Vendas Esperadas (mês)</Label>
                     <Input
                       id="expectedSales"
@@ -218,7 +345,7 @@ export default function PricingPage() {
                     <p className="text-xs text-gray-500">Para rateio dos custos fixos</p>
                   </div>
 
-                  <div className="space-y-2">
+                  <div className="space-y-2 md:col-span-2">
                     <Label htmlFor="variableExpenses">Despesas Variáveis (%)</Label>
                     <Input
                       id="variableExpenses"
@@ -228,7 +355,330 @@ export default function PricingPage() {
                       onChange={(e) => setVariableExpenses(e.target.value)}
                       placeholder="5"
                     />
-                    <p className="text-xs text-gray-500">Comissões, embalagens, frete, etc.</p>
+                    <p className="text-xs text-gray-500">Comissões, embalagens, frete, taxas de cartão, etc.</p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Custos Fixos Detalhados */}
+            <Card>
+              <CardHeader className="cursor-pointer" onClick={() => setShowFixedCosts(!showFixedCosts)}>
+                <CardTitle className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <Building2 className="h-5 w-5" />
+                    Custos Fixos Mensais (Total: R$ {totalFixedCosts.toFixed(2)})
+                  </div>
+                  {showFixedCosts ? <ChevronUp className="h-5 w-5" /> : <ChevronDown className="h-5 w-5" />}
+                </CardTitle>
+              </CardHeader>
+              {showFixedCosts && (
+                <CardContent className="space-y-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="aluguel" className="flex items-center gap-2">
+                        <Building2 className="h-4 w-4 text-blue-600" />
+                        Aluguel
+                      </Label>
+                      <Input
+                        id="aluguel"
+                        type="number"
+                        step="0.01"
+                        value={fixedCosts.aluguel}
+                        onChange={(e) => handleFixedCostChange("aluguel", e.target.value)}
+                        placeholder="0.00"
+                      />
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label htmlFor="energia" className="flex items-center gap-2">
+                        <Zap className="h-4 w-4 text-yellow-600" />
+                        Energia Elétrica
+                      </Label>
+                      <Input
+                        id="energia"
+                        type="number"
+                        step="0.01"
+                        value={fixedCosts.energia}
+                        onChange={(e) => handleFixedCostChange("energia", e.target.value)}
+                        placeholder="0.00"
+                      />
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label htmlFor="internet" className="flex items-center gap-2">
+                        <Wifi className="h-4 w-4 text-purple-600" />
+                        Internet
+                      </Label>
+                      <Input
+                        id="internet"
+                        type="number"
+                        step="0.01"
+                        value={fixedCosts.internet}
+                        onChange={(e) => handleFixedCostChange("internet", e.target.value)}
+                        placeholder="0.00"
+                      />
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label htmlFor="telefone" className="flex items-center gap-2">
+                        <Phone className="h-4 w-4 text-green-600" />
+                        Telefone
+                      </Label>
+                      <Input
+                        id="telefone"
+                        type="number"
+                        step="0.01"
+                        value={fixedCosts.telefone}
+                        onChange={(e) => handleFixedCostChange("telefone", e.target.value)}
+                        placeholder="0.00"
+                      />
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label htmlFor="agua" className="flex items-center gap-2">
+                        <Droplet className="h-4 w-4 text-blue-400" />
+                        Água
+                      </Label>
+                      <Input
+                        id="agua"
+                        type="number"
+                        step="0.01"
+                        value={fixedCosts.agua}
+                        onChange={(e) => handleFixedCostChange("agua", e.target.value)}
+                        placeholder="0.00"
+                      />
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label htmlFor="gas">Gás</Label>
+                      <Input
+                        id="gas"
+                        type="number"
+                        step="0.01"
+                        value={fixedCosts.gas}
+                        onChange={(e) => handleFixedCostChange("gas", e.target.value)}
+                        placeholder="0.00"
+                      />
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label htmlFor="iptu">IPTU</Label>
+                      <Input
+                        id="iptu"
+                        type="number"
+                        step="0.01"
+                        value={fixedCosts.iptu}
+                        onChange={(e) => handleFixedCostChange("iptu", e.target.value)}
+                        placeholder="0.00"
+                      />
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label htmlFor="condominio">Condomínio</Label>
+                      <Input
+                        id="condominio"
+                        type="number"
+                        step="0.01"
+                        value={fixedCosts.condominio}
+                        onChange={(e) => handleFixedCostChange("condominio", e.target.value)}
+                        placeholder="0.00"
+                      />
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label htmlFor="contabilidade">Contabilidade</Label>
+                      <Input
+                        id="contabilidade"
+                        type="number"
+                        step="0.01"
+                        value={fixedCosts.contabilidade}
+                        onChange={(e) => handleFixedCostChange("contabilidade", e.target.value)}
+                        placeholder="0.00"
+                      />
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label htmlFor="marketing">Marketing/Publicidade</Label>
+                      <Input
+                        id="marketing"
+                        type="number"
+                        step="0.01"
+                        value={fixedCosts.marketing}
+                        onChange={(e) => handleFixedCostChange("marketing", e.target.value)}
+                        placeholder="0.00"
+                      />
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label htmlFor="software">Software/Sistemas</Label>
+                      <Input
+                        id="software"
+                        type="number"
+                        step="0.01"
+                        value={fixedCosts.software}
+                        onChange={(e) => handleFixedCostChange("software", e.target.value)}
+                        placeholder="0.00"
+                      />
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label htmlFor="seguro">Seguros</Label>
+                      <Input
+                        id="seguro"
+                        type="number"
+                        step="0.01"
+                        value={fixedCosts.seguro}
+                        onChange={(e) => handleFixedCostChange("seguro", e.target.value)}
+                        placeholder="0.00"
+                      />
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label htmlFor="manutencao">Manutenção</Label>
+                      <Input
+                        id="manutencao"
+                        type="number"
+                        step="0.01"
+                        value={fixedCosts.manutencao}
+                        onChange={(e) => handleFixedCostChange("manutencao", e.target.value)}
+                        placeholder="0.00"
+                      />
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label htmlFor="gasolina" className="flex items-center gap-2">
+                        <Car className="h-4 w-4 text-red-600" />
+                        Gasolina/Combustível
+                      </Label>
+                      <Input
+                        id="gasolina"
+                        type="number"
+                        step="0.01"
+                        value={fixedCosts.gasolina}
+                        onChange={(e) => handleFixedCostChange("gasolina", e.target.value)}
+                        placeholder="0.00"
+                      />
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label htmlFor="outros">Outros Custos Fixos</Label>
+                      <Input
+                        id="outros"
+                        type="number"
+                        step="0.01"
+                        value={fixedCosts.outros}
+                        onChange={(e) => handleFixedCostChange("outros", e.target.value)}
+                        placeholder="0.00"
+                      />
+                    </div>
+                  </div>
+                </CardContent>
+              )}
+            </Card>
+
+            {/* Funcionários */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Users className="h-5 w-5" />
+                  Funcionários (Custo Real com Encargos)
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                {employees.length > 0 && (
+                  <div className="space-y-2">
+                    {employees.map((employee) => (
+                      <div key={employee.id} className="flex items-center justify-between p-3 bg-blue-50 rounded-lg">
+                        <div className="flex-1">
+                          <p className="text-sm font-medium">Salário: R$ {parseFloat(employee.salary).toFixed(2)}</p>
+                          <p className="text-xs text-gray-600">
+                            Custo Total: R$ {calculateEmployeeCost(employee.salary, employee.workDays).toFixed(2)}/mês
+                          </p>
+                        </div>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => handleDeleteEmployee(employee.id)}
+                        >
+                          <Trash2 className="h-4 w-4 text-red-500" />
+                        </Button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+
+                {!showEmployeeForm ? (
+                  <Button 
+                    onClick={() => setShowEmployeeForm(true)}
+                    variant="outline"
+                    className="w-full"
+                  >
+                    <Users className="h-4 w-4 mr-2" />
+                    Adicionar Funcionário
+                  </Button>
+                ) : (
+                  <div className="space-y-3 p-4 border border-blue-200 rounded-lg bg-blue-50">
+                    <div className="space-y-2">
+                      <Label htmlFor="newEmployeeSalary">Salário Bruto (R$)</Label>
+                      <Input
+                        id="newEmployeeSalary"
+                        type="number"
+                        step="0.01"
+                        value={newEmployeeSalary}
+                        onChange={(e) => setNewEmployeeSalary(e.target.value)}
+                        placeholder="0.00"
+                      />
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label htmlFor="newEmployeeWorkDays">Dias Trabalhados/Mês</Label>
+                      <Input
+                        id="newEmployeeWorkDays"
+                        type="number"
+                        value={newEmployeeWorkDays}
+                        onChange={(e) => setNewEmployeeWorkDays(e.target.value)}
+                        placeholder="22"
+                      />
+                    </div>
+
+                    {newEmployeeSalary && (
+                      <div className="bg-white border border-blue-300 rounded p-3">
+                        <p className="text-sm font-semibold text-blue-800">
+                          Custo Real: R$ {calculateEmployeeCost(newEmployeeSalary, newEmployeeWorkDays).toFixed(2)}/mês
+                        </p>
+                        <p className="text-xs text-gray-600 mt-1">
+                          Inclui: INSS (20%), FGTS (8%), RAT (3%), Salário Educação (2,5%), Sistema S (3,58%), Férias, 13º
+                        </p>
+                      </div>
+                    )}
+
+                    <div className="flex gap-2">
+                      <Button onClick={handleAddEmployee} className="flex-1">
+                        Adicionar
+                      </Button>
+                      <Button 
+                        onClick={() => {
+                          setShowEmployeeForm(false);
+                          setNewEmployeeSalary("");
+                          setNewEmployeeWorkDays("22");
+                        }}
+                        variant="outline"
+                        className="flex-1"
+                      >
+                        Cancelar
+                      </Button>
+                    </div>
+                  </div>
+                )}
+
+                <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                  <div className="flex gap-2">
+                    <AlertCircle className="h-5 w-5 text-blue-600 flex-shrink-0 mt-0.5" />
+                    <div className="text-sm text-blue-800">
+                      <strong>Cálculo Automático:</strong> O sistema calcula automaticamente todos os encargos trabalhistas 
+                      (INSS, FGTS, férias, 13º, RAT, etc.) para mostrar o custo REAL do funcionário.
+                    </div>
                   </div>
                 </div>
               </CardContent>
@@ -316,10 +766,18 @@ export default function PricingPage() {
                 </div>
                 <div className="space-y-3 text-sm">
                   <div className="flex justify-between">
+                    <span className="text-gray-600">Custo direto:</span>
+                    <span className="font-semibold">R$ {parseFloat(cost || "0").toFixed(2)}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">Custos fixos totais:</span>
+                    <span className="font-semibold">R$ {totalFixedCosts.toFixed(2)}</span>
+                  </div>
+                  <div className="flex justify-between">
                     <span className="text-gray-600">Custo por unidade:</span>
                     <span className="font-semibold">R$ {costPerUnit.toFixed(2)}</span>
                   </div>
-                  <div className="flex justify-between">
+                  <div className="flex justify-between border-t pt-2">
                     <span className="text-gray-600">Markup:</span>
                     <span className="font-semibold text-blue-600">{markup.toFixed(1)}%</span>
                   </div>
