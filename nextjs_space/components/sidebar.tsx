@@ -47,7 +47,7 @@ interface MenuItem {
 const clientMenuItems: MenuItem[] = [
   {
     title: "Início",
-    href: "/dashboard",
+    href: "/",
     icon: Home,
   },
   {
@@ -123,11 +123,11 @@ const clientMenuItems: MenuItem[] = [
 const superAdminMenuItems: MenuItem[] = [
   {
     title: "Início",
-    href: "/admin",
+    href: "/",
     icon: Home,
   },
   {
-    title: "Painel Admin",
+    title: "Dashboard Admin",
     href: "/admin",
     icon: Crown,
   },
@@ -142,14 +142,19 @@ const superAdminMenuItems: MenuItem[] = [
     icon: ShoppingCart,
   },
   {
+    title: "Gestão de Clientes",
+    href: "/admin/clients",
+    icon: UserCog,
+  },
+  {
+    title: "Gateways de Pagamento",
+    href: "/admin/gateways",
+    icon: CreditCard,
+  },
+  {
     title: "Anúncios",
     href: "/admin/ads",
     icon: Monitor,
-  },
-  {
-    title: "Usuários do Sistema",
-    href: "/admin",
-    icon: UserCog,
   },
 ];
 
