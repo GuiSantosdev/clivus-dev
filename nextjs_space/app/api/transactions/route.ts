@@ -63,7 +63,20 @@ export async function POST(request: Request) {
 
     const userId = (session.user as any).id;
     const body = await request.json();
-    const { type, category, description, amount, date, accountType } = body;
+    const { 
+      type, 
+      category, 
+      description, 
+      amount, 
+      date, 
+      accountType,
+      paymentMethod,
+      isInstallment,
+      installmentNumber,
+      totalInstallments,
+      installmentAmount,
+      dueDate
+    } = body;
 
     if (!type || !category || !description || !amount || !date || !accountType) {
       return NextResponse.json(
@@ -81,6 +94,12 @@ export async function POST(request: Request) {
         amount: parseFloat(amount),
         date: new Date(date),
         accountType,
+        paymentMethod: paymentMethod || null,
+        isInstallment: isInstallment || false,
+        installmentNumber: installmentNumber ? parseInt(installmentNumber) : null,
+        totalInstallments: totalInstallments ? parseInt(totalInstallments) : null,
+        installmentAmount: installmentAmount ? parseFloat(installmentAmount) : null,
+        dueDate: dueDate ? new Date(dueDate) : null,
       },
     });
 
