@@ -67,10 +67,12 @@ model User {
   hasAccess     Boolean       @default(false)
   createdAt     DateTime      @default(now())
   updatedAt     DateTime      @updatedAt
-  accounts      Account[]
-  sessions      Session[]
-  transactions  Transaction[]
-  payments      Payment[]
+  accounts       Account[]
+  sessions       Session[]
+  transactions   Transaction[]
+  payments       Payment[]
+  categories     Category[]
+  paymentMethods PaymentMethod[]
 
   @@map("users")
 }
@@ -94,6 +96,15 @@ model Transaction {
   amount             Float
   date               DateTime
   accountType        String // CPF, CNPJ
+  paymentMethod      String? // Forma de pagamento
+  
+  // Campos para compra/venda a prazo
+  isInstallment      Boolean      @default(false)
+  installmentNumber  Int? // Número da parcela atual (ex: 1, 2, 3)
+  totalInstallments  Int? // Total de parcelas (ex: 12)
+  installmentAmount  Float? // Valor de cada parcela
+  dueDate            DateTime? // Data de vencimento da parcela
+  
   attachments        Attachment[]
   user               User         @relation(fields: [userId], references: [id], onDelete: Cascade)
   reconciled         Boolean      @default(false)
@@ -217,4 +228,42 @@ model Advertisement {
   @@index([isActive])
   @@index([position])
   @@map("advertisements")
+}
+
+model Gateway {
+  id          String   @id @default(cuid())
+  name        String   @unique // "asaas", "stripe", "mercadopago", "cora"
+  displayName String   // "Asaas", "Stripe", etc.
+  isEnabled   Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  @@map("gateways")
+}
+
+model Category {
+  id          String   @id @default(cuid())
+  name        String
+  type        String   // "income" ou "expense"
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  @@unique([userId, name, type])
+  @@index([userId])
+  @@map("categories")
+}
+
+model PaymentMethod {
+  id          String   @id @default(cuid())
+  name        String
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  @@unique([userId, name])
+  @@index([userId])
+  @@map("payment_methods")
 }

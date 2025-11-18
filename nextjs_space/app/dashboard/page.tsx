@@ -414,11 +414,14 @@ export default function DashboardPage() {
               <CardTitle className="flex items-center justify-between">
                 <span>Seu Plano: {planLimits.planName}</span>
                 {planLimits.planSlug !== "advanced" && (
-                  <Link href="/#oferta">
-                    <Button size="sm" variant="outline" className="border-indigo-300 text-indigo-700 hover:bg-indigo-100">
-                      Fazer Upgrade
-                    </Button>
-                  </Link>
+                  <Button 
+                    size="sm" 
+                    variant="outline" 
+                    className="border-indigo-300 text-indigo-700 hover:bg-indigo-100"
+                    onClick={() => setShowPlansModal(true)}
+                  >
+                    Fazer Upgrade
+                  </Button>
                 )}
               </CardTitle>
             </CardHeader>

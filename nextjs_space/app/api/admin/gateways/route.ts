@@ -4,8 +4,35 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { writeFileSync, readFileSync } from "fs";
 import { join } from "path";
+import prisma from "@/lib/db";
 
 export const dynamic = "force-dynamic";
+
+export async function GET(request: Request) {
+  try {
+    const session = await getServerSession(authOptions);
+
+    if (!session || session.user?.role !== "superadmin") {
+      return NextResponse.json(
+        { error: "Acesso não autorizado" },
+        { status: 401 }
+      );
+    }
+
+    // Buscar todos os gateways
+    const gateways = await prisma.gateway.findMany({
+      orderBy: { name: "asc" },
+    });
+
+    return NextResponse.json({ gateways });
+  } catch (error) {
+    console.error("Erro ao buscar gateways:", error);
+    return NextResponse.json(
+      { error: "Erro ao buscar gateways" },
+      { status: 500 }
+    );
+  }
+}
 
 export async function POST(request: Request) {
   try {

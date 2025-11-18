@@ -105,7 +105,7 @@ export default function TransactionsPage() {
     if (!confirm("Tem certeza que deseja excluir esta transação?")) return;
 
     try {
-      const response = await fetch(`/api/transactions?id=${id}`, {
+      const response = await fetch(`/api/transactions/${id}`, {
         method: "DELETE",
       });
 
@@ -113,9 +113,11 @@ export default function TransactionsPage() {
         toast.success("Transação excluída com sucesso!");
         fetchTransactions();
       } else {
-        toast.error("Erro ao excluir transação");
+        const data = await response.json();
+        toast.error(data.error || "Erro ao excluir transação");
       }
     } catch (error) {
+      console.error("Erro ao excluir:", error);
       toast.error("Erro ao excluir transação");
     }
   };

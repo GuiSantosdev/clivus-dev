@@ -14,6 +14,7 @@ import {
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import toast from "react-hot-toast";
 import {
@@ -51,6 +52,10 @@ export default function GatewaysManagementPage() {
   const [hasChanges, setHasChanges] = useState(false);
   const [showSecrets, setShowSecrets] = useState<Record<string, boolean>>({});
   const [gatewayValues, setGatewayValues] = useState<Record<string, string>>({});
+  const [gatewayStatuses, setGatewayStatuses] = useState<Record<string, boolean>>({
+    asaas: true,
+    stripe: true,
+  });
 
   const gateways: GatewayConfig[] = [
     {
@@ -119,8 +124,50 @@ export default function GatewaysManagementPage() {
         return;
       }
       checkGatewaysConfiguration();
+      fetchGatewayStatuses();
     }
   }, [status, session, router]);
+
+  const fetchGatewayStatuses = async () => {
+    try {
+      const response = await fetch("/api/admin/gateways");
+      if (response.ok) {
+        const data = await response.json();
+        const statuses: Record<string, boolean> = {};
+        data.gateways.forEach((gw: any) => {
+          statuses[gw.name] = gw.isEnabled;
+        });
+        setGatewayStatuses(statuses);
+      }
+    } catch (error) {
+      console.error("Erro ao buscar status dos gateways:", error);
+    }
+  };
+
+  const handleToggleGateway = async (gatewayName: string, currentStatus: boolean) => {
+    try {
+      const response = await fetch(`/api/admin/gateways/${gatewayName}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ isEnabled: !currentStatus }),
+      });
+
+      if (response.ok) {
+        setGatewayStatuses((prev) => ({
+          ...prev,
+          [gatewayName]: !currentStatus,
+        }));
+        toast.success(
+          `Gateway ${gatewayName} ${!currentStatus ? "habilitado" : "desabilitado"} com sucesso!`
+        );
+      } else {
+        toast.error("Erro ao atualizar status do gateway");
+      }
+    } catch (error) {
+      console.error("Erro ao atualizar gateway:", error);
+      toast.error("Erro ao atualizar status do gateway");
+    }
+  };
 
   const checkGatewaysConfiguration = () => {
     // Verificar quais gateways estão configurados
@@ -296,6 +343,27 @@ export default function GatewaysManagementPage() {
                       </CardTitle>
                       <CardDescription>{gateway.description}</CardDescription>
                     </div>
+                  </div>
+                  
+                  {/* Toggle para habilitar/desabilitar */}
+                  <div className="flex flex-col items-end gap-2">
+                    <div className="flex items-center gap-2">
+                      <Label htmlFor={`gateway-${gateway.name}-toggle`} className="text-sm font-medium">
+                        {gatewayStatuses[gateway.name] ? "Habilitado" : "Desabilitado"}
+                      </Label>
+                      <Switch
+                        id={`gateway-${gateway.name}-toggle`}
+                        checked={gatewayStatuses[gateway.name] !== false}
+                        onCheckedChange={() => 
+                          handleToggleGateway(gateway.name, gatewayStatuses[gateway.name] !== false)
+                        }
+                      />
+                    </div>
+                    {!gatewayStatuses[gateway.name] && (
+                      <span className="text-xs text-red-600 font-medium">
+                        Gateway desabilitado no checkout
+                      </span>
+                    )}
                   </div>
                 </div>
               </CardHeader>
