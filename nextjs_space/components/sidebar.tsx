@@ -47,7 +47,7 @@ interface MenuItem {
 const clientMenuItems: MenuItem[] = [
   {
     title: "Início",
-    href: "/",
+    href: "/dashboard",
     icon: Home,
   },
   {
@@ -123,7 +123,7 @@ const clientMenuItems: MenuItem[] = [
 const superAdminMenuItems: MenuItem[] = [
   {
     title: "Início",
-    href: "/",
+    href: "/admin",
     icon: Home,
   },
   {

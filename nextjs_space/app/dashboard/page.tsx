@@ -74,17 +74,32 @@ export default function DashboardPage() {
       fetchDashboardData();
       fetchPlanLimits();
       
+      // Não mostrar modal para SuperAdmin
+      if (session?.user?.role === "superadmin") {
+        return;
+      }
+      
       // Verificar se é o primeiro acesso do usuário
       const hasSeenModal = localStorage.getItem("hasSeenPlansModal");
       if (!hasSeenModal) {
-        // Mostrar modal após 1 segundo
-        setTimeout(() => {
-          setShowPlansModal(true);
+        // Mostrar modal após 1 segundo, mas verificar plano antes
+        setTimeout(async () => {
+          // Buscar plano do usuário
+          const limitsResponse = await fetch("/api/user/plan-limits");
+          if (limitsResponse.ok) {
+            const limitsData = await limitsResponse.json();
+            
+            // Não mostrar se já tem o plano mais caro (Avançado)
+            if (limitsData.planSlug !== "advanced") {
+              setShowPlansModal(true);
+            }
+          }
+          
           localStorage.setItem("hasSeenPlansModal", "true");
         }, 1000);
       }
     }
-  }, [status, router]);
+  }, [status, router, session]);
 
   const fetchDashboardData = async () => {
     try {
