@@ -27,6 +27,7 @@ import Link from "next/link";
 import toast from "react-hot-toast";
 import { ProtectedLayout } from "@/components/protected-layout";
 import { AdBanner } from "@/components/ads/ad-banner";
+import { PlansModal } from "@/components/plans-modal";
 
 interface DashboardStats {
   cpf: {
@@ -64,6 +65,7 @@ export default function DashboardPage() {
   const [stats, setStats] = useState<DashboardStats | null>(null);
   const [planLimits, setPlanLimits] = useState<PlanLimits | null>(null);
   const [loading, setLoading] = useState(true);
+  const [showPlansModal, setShowPlansModal] = useState(false);
 
   useEffect(() => {
     if (status === "unauthenticated") {
@@ -71,6 +73,16 @@ export default function DashboardPage() {
     } else if (status === "authenticated") {
       fetchDashboardData();
       fetchPlanLimits();
+      
+      // Verificar se é o primeiro acesso do usuário
+      const hasSeenModal = localStorage.getItem("hasSeenPlansModal");
+      if (!hasSeenModal) {
+        // Mostrar modal após 1 segundo
+        setTimeout(() => {
+          setShowPlansModal(true);
+          localStorage.setItem("hasSeenPlansModal", "true");
+        }, 1000);
+      }
     }
   }, [status, router]);
 
@@ -604,6 +616,12 @@ export default function DashboardPage() {
 
         {/* Anúncio Modal (Pop-up) */}
         <AdBanner position="modal" />
+
+        {/* Modal de Planos */}
+        <PlansModal 
+          show={showPlansModal} 
+          onClose={() => setShowPlansModal(false)} 
+        />
     </ProtectedLayout>
   );
 }
