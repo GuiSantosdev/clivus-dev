@@ -134,6 +134,7 @@ model Payment {
   currency        String   @default("brl")
   status          String // pending, completed, failed
   plan            String   @default("lifetime_97") // lifetime_97, basic, intermediate, advanced (slug)
+  gateway         String   @default("stripe") // stripe, asaas, mercadopago, cora
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
   user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)

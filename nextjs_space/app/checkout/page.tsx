@@ -29,6 +29,7 @@ export default function CheckoutPage() {
   const [loading, setLoading] = useState(false);
   const [plan, setPlan] = useState<Plan | null>(null);
   const [loadingPlan, setLoadingPlan] = useState(true);
+  const [gateway, setGateway] = useState<"asaas" | "stripe">("asaas"); // Default para Asaas
 
   const planSlug = searchParams.get("plan") || "basic";
 
@@ -78,6 +79,7 @@ export default function CheckoutPage() {
         },
         body: JSON.stringify({
           plan: plan.slug,
+          gateway: gateway,
           amount: plan.price,
         }),
       });
@@ -190,6 +192,50 @@ export default function CheckoutPage() {
                 </p>
               </CardHeader>
               <CardContent className="p-6">
+                {/* Seleção de Gateway de Pagamento */}
+                <div className="mb-6">
+                  <label className="block text-sm font-semibold text-gray-700 mb-3">
+                    Escolha a forma de pagamento:
+                  </label>
+                  <div className="grid grid-cols-2 gap-4">
+                    <button
+                      onClick={() => setGateway("asaas")}
+                      className={`p-4 rounded-lg border-2 transition-all duration-200 ${
+                        gateway === "asaas"
+                          ? "border-blue-600 bg-blue-50 shadow-md"
+                          : "border-gray-300 hover:border-gray-400"
+                      }`}
+                    >
+                      <div className="flex flex-col items-center">
+                        <div className="text-2xl font-bold text-blue-600 mb-1">
+                          Asaas
+                        </div>
+                        <div className="text-xs text-gray-600">
+                          PIX • Boleto • Cartão
+                        </div>
+                      </div>
+                    </button>
+
+                    <button
+                      onClick={() => setGateway("stripe")}
+                      className={`p-4 rounded-lg border-2 transition-all duration-200 ${
+                        gateway === "stripe"
+                          ? "border-purple-600 bg-purple-50 shadow-md"
+                          : "border-gray-300 hover:border-gray-400"
+                      }`}
+                    >
+                      <div className="flex flex-col items-center">
+                        <div className="text-2xl font-bold text-purple-600 mb-1">
+                          Stripe
+                        </div>
+                        <div className="text-xs text-gray-600">
+                          Cartão de Crédito
+                        </div>
+                      </div>
+                    </button>
+                  </div>
+                </div>
+
                 <Button
                   onClick={handleCheckout}
                   disabled={loading}
@@ -208,7 +254,7 @@ export default function CheckoutPage() {
                 <div className="mt-6 space-y-3">
                   <div className="flex items-center justify-center space-x-2 text-sm text-gray-600">
                     <Check className="h-4 w-4 text-green-600" />
-                    <span>Pagamento 100% seguro via Stripe</span>
+                    <span>Pagamento 100% seguro via {gateway === "asaas" ? "Asaas" : "Stripe"}</span>
                   </div>
                   <div className="flex items-center justify-center space-x-2 text-sm text-gray-600">
                     <Check className="h-4 w-4 text-green-600" />
