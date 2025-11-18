@@ -47,6 +47,8 @@ export default function GatewaysManagementPage() {
   const { data: session, status } = useSession();
   const router = useRouter();
   const [loading, setLoading] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const [hasChanges, setHasChanges] = useState(false);
   const [showSecrets, setShowSecrets] = useState<Record<string, boolean>>({});
   const [gatewayValues, setGatewayValues] = useState<Record<string, string>>({});
 
@@ -136,22 +138,58 @@ export default function GatewaysManagementPage() {
     try {
       setLoading(true);
       
-      toast(
-        "⚠️ Para salvar as configurações dos gateways, você precisa:\n\n" +
-        "1. Editar manualmente o arquivo .env no servidor\n" +
-        "2. Adicionar as variáveis de ambiente corretas\n" +
-        "3. Reiniciar o servidor Next.js\n\n" +
-        "Exemplo:\n" +
-        "ASAAS_API_KEY=\"$aact_...\"\n" +
-        "STRIPE_SECRET_KEY=\"sk_...\"\n\n" +
-        "Consulte a documentação ADMIN_SETUP.md para mais detalhes.",
+      // Obter gateway específico
+      const gateway = gateways.find(g => g.name === gatewayName);
+      if (!gateway) {
+        toast.error("Gateway não encontrado");
+        return;
+      }
+
+      // Preparar variáveis para salvar
+      const envVars: { [key: string]: string } = {};
+      
+      gateway.fields.forEach((field) => {
+        const value = gatewayValues[field.envVar];
+        if (value && value.trim()) {
+          envVars[field.envVar] = value.trim();
+        }
+      });
+
+      if (Object.keys(envVars).length === 0) {
+        toast.error("Preencha pelo menos um campo antes de salvar");
+        return;
+      }
+
+      // Salvar no servidor
+      const response = await fetch("/api/admin/gateways", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ envVars }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || "Erro ao salvar");
+      }
+
+      toast.success(
+        `✅ ${data.message}\n\n⚠️ IMPORTANTE: Reinicie o servidor para aplicar as mudanças:\n\n` +
+        `pkill -f "next dev"\ncd /home/ubuntu/clivus_landing_page/nextjs_space\nyarn dev`,
         { 
-          duration: 8000,
-          icon: "⚠️",
+          duration: 10000,
         }
       );
 
+      setHasChanges(false);
+      
+      // Recarregar após 2 segundos
+      setTimeout(() => {
+        window.location.reload();
+      }, 2000);
+
     } catch (error: any) {
+      console.error("Erro ao salvar:", error);
       toast.error(error.message || "Erro ao salvar configuração");
     } finally {
       setLoading(false);
@@ -163,6 +201,14 @@ export default function GatewaysManagementPage() {
       ...prev,
       [fieldKey]: !prev[fieldKey],
     }));
+  };
+
+  const handleValueChange = (envVar: string, value: string) => {
+    setGatewayValues((prev) => ({
+      ...prev,
+      [envVar]: value,
+    }));
+    setHasChanges(true);
   };
 
   const handleCopyWebhook = (url?: string) => {
@@ -296,13 +342,8 @@ export default function GatewaysManagementPage() {
                                 : "text"
                             }
                             placeholder={field.placeholder}
-                            value={gatewayValues[`${gateway.name}-${field.key}`] || ""}
-                            onChange={(e) =>
-                              setGatewayValues((prev) => ({
-                                ...prev,
-                                [`${gateway.name}-${field.key}`]: e.target.value,
-                              }))
-                            }
+                            value={gatewayValues[field.envVar] || ""}
+                            onChange={(e) => handleValueChange(field.envVar, e.target.value)}
                           />
                           {field.type === "password" && (
                             <button
@@ -332,11 +373,11 @@ export default function GatewaysManagementPage() {
                 <div className="flex gap-3 pt-4 border-t border-gray-200">
                   <Button
                     onClick={() => handleSaveConfiguration(gateway.name)}
-                    disabled={loading}
-                    className="gap-2"
+                    disabled={loading || saving}
+                    className="gap-2 bg-green-600 hover:bg-green-700 text-white"
                   >
                     <Save className="w-4 h-4" />
-                    Ver Instruções
+                    {loading || saving ? "Salvando..." : "Salvar Configurações"}
                   </Button>
                   
                   {gateway.name === "asaas" && (
