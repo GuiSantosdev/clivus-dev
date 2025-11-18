@@ -65,12 +65,21 @@ export async function POST(request: Request) {
     // Processar com Asaas (padrão)
     if (gateway === "asaas") {
       // Verificar se Asaas está configurado
+      console.log("🔑 Verificando token Asaas...");
+      console.log("Token presente?", !!process.env.ASAAS_API_KEY);
+      
       if (!process.env.ASAAS_API_KEY) {
+        console.error("❌ Token Asaas não configurado!");
         return NextResponse.json(
-          { error: "Sistema de pagamento Asaas não configurado." },
+          { 
+            error: "Sistema de pagamento Asaas não configurado. Entre em contato com o suporte.",
+            details: "Variável ASAAS_API_KEY não encontrada"
+          },
           { status: 503 }
         );
       }
+      
+      console.log("✅ Token Asaas encontrado!");
 
       // Criar ou buscar cliente no Asaas
       const asaasCustomerId = await createOrGetAsaasCustomer({

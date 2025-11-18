@@ -68,7 +68,7 @@ export function PlansModal({ show, onClose }: PlansModalProps) {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in">
-      <div className="relative w-full max-w-5xl max-h-[90vh] overflow-y-auto bg-white rounded-2xl shadow-2xl animate-in zoom-in-95 duration-300">
+      <div className="relative w-full max-w-6xl max-h-[90vh] overflow-y-auto bg-white rounded-2xl shadow-2xl animate-in zoom-in-95 duration-300">
         {/* Botão Fechar */}
         <button
           onClick={onClose}
@@ -78,16 +78,20 @@ export function PlansModal({ show, onClose }: PlansModalProps) {
         </button>
 
         {/* Header */}
-        <div className="p-8 text-center border-b border-gray-200">
-          <div className="inline-flex items-center justify-center w-16 h-16 mb-4 rounded-full bg-gradient-to-br from-blue-500 to-purple-600">
+        <div className="p-8 text-center border-b border-gray-200 bg-gradient-to-br from-blue-50 to-purple-50">
+          <div className="inline-flex items-center justify-center w-16 h-16 mb-4 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 shadow-lg">
             <Sparkles className="w-8 h-8 text-white" />
           </div>
-          <h2 className="text-3xl font-bold text-gray-900 mb-2">
-            Escolha Seu Plano Ideal
+          <h2 className="text-4xl font-bold text-gray-900 mb-3">
+            🎉 Escolha Seu Plano Ideal
           </h2>
-          <p className="text-gray-600 max-w-2xl mx-auto">
+          <p className="text-lg text-gray-700 max-w-2xl mx-auto mb-4">
             Desbloqueie todo o potencial do Clivus e separe suas finanças de forma profissional
           </p>
+          <div className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-full text-sm font-semibold">
+            <Sparkles className="w-4 h-4" />
+            <span>{plans.length} Planos Disponíveis • Escolha o melhor para você</span>
+          </div>
         </div>
 
         {/* Planos */}
