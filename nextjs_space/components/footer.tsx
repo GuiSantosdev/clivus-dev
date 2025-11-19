@@ -1,150 +1,80 @@
-
-import { Mail, Phone, MapPin, Facebook, Instagram, Linkedin } from "lucide-react";
+import Link from "next/link";
 import Image from "next/image";
 
 export function Footer() {
-  const currentYear = new Date().getFullYear();
-
   return (
-    <footer className="bg-gray-900 text-white pt-16 pb-8">
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-6xl">
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
-          <div className="space-y-6">
-            <div>
+    <footer className="bg-gray-900 text-white pt-12 pb-6">
+      <div className="container mx-auto px-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
+          {/* Logo and Description */}
+          <div>
+            <div className="mb-4">
               <Image
                 src="/logo-clivus.png"
                 alt="Clivus"
-                width={200}
-                height={80}
-                className="brightness-0 invert"
+                width={150}
+                height={64}
+                className="h-12 w-auto brightness-0 invert"
               />
             </div>
-            <p className="text-gray-300 leading-relaxed">
-              A ferramenta completa para separar suas finanças pessoais das 
-              empresariais e ter total controle sobre seu dinheiro.
+            <p className="text-gray-400 text-sm">
+              A ferramenta completa para separar suas finanças pessoais das empresariais e ter total controle sobre seu dinheiro.
             </p>
-            <div className="flex space-x-4">
-              <a href="#" className="text-gray-400 hover:text-white transition-colors">
-                <Facebook className="h-5 w-5" />
-              </a>
-              <a href="#" className="text-gray-400 hover:text-white transition-colors">
-                <Instagram className="h-5 w-5" />
-              </a>
-              <a href="#" className="text-gray-400 hover:text-white transition-colors">
-                <Linkedin className="h-5 w-5" />
-              </a>
-            </div>
           </div>
 
+          {/* Produto */}
           <div>
-            <h3 className="text-lg font-semibold mb-6">Produto</h3>
-            <ul className="space-y-3">
+            <h4 className="text-lg font-semibold mb-4">Produto</h4>
+            <ul className="space-y-2 text-sm text-gray-400">
               <li>
-                <a href="#" className="text-gray-300 hover:text-white transition-colors">
+                <Link href="/#funcionalidades" className="hover:text-white transition-colors">
                   Funcionalidades
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="#" className="text-gray-300 hover:text-white transition-colors">
+                <Link href="/pricing" className="hover:text-white transition-colors">
                   Preços
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="#" className="text-gray-300 hover:text-white transition-colors">
+                <Link href="/#depoimentos" className="hover:text-white transition-colors">
                   Depoimentos
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="#" className="text-gray-300 hover:text-white transition-colors">
+                <Link href="/#faq" className="hover:text-white transition-colors">
                   FAQ
-                </a>
+                </Link>
               </li>
             </ul>
           </div>
+        </div>
 
-          <div>
-            <h3 className="text-lg font-semibold mb-6">Suporte</h3>
-            <ul className="space-y-3">
-              <li>
-                <a href="#" className="text-gray-300 hover:text-white transition-colors">
-                  Central de Ajuda
-                </a>
-              </li>
-              <li>
-                <a href="#" className="text-gray-300 hover:text-white transition-colors">
-                  Tutoriais
-                </a>
-              </li>
-              <li>
-                <a href="#" className="text-gray-300 hover:text-white transition-colors">
-                  Contato
-                </a>
-              </li>
-              <li>
-                <a href="#" className="text-gray-300 hover:text-white transition-colors">
-                  Status do Sistema
-                </a>
-              </li>
-            </ul>
-          </div>
-
-          <div>
-            <h3 className="text-lg font-semibold mb-6">Contato</h3>
-            <div className="space-y-4">
-              <div className="flex items-start space-x-3">
-                <Mail className="h-5 w-5 text-blue-400 mt-0.5" />
-                <div>
-                  <p className="text-gray-300">contato@clivus.com.br</p>
-                  <p className="text-sm text-gray-400">Suporte por email</p>
-                </div>
-              </div>
-              <div className="flex items-start space-x-3">
-                <Phone className="h-5 w-5 text-blue-400 mt-0.5" />
-                <div>
-                  <p className="text-gray-300">(11) 9999-9999</p>
-                  <p className="text-sm text-gray-400">Seg-Sex, 9h às 18h</p>
-                </div>
-              </div>
-              <div className="flex items-start space-x-3">
-                <MapPin className="h-5 w-5 text-blue-400 mt-0.5" />
-                <div>
-                  <p className="text-gray-300">São Paulo, SP</p>
-                  <p className="text-sm text-gray-400">Brasil</p>
-                </div>
-              </div>
+        {/* Bottom Bar */}
+        <div className="pt-6 border-t border-gray-800">
+          <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
+            <p className="text-sm text-gray-400">
+              © 2025 Clivus. Todos os direitos reservados.
+            </p>
+            <div className="flex space-x-6 text-sm text-gray-400">
+              <Link href="/politica-privacidade" className="hover:text-white transition-colors">
+                Política de Privacidade
+              </Link>
+              <Link href="/termos-uso" className="hover:text-white transition-colors">
+                Termos de Uso
+              </Link>
+              <Link href="/cookies" className="hover:text-white transition-colors">
+                Cookies
+              </Link>
             </div>
           </div>
         </div>
 
-        <div className="border-t border-gray-800 pt-8">
-          <div className="grid md:grid-cols-2 gap-4 items-center">
-            <div className="text-center md:text-left">
-              <p className="text-gray-400 text-sm">
-                © {currentYear} Clivus. Todos os direitos reservados.
-              </p>
-            </div>
-            <div className="text-center md:text-right">
-              <div className="flex flex-wrap justify-center md:justify-end space-x-6">
-                <a href="#" className="text-gray-400 hover:text-white text-sm transition-colors">
-                  Política de Privacidade
-                </a>
-                <a href="#" className="text-gray-400 hover:text-white text-sm transition-colors">
-                  Termos de Uso
-                </a>
-                <a href="#" className="text-gray-400 hover:text-white text-sm transition-colors">
-                  Cookies
-                </a>
-              </div>
-            </div>
-          </div>
-          
-          <div className="mt-6 text-center">
-            <p className="text-xs text-gray-500">
-              CNPJ: 00.000.000/0001-00 | Este site não faz parte do Facebook ou de qualquer 
-              empresa do grupo Meta. Além disso, este site NÃO é endossado pelo Facebook 
-              de forma alguma. FACEBOOK é uma marca comercial da Meta Platforms, Inc.
-            </p>
-          </div>
+        {/* Meta Disclaimer */}
+        <div className="mt-6 pt-6 border-t border-gray-800">
+          <p className="text-xs text-gray-500 text-center">
+            CNPJ: 39.956.528/0001-74 | Este site não faz parte do Facebook ou do qualquer empresa do grupo Meta. Além disso, este site NÃO é endossado pelo Facebook de forma alguma. FACEBOOK é uma marca comercial da Meta Platforms, Inc.
+          </p>
         </div>
       </div>
     </footer>

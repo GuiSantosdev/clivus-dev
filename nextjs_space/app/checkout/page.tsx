@@ -30,6 +30,7 @@ export default function CheckoutPage() {
   const [plan, setPlan] = useState<Plan | null>(null);
   const [loadingPlan, setLoadingPlan] = useState(true);
   const [gateway, setGateway] = useState<"asaas" | "stripe">("asaas"); // Default para Asaas
+  const [activeGateways, setActiveGateways] = useState<Array<{name: string; displayName: string}>>([]);
 
   const planSlug = searchParams.get("plan") || "basic";
 
@@ -38,8 +39,29 @@ export default function CheckoutPage() {
       router.push("/login");
     } else if (status === "authenticated") {
       fetchPlan();
+      fetchActiveGateways();
     }
   }, [status, router, planSlug]);
+
+  const fetchActiveGateways = async () => {
+    try {
+      const response = await fetch("/api/gateways/active");
+      if (response.ok) {
+        const gateways = await response.json();
+        setActiveGateways(gateways);
+        
+        // Definir gateway padrão baseado nos gateways ativos
+        if (gateways.length > 0) {
+          const firstGateway = gateways[0].name.toLowerCase();
+          if (firstGateway === "asaas" || firstGateway === "stripe") {
+            setGateway(firstGateway as "asaas" | "stripe");
+          }
+        }
+      }
+    } catch (error) {
+      console.error("Error fetching active gateways:", error);
+    }
+  };
 
   const fetchPlan = async () => {
     try {
@@ -193,48 +215,55 @@ export default function CheckoutPage() {
               </CardHeader>
               <CardContent className="p-6">
                 {/* Seleção de Gateway de Pagamento */}
-                <div className="mb-6">
-                  <label className="block text-sm font-semibold text-gray-700 mb-3">
-                    Escolha a forma de pagamento:
-                  </label>
-                  <div className="grid grid-cols-2 gap-4">
-                    <button
-                      onClick={() => setGateway("asaas")}
-                      className={`p-4 rounded-lg border-2 transition-all duration-200 ${
-                        gateway === "asaas"
-                          ? "border-blue-600 bg-blue-50 shadow-md"
-                          : "border-gray-300 hover:border-gray-400"
-                      }`}
-                    >
-                      <div className="flex flex-col items-center">
-                        <div className="text-2xl font-bold text-blue-600 mb-1">
-                          Asaas
-                        </div>
-                        <div className="text-xs text-gray-600">
-                          PIX • Boleto • Cartão
-                        </div>
-                      </div>
-                    </button>
-
-                    <button
-                      onClick={() => setGateway("stripe")}
-                      className={`p-4 rounded-lg border-2 transition-all duration-200 ${
-                        gateway === "stripe"
-                          ? "border-purple-600 bg-purple-50 shadow-md"
-                          : "border-gray-300 hover:border-gray-400"
-                      }`}
-                    >
-                      <div className="flex flex-col items-center">
-                        <div className="text-2xl font-bold text-purple-600 mb-1">
-                          Stripe
-                        </div>
-                        <div className="text-xs text-gray-600">
-                          Cartão de Crédito
-                        </div>
-                      </div>
-                    </button>
+                {activeGateways.length > 0 && (
+                  <div className="mb-6">
+                    <label className="block text-sm font-semibold text-gray-700 mb-3">
+                      Escolha a forma de pagamento:
+                    </label>
+                    <div className={activeGateways.length === 1 ? "grid grid-cols-1 gap-4" : "grid grid-cols-2 gap-4"}>
+                      {activeGateways.map((gw) => {
+                        const isAsaas = gw.name.toLowerCase() === "asaas";
+                        const isStripe = gw.name.toLowerCase() === "stripe";
+                        const gwName = gw.name.toLowerCase() as "asaas" | "stripe";
+                        
+                        if (!isAsaas && !isStripe) return null;
+                        
+                        return (
+                          <button
+                            key={gw.name}
+                            onClick={() => setGateway(gwName)}
+                            className={`p-4 rounded-lg border-2 transition-all duration-200 ${
+                              gateway === gwName
+                                ? isAsaas 
+                                  ? "border-blue-600 bg-blue-50 shadow-md"
+                                  : "border-purple-600 bg-purple-50 shadow-md"
+                                : "border-gray-300 hover:border-gray-400"
+                            }`}
+                          >
+                            <div className="flex flex-col items-center">
+                              <div className={`text-2xl font-bold mb-1 ${
+                                isAsaas ? "text-blue-600" : "text-purple-600"
+                              }`}>
+                                {gw.displayName}
+                              </div>
+                              <div className="text-xs text-gray-600">
+                                {isAsaas ? "PIX • Boleto • Cartão" : "Cartão de Crédito"}
+                              </div>
+                            </div>
+                          </button>
+                        );
+                      })}
+                    </div>
                   </div>
-                </div>
+                )}
+
+                {activeGateways.length === 0 && (
+                  <div className="mb-6 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
+                    <p className="text-sm text-yellow-800">
+                      ⚠️ Nenhum gateway de pagamento está configurado no momento. Entre em contato com o suporte.
+                    </p>
+                  </div>
+                )}
 
                 <Button
                   onClick={handleCheckout}
