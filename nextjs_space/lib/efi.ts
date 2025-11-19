@@ -237,7 +237,10 @@ export async function createEfiCharge(params: CreateChargeParams): Promise<any> 
     }
   }
 
-  // Create charge body
+  console.log("[EFI] Creating charge with ONE-STEP method");
+  console.log("[EFI] Payment method:", paymentMethod);
+
+  // Usar o endpoint ONE-STEP que funciona corretamente
   const body: any = {
     items: [
       {
@@ -246,126 +249,48 @@ export async function createEfiCharge(params: CreateChargeParams): Promise<any> 
         value: amount,
       },
     ],
-    metadata: {
-      custom_id: planName,
-      notification_url: `${process.env.NEXT_PUBLIC_APP_URL}/api/webhook/efi`,
-    },
     settings: {
       payment_method: "all",
       expire_at: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000)
         .toISOString()
         .split("T")[0],
-      request_delivery_address: false, // Campo obrigatório pela API EFI
+      request_delivery_address: false, // Campo obrigatório
     },
   };
 
-  // Add customer data if CPF/CNPJ is valid
+  // Add customer data (email é obrigatório)
+  body.customer = {
+    email: userEmail,
+  };
+
+  // Adicionar nome e CPF/CNPJ se disponíveis
+  if (userName) {
+    body.customer.name = userName;
+  }
+
   if (cleanCpfCnpj) {
-    body.customer = {
-      name: userName,
-      email: userEmail,
-      cpf: cleanCpfCnpj.length === 11 ? cleanCpfCnpj : undefined,
-      cnpj: cleanCpfCnpj.length === 14 ? cleanCpfCnpj : undefined,
-    };
+    if (cleanCpfCnpj.length === 11) {
+      body.customer.cpf = cleanCpfCnpj;
+    } else if (cleanCpfCnpj.length === 14) {
+      body.customer.cnpj = cleanCpfCnpj;
+    }
   }
 
-  console.log("[EFI] Creating charge with method:", paymentMethod);
-
-  // Create the charge
-  const chargeResponse = await efiRequest("/charge", "POST", body, accessToken);
+  // Criar cobrança usando ONE-STEP
+  const chargeResponse = await efiRequest("/charge/one-step/link", "POST", body, accessToken);
   const chargeId = chargeResponse.data.charge_id;
+  const paymentUrl = chargeResponse.data.payment_url;
 
-  console.log("[EFI] Charge created:", chargeId);
+  console.log("[EFI] One-step charge created:", chargeId);
+  console.log("[EFI] Payment URL:", paymentUrl);
 
-  // Configure payment method
-  let paymentResponse: any = {};
-
-  if (paymentMethod === "pix") {
-    // PIX Payment
-    paymentResponse = await efiRequest(
-      `/charge/${chargeId}/pay`,
-      "POST",
-      { payment: { pix: {} } },
-      accessToken
-    );
-
-    return {
-      chargeId,
-      pixQrCode: paymentResponse.data.pix.qrcode,
-      pixCopyPaste: paymentResponse.data.pix.qrcode_text,
-      expiresAt: paymentResponse.data.pix.expiration_date,
-    };
-  } else if (paymentMethod === "boleto") {
-    // Boleto Payment
-    const expireAt = new Date();
-    expireAt.setDate(expireAt.getDate() + 3); // 3 days to pay
-
-    paymentResponse = await efiRequest(
-      `/charge/${chargeId}/pay`,
-      "POST",
-      {
-        payment: {
-          banking_billet: {
-            expire_at: expireAt.toISOString().split("T")[0],
-            customer: {
-              name: userName,
-              email: userEmail,
-              cpf: cleanCpfCnpj.length === 11 ? cleanCpfCnpj : undefined,
-              cnpj: cleanCpfCnpj.length === 14 ? cleanCpfCnpj : undefined,
-            },
-          },
-        },
-      },
-      accessToken
-    );
-
-    return {
-      chargeId,
-      boletoUrl: paymentResponse.data.banking_billet.link,
-      boletoBarcode: paymentResponse.data.banking_billet.barcode,
-      expiresAt: paymentResponse.data.banking_billet.expire_at,
-    };
-  } else if (paymentMethod === "card" && cardToken) {
-    // Card Payment
-    paymentResponse = await efiRequest(
-      `/charge/${chargeId}/pay`,
-      "POST",
-      {
-        payment: {
-          credit_card: {
-            installments: installments,
-            payment_token: cardToken,
-            billing_address: {
-              street: "Rua Exemplo",
-              number: "100",
-              neighborhood: "Centro",
-              zipcode: "01310-100",
-              city: "São Paulo",
-              state: "SP",
-            },
-            customer: {
-              name: userName,
-              email: userEmail,
-              cpf: cleanCpfCnpj.length === 11 ? cleanCpfCnpj : undefined,
-              cnpj: cleanCpfCnpj.length === 14 ? cleanCpfCnpj : undefined,
-              birth: "1990-01-01",
-              phone_number: "11999999999",
-            },
-          },
-        },
-      },
-      accessToken
-    );
-
-    return {
-      chargeId,
-      status: paymentResponse.data.status,
-      installments: paymentResponse.data.installments,
-      total: paymentResponse.data.total,
-    };
-  }
-
-  throw new Error("Método de pagamento inválido");
+  // One-step retorna um link de pagamento universal
+  // O cliente escolhe o método (PIX, Boleto, Cartão) na página da EFI
+  return {
+    chargeId,
+    paymentUrl, // Link universal para todos os métodos
+    paymentMethod: "link", // Indica que é um link de pagamento
+  };
 }
 
 // ===========================

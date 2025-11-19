@@ -558,48 +558,13 @@ export async function POST(request: Request) {
         });
         console.log("✅ [Checkout API] Pagamento atualizado com sucesso!");
 
-        // Preparar dados de resposta com base no método de pagamento
-        let responseData: any = {
+        // EFI One-Step retorna um link universal de pagamento
+        const responseData: any = {
           gateway: "efi",
           paymentId: payment.id,
           chargeId: charge.chargeId,
+          url: charge.paymentUrl, // Link universal da EFI para todos os métodos
         };
-
-        // Se for PIX, incluir QR Code
-        if (paymentMethod === "pix" && charge.pixQrCode) {
-          responseData.pixData = {
-            qrCode: charge.pixQrCode,
-            copyPaste: charge.pixCopyPaste,
-            expiresAt: charge.expiresAt,
-          };
-          console.log("✅ [Checkout API] PIX QR Code gerado (EFI)");
-        }
-
-        // Se for boleto, incluir URL e código de barras
-        if (paymentMethod === "boleto" && charge.boletoUrl) {
-          responseData.boletoData = {
-            url: charge.boletoUrl,
-            barcode: charge.boletoBarcode,
-            expiresAt: charge.expiresAt,
-          };
-          responseData.url = charge.boletoUrl; // URL do boleto para redirecionamento
-          console.log("✅ [Checkout API] Boleto gerado (EFI)");
-        }
-
-        // Se for cartão, incluir status da transação
-        if (paymentMethod === "card" && charge.status) {
-          responseData.cardData = {
-            status: charge.status,
-            installments: charge.installments,
-            total: charge.total,
-          };
-          
-          // Se aprovado, redirecionar para dashboard
-          if (charge.status === "paid") {
-            responseData.url = `${origin}/dashboard?payment=success`;
-          }
-          console.log("✅ [Checkout API] Transação de cartão processada (EFI)");
-        }
 
         console.log("🎉 [Checkout API] Checkout concluído com sucesso (EFI)!");
         return NextResponse.json(responseData);
