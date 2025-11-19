@@ -230,10 +230,10 @@ export default function GatewaysManagementPage() {
     }
   }, [status, session, router]);
 
-  // Re-verificar configuração quando gatewayStatuses ou gatewayValues mudarem
+  // Re-verificar configuração quando gatewayStatuses mudar
   useEffect(() => {
     checkGatewaysConfiguration();
-  }, [gatewayStatuses, gatewayValues]);
+  }, [gatewayStatuses]);
 
   const fetchGatewayStatuses = async () => {
     try {
@@ -282,18 +282,10 @@ export default function GatewaysManagementPage() {
       // Se o gateway está HABILITADO no banco de dados, significa que foi configurado
       const isEnabled = gatewayStatuses[gateway.name];
       
-      // Ou se todos os campos do formulário estão preenchidos
-      const allFieldsFilled = gateway.fields.every((field) => {
-        const value = gatewayValues[field.envVar];
-        return value && value.trim() !== "" && !value.includes("...") && !value.includes("YOUR_") && !value.includes("your_");
-      });
-      
-      // Gateway está configurado se está habilitado OU se todos os campos estão preenchidos
-      if (isEnabled || allFieldsFilled) {
-        gateway.isConfigured = true;
-      } else {
-        gateway.isConfigured = false;
-      }
+      // Gateway está configurado se está habilitado (toggle verde)
+      // Não verificamos os campos do formulário porque as credenciais 
+      // estão no .env do servidor e não são expostas ao cliente
+      gateway.isConfigured = isEnabled === true;
     });
   };
 
