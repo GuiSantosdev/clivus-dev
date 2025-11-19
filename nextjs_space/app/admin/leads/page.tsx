@@ -8,6 +8,8 @@ import Link from "next/link";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Label } from "@/components/ui/label";
 import { toast } from "react-hot-toast";
 import {
   Users,
@@ -21,7 +23,14 @@ import {
   UserPlus,
   Clock,
   AlertCircle,
+  ArrowLeft,
+  Download,
+  FileText,
+  FileSpreadsheet,
 } from "lucide-react";
+import * as XLSX from "xlsx";
+import jsPDF from "jspdf";
+import autoTable from "jspdf-autotable";
 
 interface Lead {
   id: string;
@@ -61,8 +70,12 @@ export default function LeadsManagementPage() {
     paymentPending: 0,
   });
   const [searchTerm, setSearchTerm] = useState("");
-  const [filterStatus, setFilterStatus] = useState("all");
+  const [filterStatus, setFilterStatus] = useState<string[]>([]);
+  const [filterSource, setFilterSource] = useState<string[]>([]);
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
   const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [showFilters, setShowFilters] = useState(false);
 
   useEffect(() => {
     if (status === "unauthenticated") {
@@ -101,15 +114,32 @@ export default function LeadsManagementPage() {
     // Aplicar filtros
     let result = [...leads];
 
-    // Filtro por status
-    if (filterStatus !== "all") {
+    // Filtro por status (múltiplos)
+    if (filterStatus.length > 0) {
       result = result.filter((lead) => {
-        if (filterStatus === "novo") return lead.status === "novo";
-        if (filterStatus === "registered") return lead.status === "registered";
-        if (filterStatus === "checkout_started") return lead.lastCheckoutAttempt;
-        if (filterStatus === "payment_pending") return lead.status === "payment_pending";
-        return true;
+        if (filterStatus.includes("novo") && lead.status === "novo") return true;
+        if (filterStatus.includes("registered") && lead.status === "registered") return true;
+        if (filterStatus.includes("checkout_started") && lead.lastCheckoutAttempt) return true;
+        if (filterStatus.includes("payment_pending") && lead.status === "payment_pending") return true;
+        return false;
       });
+    }
+
+    // Filtro por origem (múltiplos)
+    if (filterSource.length > 0) {
+      result = result.filter((lead) => filterSource.includes(lead.source));
+    }
+
+    // Filtro por data
+    if (startDate) {
+      result = result.filter(
+        (lead) => new Date(lead.createdAt) >= new Date(startDate)
+      );
+    }
+    if (endDate) {
+      result = result.filter(
+        (lead) => new Date(lead.createdAt) <= new Date(endDate)
+      );
     }
 
     // Filtro por busca
@@ -122,7 +152,7 @@ export default function LeadsManagementPage() {
     }
 
     setFilteredLeads(result);
-  }, [searchTerm, filterStatus, leads]);
+  }, [searchTerm, filterStatus, filterSource, startDate, endDate, leads]);
 
   const handleDelete = async (id: string, type: string) => {
     if (!confirm("Tem certeza que deseja excluir este lead? Esta ação não pode ser desfeita.")) {
@@ -146,6 +176,123 @@ export default function LeadsManagementPage() {
       toast.error("Erro ao excluir lead");
     } finally {
       setDeletingId(null);
+    }
+  };
+
+  const handleToggleStatus = (status: string) => {
+    setFilterStatus((prev) =>
+      prev.includes(status) ? prev.filter((s) => s !== status) : [...prev, status]
+    );
+  };
+
+  const handleToggleSource = (source: string) => {
+    setFilterSource((prev) =>
+      prev.includes(source) ? prev.filter((s) => s !== source) : [...prev, source]
+    );
+  };
+
+  const exportToCSV = () => {
+    try {
+      const headers = ["Nome", "Email", "CPF/CNPJ", "Origem", "Status", "Cadastro", "Último Checkout"];
+      const data = filteredLeads.map((lead) => [
+        lead.name,
+        lead.email,
+        lead.cpf || lead.cnpj || "-",
+        lead.source === "landing_page" ? "Landing Page" : "Cadastro Completo",
+        lead.status,
+        new Date(lead.createdAt).toLocaleDateString("pt-BR"),
+        lead.lastCheckoutAttempt
+          ? new Date(lead.lastCheckoutAttempt).toLocaleDateString("pt-BR")
+          : "-",
+      ]);
+
+      const csvContent =
+        "data:text/csv;charset=utf-8," +
+        [headers.join(","), ...data.map((row) => row.join(","))].join("\n");
+
+      const encodedUri = encodeURI(csvContent);
+      const link = document.createElement("a");
+      link.setAttribute("href", encodedUri);
+      link.setAttribute("download", `leads_${new Date().toISOString().split("T")[0]}.csv`);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+
+      toast.success("CSV exportado com sucesso!");
+    } catch (error) {
+      console.error("Erro ao exportar CSV:", error);
+      toast.error("Erro ao exportar CSV");
+    }
+  };
+
+  const exportToXLSX = () => {
+    try {
+      const data = filteredLeads.map((lead) => ({
+        Nome: lead.name,
+        Email: lead.email,
+        "CPF/CNPJ": lead.cpf || lead.cnpj || "-",
+        Origem: lead.source === "landing_page" ? "Landing Page" : "Cadastro Completo",
+        Status: lead.status,
+        Cadastro: new Date(lead.createdAt).toLocaleDateString("pt-BR"),
+        "Último Checkout": lead.lastCheckoutAttempt
+          ? new Date(lead.lastCheckoutAttempt).toLocaleDateString("pt-BR")
+          : "-",
+      }));
+
+      const ws = XLSX.utils.json_to_sheet(data);
+      const wb = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, ws, "Leads");
+      XLSX.writeFile(wb, `leads_${new Date().toISOString().split("T")[0]}.xlsx`);
+
+      toast.success("XLSX exportado com sucesso!");
+    } catch (error) {
+      console.error("Erro ao exportar XLSX:", error);
+      toast.error("Erro ao exportar XLSX");
+    }
+  };
+
+  const exportToPDF = () => {
+    try {
+      const doc = new jsPDF();
+
+      // Título
+      doc.setFontSize(18);
+      doc.text("Relatório de Leads & Remarketing", 14, 20);
+
+      // Data
+      doc.setFontSize(11);
+      doc.text(`Data: ${new Date().toLocaleDateString("pt-BR")}`, 14, 30);
+
+      // Estatísticas
+      doc.text(`Total de Leads: ${stats.totalLeads}`, 14, 40);
+      doc.text(`Landing Page: ${stats.landingPageLeads}`, 14, 46);
+      doc.text(`Cadastrados: ${stats.registeredUsers}`, 14, 52);
+      doc.text(`Checkout Iniciado: ${stats.checkoutStarted}`, 14, 58);
+      doc.text(`Pagamento Pendente: ${stats.paymentPending}`, 14, 64);
+
+      // Tabela
+      const tableData = filteredLeads.map((lead) => [
+        lead.name,
+        lead.email,
+        lead.source === "landing_page" ? "Landing" : "Cadastro",
+        lead.status,
+        new Date(lead.createdAt).toLocaleDateString("pt-BR"),
+      ]);
+
+      autoTable(doc, {
+        startY: 75,
+        head: [["Nome", "Email", "Origem", "Status", "Cadastro"]],
+        body: tableData,
+        styles: { fontSize: 8 },
+        headStyles: { fillColor: [59, 130, 246] },
+      });
+
+      doc.save(`leads_${new Date().toISOString().split("T")[0]}.pdf`);
+
+      toast.success("PDF exportado com sucesso!");
+    } catch (error) {
+      console.error("Erro ao exportar PDF:", error);
+      toast.error("Erro ao exportar PDF");
     }
   };
 
@@ -229,12 +376,21 @@ export default function LeadsManagementPage() {
     <div className="container mx-auto p-6 max-w-7xl">
       {/* Header */}
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900 mb-2">
-          Gestão de Leads & Remarketing
-        </h1>
-        <p className="text-gray-600">
-          Gerencie leads da landing page e usuários que ainda não completaram o pagamento
-        </p>
+        <div className="flex items-center gap-4 mb-4">
+          <Link href="/admin">
+            <Button variant="outline" size="icon">
+              <ArrowLeft className="h-4 w-4" />
+            </Button>
+          </Link>
+          <div>
+            <h1 className="text-3xl font-bold text-gray-900 mb-2">
+              Gestão de Leads & Remarketing
+            </h1>
+            <p className="text-gray-600">
+              Gerencie leads da landing page e usuários que ainda não completaram o pagamento
+            </p>
+          </div>
+        </div>
       </div>
 
       {/* Estatísticas */}
@@ -303,36 +459,216 @@ export default function LeadsManagementPage() {
       {/* Filtros */}
       <Card className="mb-6">
         <CardContent className="pt-6">
-          <div className="flex flex-col md:flex-row gap-4">
-            {/* Busca */}
-            <div className="flex-1">
-              <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-                <Input
-                  type="text"
-                  placeholder="Buscar por nome ou email..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-10"
-                />
+          <div className="space-y-4">
+            {/* Linha 1: Busca e Botões */}
+            <div className="flex flex-col md:flex-row gap-4">
+              {/* Busca */}
+              <div className="flex-1">
+                <div className="relative">
+                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                  <Input
+                    type="text"
+                    placeholder="Buscar por nome ou email..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    className="pl-10"
+                  />
+                </div>
+              </div>
+
+              {/* Botões de Ação */}
+              <div className="flex gap-2">
+                <Button
+                  variant="outline"
+                  onClick={() => setShowFilters(!showFilters)}
+                  className="flex items-center gap-2"
+                >
+                  <Filter className="h-4 w-4" />
+                  Filtros
+                </Button>
+                
+                <div className="flex gap-2 border-l pl-2">
+                  <Button
+                    variant="outline"
+                    onClick={exportToCSV}
+                    className="flex items-center gap-2"
+                    title="Exportar CSV"
+                  >
+                    <FileText className="h-4 w-4" />
+                    CSV
+                  </Button>
+                  <Button
+                    variant="outline"
+                    onClick={exportToXLSX}
+                    className="flex items-center gap-2"
+                    title="Exportar XLSX"
+                  >
+                    <FileSpreadsheet className="h-4 w-4" />
+                    XLSX
+                  </Button>
+                  <Button
+                    variant="outline"
+                    onClick={exportToPDF}
+                    className="flex items-center gap-2"
+                    title="Exportar PDF"
+                  >
+                    <Download className="h-4 w-4" />
+                    PDF
+                  </Button>
+                </div>
               </div>
             </div>
 
-            {/* Filtro por status */}
-            <div className="flex items-center gap-2">
-              <Filter className="h-4 w-4 text-gray-400" />
-              <select
-                value={filterStatus}
-                onChange={(e) => setFilterStatus(e.target.value)}
-                className="border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-              >
-                <option value="all">Todos os Status</option>
-                <option value="novo">Novos Leads</option>
-                <option value="registered">Cadastrados</option>
-                <option value="checkout_started">Checkout Iniciado</option>
-                <option value="payment_pending">Pagamento Pendente</option>
-              </select>
-            </div>
+            {/* Filtros Avançados (Expansível) */}
+            {showFilters && (
+              <div className="pt-4 border-t space-y-4">
+                {/* Filtros por Data */}
+                <div>
+                  <Label className="text-sm font-medium text-gray-700 mb-2 block">
+                    Período de Cadastro
+                  </Label>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <Label htmlFor="startDate" className="text-xs text-gray-500">
+                        Data Início
+                      </Label>
+                      <Input
+                        id="startDate"
+                        type="date"
+                        value={startDate}
+                        onChange={(e) => setStartDate(e.target.value)}
+                        className="mt-1"
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="endDate" className="text-xs text-gray-500">
+                        Data Fim
+                      </Label>
+                      <Input
+                        id="endDate"
+                        type="date"
+                        value={endDate}
+                        onChange={(e) => setEndDate(e.target.value)}
+                        className="mt-1"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                {/* Filtros por Origem */}
+                <div>
+                  <Label className="text-sm font-medium text-gray-700 mb-2 block">
+                    Origem
+                  </Label>
+                  <div className="flex flex-wrap gap-4">
+                    <div className="flex items-center space-x-2">
+                      <Checkbox
+                        id="source-landing"
+                        checked={filterSource.includes("landing_page")}
+                        onCheckedChange={() => handleToggleSource("landing_page")}
+                      />
+                      <Label
+                        htmlFor="source-landing"
+                        className="text-sm font-normal cursor-pointer"
+                      >
+                        Landing Page
+                      </Label>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <Checkbox
+                        id="source-cadastro"
+                        checked={filterSource.includes("cadastro")}
+                        onCheckedChange={() => handleToggleSource("cadastro")}
+                      />
+                      <Label
+                        htmlFor="source-cadastro"
+                        className="text-sm font-normal cursor-pointer"
+                      >
+                        Cadastro Completo
+                      </Label>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Filtros por Status */}
+                <div>
+                  <Label className="text-sm font-medium text-gray-700 mb-2 block">
+                    Status
+                  </Label>
+                  <div className="flex flex-wrap gap-4">
+                    <div className="flex items-center space-x-2">
+                      <Checkbox
+                        id="status-novo"
+                        checked={filterStatus.includes("novo")}
+                        onCheckedChange={() => handleToggleStatus("novo")}
+                      />
+                      <Label
+                        htmlFor="status-novo"
+                        className="text-sm font-normal cursor-pointer"
+                      >
+                        Novos Leads
+                      </Label>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <Checkbox
+                        id="status-registered"
+                        checked={filterStatus.includes("registered")}
+                        onCheckedChange={() => handleToggleStatus("registered")}
+                      />
+                      <Label
+                        htmlFor="status-registered"
+                        className="text-sm font-normal cursor-pointer"
+                      >
+                        Cadastrados
+                      </Label>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <Checkbox
+                        id="status-checkout"
+                        checked={filterStatus.includes("checkout_started")}
+                        onCheckedChange={() => handleToggleStatus("checkout_started")}
+                      />
+                      <Label
+                        htmlFor="status-checkout"
+                        className="text-sm font-normal cursor-pointer"
+                      >
+                        Checkout Iniciado
+                      </Label>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <Checkbox
+                        id="status-pending"
+                        checked={filterStatus.includes("payment_pending")}
+                        onCheckedChange={() => handleToggleStatus("payment_pending")}
+                      />
+                      <Label
+                        htmlFor="status-pending"
+                        className="text-sm font-normal cursor-pointer"
+                      >
+                        Pagamento Pendente
+                      </Label>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Botão Limpar Filtros */}
+                <div className="flex justify-end">
+                  <Button
+                    variant="ghost"
+                    onClick={() => {
+                      setFilterStatus([]);
+                      setFilterSource([]);
+                      setStartDate("");
+                      setEndDate("");
+                      setSearchTerm("");
+                    }}
+                    className="text-sm"
+                  >
+                    Limpar Filtros
+                  </Button>
+                </div>
+              </div>
+            )}
           </div>
         </CardContent>
       </Card>
