@@ -66,6 +66,8 @@ model User {
   role                  String              @default("user") // user, admin, superadmin
   hasAccess             Boolean             @default(false)
   planningEnabled       Boolean             @default(false) // Habilita/desabilita planejamento financeiro
+  leadStatus            String              @default("registered") // registered, checkout_started, payment_pending, active, inactive
+  lastCheckoutAttempt   DateTime?           // Última tentativa de checkout para remarketing
   createdAt             DateTime            @default(now())
   updatedAt             DateTime            @updatedAt
   accounts              Account[]

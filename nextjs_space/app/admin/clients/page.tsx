@@ -195,13 +195,21 @@ export default function ClientsManagementPage() {
             </Link>
             <div>
               <h1 className="text-3xl font-bold text-gray-900">
-                Gestão de Clientes
+                Gestão de Clientes Pagantes
               </h1>
               <p className="text-gray-600">
-                Gerencie todos os clientes do sistema Clivus
+                Clientes com acesso ativo ao sistema (hasAccess: true)
               </p>
             </div>
           </div>
+        </div>
+
+        {/* Info sobre Leads */}
+        <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+          <p className="text-sm text-blue-800">
+            💡 <strong>Dica:</strong> Para ver leads e usuários que ainda não completaram o pagamento, 
+            acesse <Link href="/admin/leads" className="underline font-semibold text-blue-900">Leads & Remarketing</Link>
+          </p>
         </div>
 
         {/* Statistics Cards */}

@@ -148,6 +148,11 @@ const superAdminMenuItems: MenuItem[] = [
     icon: ShoppingCart,
   },
   {
+    title: "Leads & Remarketing",
+    href: "/admin/leads",
+    icon: Users,
+  },
+  {
     title: "Gestão de Clientes",
     href: "/admin/clients",
     icon: UserCog,

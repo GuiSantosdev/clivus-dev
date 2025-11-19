@@ -127,6 +127,16 @@ export async function POST(request: Request) {
       console.log("✅ [Checkout API] Token Asaas encontrado!");
 
       try {
+        // Marcar lastCheckoutAttempt para remarketing
+        await prisma.user.update({
+          where: { id: session.user.id },
+          data: {
+            lastCheckoutAttempt: new Date(),
+            leadStatus: "checkout_started",
+          },
+        });
+        console.log("✅ [Checkout API] lastCheckoutAttempt atualizado");
+        
         // Criar ou buscar cliente no Asaas
         console.log("👤 [Checkout API] Criando/buscando cliente no Asaas...");
         
