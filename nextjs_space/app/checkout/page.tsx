@@ -8,7 +8,8 @@ import { Button } from "@/components/ui/button";
 import { 
   Check,
   ArrowLeft,
-  CreditCard
+  CreditCard,
+  User
 } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
@@ -35,13 +36,10 @@ export default function CheckoutPage() {
   const planSlug = searchParams.get("plan") || "basic";
 
   useEffect(() => {
-    if (status === "unauthenticated") {
-      router.push("/login");
-    } else if (status === "authenticated") {
-      fetchPlan();
-      fetchActiveGateways();
-    }
-  }, [status, router, planSlug]);
+    // Sempre carrega os dados do plano, independente de estar logado
+    fetchPlan();
+    fetchActiveGateways();
+  }, [planSlug]);
 
   const fetchActiveGateways = async () => {
     try {
@@ -86,6 +84,13 @@ export default function CheckoutPage() {
   };
 
   const handleCheckout = async () => {
+    // Se não estiver logado, redirecionar para cadastro
+    if (status === "unauthenticated") {
+      toast.success("📝 Vamos criar sua conta para continuar!");
+      router.push(`/cadastro?plan=${planSlug}&redirect=/checkout?plan=${planSlug}`);
+      return;
+    }
+
     if (!plan) {
       toast.error("Plano não selecionado");
       return;
@@ -131,12 +136,13 @@ export default function CheckoutPage() {
     }
   };
 
-  if (status === "loading" || loadingPlan) {
+  // Mostrar loading apenas se estiver carregando o plano
+  if (loadingPlan) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
-          <p className="mt-4 text-gray-600">Carregando...</p>
+          <p className="mt-4 text-gray-600">Carregando plano...</p>
         </div>
       </div>
     );
@@ -182,6 +188,26 @@ export default function CheckoutPage() {
             Organize suas finanças pessoais e empresariais de forma profissional
           </p>
         </div>
+
+        {/* Alerta para usuários não logados */}
+        {status === "unauthenticated" && (
+          <div className="mb-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+            <div className="flex items-start gap-3">
+              <div className="text-blue-600 mt-0.5">
+                <User className="h-5 w-5" />
+              </div>
+              <div className="flex-1">
+                <h3 className="font-semibold text-blue-900 mb-1">
+                  Crie sua conta para continuar
+                </h3>
+                <p className="text-sm text-blue-700">
+                  Você poderá revisar todos os detalhes do plano. Ao clicar em "Finalizar Compra", 
+                  será solicitado que você crie uma conta gratuita para processar o pagamento.
+                </p>
+              </div>
+            </div>
+          </div>
+        )}
 
         <div className="grid md:grid-cols-2 gap-8">
           <Card className="shadow-xl">

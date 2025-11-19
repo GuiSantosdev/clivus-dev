@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { signIn } from "next-auth/react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
@@ -13,6 +13,8 @@ import { User, Shield, Copy } from "lucide-react";
 
 export default function LoginPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const redirectUrl = searchParams.get("redirect") || "/dashboard";
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     email: "",
@@ -34,7 +36,7 @@ export default function LoginPage() {
         toast.error("Credenciais inválidas");
       } else {
         toast.success("Login realizado com sucesso!");
-        router.push("/dashboard");
+        router.push(redirectUrl);
       }
     } catch (error) {
       toast.error("Erro ao fazer login");

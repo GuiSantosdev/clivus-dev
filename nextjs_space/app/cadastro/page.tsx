@@ -3,7 +3,7 @@
 
 import { useState } from "react";
 import { signIn } from "next-auth/react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
@@ -13,6 +13,8 @@ import toast from "react-hot-toast";
 
 export default function SignupPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const redirectUrl = searchParams.get("redirect") || "/dashboard";
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
@@ -56,9 +58,9 @@ export default function SignupPage() {
         });
 
         if (result?.ok) {
-          router.push("/dashboard");
+          router.push(redirectUrl);
         } else {
-          router.push("/login");
+          router.push(`/login?redirect=${encodeURIComponent(redirectUrl)}`);
         }
       } else {
         toast.error(data.error || "Erro ao criar conta");
