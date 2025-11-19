@@ -12,9 +12,16 @@ interface Notification {
   city: string;
   state: string;
   timeAgo: string;
+  isUserCity?: boolean; // Marca se é a cidade real do usuário
 }
 
-const notifications: Notification[] = [
+interface UserLocation {
+  city: string;
+  state: string;
+  country: string;
+}
+
+const baseNotifications: Notification[] = [
   { id: "1", name: "Maria Silva", plan: "Avançado", city: "São Paulo", state: "SP", timeAgo: "há 3 minutos" },
   { id: "2", name: "João Santos", plan: "Intermediário", city: "Rio de Janeiro", state: "RJ", timeAgo: "há 8 minutos" },
   { id: "3", name: "Ana Costa", plan: "Básico", city: "Belo Horizonte", state: "MG", timeAgo: "há 15 minutos" },
@@ -32,10 +39,125 @@ const notifications: Notification[] = [
   { id: "15", name: "Amanda Barbosa", plan: "Básico", city: "Campo Grande", state: "MS", timeAgo: "há 5 horas" },
 ];
 
+// Nomes extras para notificações com a cidade do usuário
+const extraNames = [
+  "Roberto Silva",
+  "Mariana Costa",
+  "Felipe Oliveira",
+  "Gabriela Santos",
+  "Ricardo Pereira",
+  "Daniela Almeida",
+  "André Fernandes",
+  "Larissa Rodrigues",
+  "Bruno Carvalho",
+  "Carolina Martins",
+];
+
 export function SocialProofNotification() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isVisible, setIsVisible] = useState(false);
   const [isMinimized, setIsMinimized] = useState(false);
+  const [notifications, setNotifications] = useState<Notification[]>(baseNotifications);
+  const [userLocation, setUserLocation] = useState<UserLocation | null>(null);
+
+  // Busca a localização do usuário via API
+  useEffect(() => {
+    const fetchUserLocation = async () => {
+      try {
+        // Verifica se já temos a localização em cache (válido por 24h)
+        const cachedLocation = localStorage.getItem("clivus_user_location");
+        const cacheTimestamp = localStorage.getItem("clivus_location_timestamp");
+        
+        if (cachedLocation && cacheTimestamp) {
+          const cacheAge = Date.now() - parseInt(cacheTimestamp);
+          const oneDayInMs = 24 * 60 * 60 * 1000;
+          
+          // Se o cache ainda é válido (menos de 24h)
+          if (cacheAge < oneDayInMs) {
+            const location = JSON.parse(cachedLocation);
+            setUserLocation(location);
+            console.log("🎯 [Social Proof] Usando localização em cache:", location);
+            return;
+          }
+        }
+
+        // Busca nova localização da API
+        console.log("🌍 [Social Proof] Buscando localização do usuário...");
+        const response = await fetch("/api/geolocation");
+        
+        if (!response.ok) {
+          throw new Error("Falha ao buscar geolocalização");
+        }
+
+        const data = await response.json();
+        const location: UserLocation = {
+          city: data.city,
+          state: data.state,
+          country: data.country,
+        };
+
+        setUserLocation(location);
+        
+        // Salva no cache
+        localStorage.setItem("clivus_user_location", JSON.stringify(location));
+        localStorage.setItem("clivus_location_timestamp", Date.now().toString());
+        
+        console.log("✅ [Social Proof] Localização detectada:", location);
+
+      } catch (error) {
+        console.error("❌ [Social Proof] Erro ao buscar localização:", error);
+        // Usa notificações padrão em caso de erro
+      }
+    };
+
+    fetchUserLocation();
+  }, []);
+
+  // Cria notificações personalizadas com a cidade do usuário
+  useEffect(() => {
+    if (!userLocation) return;
+
+    // Adiciona 3 notificações com a cidade real do usuário
+    const userCityNotifications: Notification[] = [
+      {
+        id: "user-1",
+        name: extraNames[Math.floor(Math.random() * extraNames.length)],
+        plan: ["Básico", "Intermediário", "Avançado"][Math.floor(Math.random() * 3)],
+        city: userLocation.city,
+        state: userLocation.state,
+        timeAgo: "há 5 minutos",
+        isUserCity: true,
+      },
+      {
+        id: "user-2",
+        name: extraNames[Math.floor(Math.random() * extraNames.length)],
+        plan: ["Básico", "Intermediário", "Avançado"][Math.floor(Math.random() * 3)],
+        city: userLocation.city,
+        state: userLocation.state,
+        timeAgo: "há 28 minutos",
+        isUserCity: true,
+      },
+      {
+        id: "user-3",
+        name: extraNames[Math.floor(Math.random() * extraNames.length)],
+        plan: ["Básico", "Intermediário", "Avançado"][Math.floor(Math.random() * 3)],
+        city: userLocation.city,
+        state: userLocation.state,
+        timeAgo: "há 1 hora",
+        isUserCity: true,
+      },
+    ];
+
+    // Mescla notificações: intercala notificações da cidade do usuário com as fictícias
+    const mergedNotifications = [...baseNotifications];
+    mergedNotifications.splice(2, 0, userCityNotifications[0]); // Após 2ª notificação
+    mergedNotifications.splice(7, 0, userCityNotifications[1]); // Após 7ª notificação
+    mergedNotifications.splice(12, 0, userCityNotifications[2]); // Após 12ª notificação
+
+    setNotifications(mergedNotifications);
+    console.log("🎉 [Social Proof] Notificações personalizadas criadas!");
+
+  }, [userLocation]);
 
   useEffect(() => {
     // Mostra a primeira notificação após 3 segundos
@@ -63,7 +185,7 @@ export function SocialProofNotification() {
       clearTimeout(dismissTimer);
       clearTimeout(nextTimer);
     };
-  }, [isVisible, currentIndex, isMinimized]);
+  }, [isVisible, currentIndex, isMinimized, notifications.length]);
 
   const currentNotification = notifications[currentIndex];
 
@@ -92,7 +214,18 @@ export function SocialProofNotification() {
           transition={{ duration: 0.5, ease: "easeOut" }}
           className="fixed bottom-6 left-6 z-50 max-w-sm"
         >
-          <div className="bg-white rounded-lg shadow-2xl border border-gray-200 p-4 pr-12">
+          <div className={`bg-white rounded-lg shadow-2xl p-4 pr-12 ${
+            currentNotification.isUserCity 
+              ? "border-2 border-green-400 ring-2 ring-green-200" 
+              : "border border-gray-200"
+          }`}>
+            {/* Badge especial para cidade do usuário */}
+            {currentNotification.isUserCity && (
+              <div className="absolute -top-2 -right-2 bg-gradient-to-r from-green-500 to-emerald-500 text-white text-xs font-bold px-2 py-1 rounded-full shadow-lg animate-pulse">
+                📍 Sua região
+              </div>
+            )}
+
             {/* Botão de fechar */}
             <button
               onClick={() => setIsMinimized(true)}
@@ -105,8 +238,16 @@ export function SocialProofNotification() {
             {/* Conteúdo */}
             <div className="flex items-start gap-3">
               <div className="flex-shrink-0 mt-0.5">
-                <div className="h-10 w-10 rounded-full bg-green-100 flex items-center justify-center">
-                  <CheckCircle className="h-6 w-6 text-green-600" />
+                <div className={`h-10 w-10 rounded-full flex items-center justify-center ${
+                  currentNotification.isUserCity
+                    ? "bg-green-200 ring-2 ring-green-300"
+                    : "bg-green-100"
+                }`}>
+                  <CheckCircle className={`h-6 w-6 ${
+                    currentNotification.isUserCity
+                      ? "text-green-700"
+                      : "text-green-600"
+                  }`} />
                 </div>
               </div>
 
@@ -121,7 +262,7 @@ export function SocialProofNotification() {
                   </span>
                 </p>
                 <div className="flex items-center gap-2 mt-1.5 text-xs text-gray-500">
-                  <span>
+                  <span className={currentNotification.isUserCity ? "font-semibold text-green-700" : ""}>
                     {currentNotification.city}, {currentNotification.state}
                   </span>
                   <span>•</span>
@@ -132,7 +273,11 @@ export function SocialProofNotification() {
 
             {/* Barra de progresso */}
             <motion.div
-              className="absolute bottom-0 left-0 h-1 bg-gradient-to-r from-green-500 to-blue-500 rounded-bl-lg"
+              className={`absolute bottom-0 left-0 h-1 rounded-bl-lg ${
+                currentNotification.isUserCity
+                  ? "bg-gradient-to-r from-green-500 via-emerald-500 to-teal-500"
+                  : "bg-gradient-to-r from-green-500 to-blue-500"
+              }`}
               initial={{ width: "100%" }}
               animate={{ width: "0%" }}
               transition={{ duration: 6, ease: "linear" }}
