@@ -159,10 +159,10 @@ export default function CheckoutPage() {
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-gray-100">
       <div className="container mx-auto px-4 py-8 max-w-4xl">
         <div className="mb-6">
-          <Link href="/dashboard">
+          <Link href="/">
             <Button variant="outline" size="sm">
               <ArrowLeft className="h-4 w-4 mr-2" />
-              Voltar ao Dashboard
+              Voltar
             </Button>
           </Link>
         </div>
