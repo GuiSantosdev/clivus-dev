@@ -27,47 +27,47 @@ export function FeaturesSection() {
     {
       icon: Calculator,
       title: "Calculadora de Pró-labore",
-      description: "Calcule automaticamente o valor ideal do seu pró-labore baseado na legislação vigente"
+      description: "Calcule automaticamente o valor ideal do seu pró-labore baseado na legislação vigente com INSS e IR"
     },
     {
       icon: FileText,
-      title: "Gerador de Relatórios",
-      description: "Relatórios detalhados de DRE, fluxo de caixa e balanço patrimonial em poucos cliques"
+      title: "DRE Customizável",
+      description: "Demonstração do Resultado do Exercício com plano de contas personalizável"
     },
     {
       icon: BarChart3,
-      title: "Dashboard Executivo",
-      description: "Visualize todos os indicadores importantes do seu negócio em uma única tela"
+      title: "Dashboard Completo",
+      description: "Visualize CPF e CNPJ separados com saldos, receitas e despesas em tempo real"
     },
     {
       icon: Shield,
       title: "Compliance Fiscal",
-      description: "Mantenha-se sempre em conformidade com as obrigações fiscais e tributárias"
+      description: "Monitore obrigações fiscais (IRPF, DASN, PGMEI) e mantenha-se em dia com a Receita"
     },
     {
       icon: RefreshCw,
-      title: "Sincronização Bancária",
-      description: "Conecte suas contas e cartões para importação automática de transações"
+      title: "Reconciliação Bancária",
+      description: "Importe extratos bancários (CSV/OFX) e reconcilie transações automaticamente"
     },
     {
       icon: DollarSign,
       title: "Controle de Investimentos",
-      description: "Acompanhe seus investimentos pessoais separadamente dos empresariais"
+      description: "Gerencie investimentos CPF e CNPJ separadamente (CDB, Tesouro, Fundos)"
     },
     {
-      icon: Cloud,
-      title: "Backup Automático",
-      description: "Seus dados sempre seguros na nuvem com backup automático diário"
+      icon: Calculator,
+      title: "Calculadora de Custos",
+      description: "Calcule o custo real de contratar funcionários (CLT) com todos os encargos"
     },
     {
       icon: Smartphone,
-      title: "100% Online - Mobile & Desktop",
-      description: "Ferramenta totalmente online. Acesse pelo computador ou celular, de qualquer lugar, a qualquer hora"
+      title: "100% Online",
+      description: "Acesse de qualquer lugar, em qualquer dispositivo - computador, tablet ou celular"
     },
     {
       icon: Users,
-      title: "Multi-usuário",
-      description: "Permita acesso ao seu contador ou sócios com níveis diferentes de permissão"
+      title: "Gestão de Equipe",
+      description: "Adicione contador, sócios ou funcionários com diferentes níveis de acesso"
     }
   ];
 
@@ -126,14 +126,14 @@ export function FeaturesSection() {
           
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4 mt-8">
             {[
-              "Planejamento tributário",
-              "Controle de estoque",
-              "Gestão de fornecedores",
-              "Análise de rentabilidade",
-              "Projeções financeiras",
-              "Alertas personalizados",
-              "Exportação para contabilidade",
-              "Suporte especializado"
+              "Planejamento Financeiro (Previsto x Realizado)",
+              "Calculadora de Precificação",
+              "Gestão de Transações PF e PJ",
+              "Categorias Personalizadas",
+              "Múltiplos Métodos de Pagamento",
+              "Exportação de Relatórios (CSV)",
+              "Controle de Parcelamentos",
+              "Painéis Administrativos"
             ]?.map?.((item, index) => (
               <div key={index} className="flex items-center space-x-2">
                 <CheckCircle2 className="h-5 w-5 text-green-300" />
