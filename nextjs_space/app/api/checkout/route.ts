@@ -9,6 +9,7 @@ import prisma from "@/lib/db";
 import {
   createOrGetAsaasCustomer,
   createAsaasPaymentLink,
+  validateCpfCnpj,
 } from "@/lib/asaas";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || "", {
@@ -129,21 +130,23 @@ export async function POST(request: Request) {
         // Criar ou buscar cliente no Asaas
         console.log("👤 [Checkout API] Criando/buscando cliente no Asaas...");
         
-        // Validar CPF/CNPJ antes de enviar (apenas números com 11 ou 14 dígitos)
+        // Validar CPF/CNPJ com dígitos verificadores
         const cpfCnpj = user?.cpf || user?.cnpj || "";
-        const cpfCnpjNumeros = cpfCnpj.replace(/\D/g, "");
-        const cpfCnpjValido = cpfCnpjNumeros.length === 11 || cpfCnpjNumeros.length === 14;
+        const validation = validateCpfCnpj(cpfCnpj);
         
         console.log("🔍 [Checkout API] Validando CPF/CNPJ:", { 
           original: cpfCnpj,
-          numeros: cpfCnpjNumeros,
-          valido: cpfCnpjValido
+          cleaned: validation.cleaned,
+          valid: validation.valid,
+          message: validation.valid 
+            ? "CPF/CNPJ válido - SERÁ ENVIADO ao Asaas" 
+            : "CPF/CNPJ inválido ou vazio - NÃO SERÁ ENVIADO ao Asaas"
         });
         
         const asaasCustomerId = await createOrGetAsaasCustomer({
           name: userName,
           email: userEmail,
-          cpfCnpj: cpfCnpjValido ? cpfCnpjNumeros : undefined,
+          cpfCnpj: validation.valid ? validation.cleaned : undefined,
         });
         console.log("✅ [Checkout API] Cliente Asaas:", asaasCustomerId);
 

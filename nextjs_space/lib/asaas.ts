@@ -11,6 +11,83 @@ const ASAAS_BASE_URL =
     ? "https://sandbox.asaas.com/api/v3"
     : "https://api.asaas.com/v3";
 
+/**
+ * Valida CPF com dígitos verificadores
+ */
+function isValidCPF(cpf: string): boolean {
+  const cleanCPF = cpf.replace(/\D/g, "");
+  
+  if (cleanCPF.length !== 11) return false;
+  if (/^(\d)\1+$/.test(cleanCPF)) return false; // Todos dígitos iguais
+  
+  // Validar dígito verificador 1
+  let sum = 0;
+  for (let i = 0; i < 9; i++) {
+    sum += parseInt(cleanCPF.charAt(i)) * (10 - i);
+  }
+  let digit1 = 11 - (sum % 11);
+  if (digit1 >= 10) digit1 = 0;
+  if (digit1 !== parseInt(cleanCPF.charAt(9))) return false;
+  
+  // Validar dígito verificador 2
+  sum = 0;
+  for (let i = 0; i < 10; i++) {
+    sum += parseInt(cleanCPF.charAt(i)) * (11 - i);
+  }
+  let digit2 = 11 - (sum % 11);
+  if (digit2 >= 10) digit2 = 0;
+  if (digit2 !== parseInt(cleanCPF.charAt(10))) return false;
+  
+  return true;
+}
+
+/**
+ * Valida CNPJ com dígitos verificadores
+ */
+function isValidCNPJ(cnpj: string): boolean {
+  const cleanCNPJ = cnpj.replace(/\D/g, "");
+  
+  if (cleanCNPJ.length !== 14) return false;
+  if (/^(\d)\1+$/.test(cleanCNPJ)) return false; // Todos dígitos iguais
+  
+  // Validar dígito verificador 1
+  let sum = 0;
+  let weight = 5;
+  for (let i = 0; i < 12; i++) {
+    sum += parseInt(cleanCNPJ.charAt(i)) * weight;
+    weight = weight === 2 ? 9 : weight - 1;
+  }
+  let digit1 = sum % 11 < 2 ? 0 : 11 - (sum % 11);
+  if (digit1 !== parseInt(cleanCNPJ.charAt(12))) return false;
+  
+  // Validar dígito verificador 2
+  sum = 0;
+  weight = 6;
+  for (let i = 0; i < 13; i++) {
+    sum += parseInt(cleanCNPJ.charAt(i)) * weight;
+    weight = weight === 2 ? 9 : weight - 1;
+  }
+  let digit2 = sum % 11 < 2 ? 0 : 11 - (sum % 11);
+  if (digit2 !== parseInt(cleanCNPJ.charAt(13))) return false;
+  
+  return true;
+}
+
+/**
+ * Valida se CPF/CNPJ é válido (verifica dígitos verificadores)
+ */
+export function validateCpfCnpj(value: string): { valid: boolean; cleaned: string } {
+  const cleaned = value.replace(/\D/g, "");
+  
+  if (cleaned.length === 11) {
+    return { valid: isValidCPF(cleaned), cleaned };
+  } else if (cleaned.length === 14) {
+    return { valid: isValidCNPJ(cleaned), cleaned };
+  }
+  
+  return { valid: false, cleaned };
+}
+
 interface AsaasCustomer {
   name: string;
   email: string;
