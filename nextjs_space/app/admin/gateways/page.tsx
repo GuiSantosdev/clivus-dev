@@ -226,10 +226,14 @@ export default function GatewaysManagementPage() {
         router.push("/dashboard");
         return;
       }
-      checkGatewaysConfiguration();
       fetchGatewayStatuses();
     }
   }, [status, session, router]);
+
+  // Re-verificar configuração quando gatewayStatuses ou gatewayValues mudarem
+  useEffect(() => {
+    checkGatewaysConfiguration();
+  }, [gatewayStatuses, gatewayValues]);
 
   const fetchGatewayStatuses = async () => {
     try {
@@ -275,12 +279,21 @@ export default function GatewaysManagementPage() {
   const checkGatewaysConfiguration = () => {
     // Verificar quais gateways estão configurados
     gateways.forEach((gateway) => {
-      gateway.fields.forEach((field) => {
-        const envValue = process.env[field.envVar];
-        if (envValue && !envValue.includes("YOUR_") && !envValue.includes("your_")) {
-          gateway.isConfigured = true;
-        }
+      // Se o gateway está HABILITADO no banco de dados, significa que foi configurado
+      const isEnabled = gatewayStatuses[gateway.name];
+      
+      // Ou se todos os campos do formulário estão preenchidos
+      const allFieldsFilled = gateway.fields.every((field) => {
+        const value = gatewayValues[field.envVar];
+        return value && value.trim() !== "" && !value.includes("...") && !value.includes("YOUR_") && !value.includes("your_");
       });
+      
+      // Gateway está configurado se está habilitado OU se todos os campos estão preenchidos
+      if (isEnabled || allFieldsFilled) {
+        gateway.isConfigured = true;
+      } else {
+        gateway.isConfigured = false;
+      }
     });
   };
 
