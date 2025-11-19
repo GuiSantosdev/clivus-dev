@@ -16,6 +16,10 @@ import {
   getDefaultAddress,
   validateCpfCnpj as validateCpfCnpjCora,
 } from "@/lib/cora";
+import {
+  createPagarmeOrder,
+  validateCpfCnpj as validateCpfCnpjPagarme,
+} from "@/lib/pagarme";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || "", {
   apiVersion: "2025-11-17.clover",
@@ -324,6 +328,148 @@ export async function POST(request: Request) {
           { 
             error: "Erro ao processar pagamento com CORA",
             details: coraError.message || "Erro desconhecido"
+          },
+          { status: 500 }
+        );
+      }
+    }
+
+    // Processar com Pagar.me (PIX, Boleto, Cartão)
+    if (gateway === "pagarme") {
+      console.log("💳 [Checkout API] Processando com Pagar.me...");
+      
+      // Verificar se Pagar.me está configurado
+      console.log("🔑 [Checkout API] Verificando token Pagar.me...");
+      console.log("Token presente?", !!process.env.PAGARME_API_KEY);
+      
+      if (!process.env.PAGARME_API_KEY) {
+        console.error("❌ [Checkout API] Token Pagar.me não configurado!");
+        return NextResponse.json(
+          { 
+            error: "Sistema de pagamento Pagar.me não configurado. Entre em contato com o suporte.",
+            details: "Variável PAGARME_API_KEY não encontrada"
+          },
+          { status: 503 }
+        );
+      }
+      
+      console.log("✅ [Checkout API] Token Pagar.me encontrado!");
+
+      try {
+        // Marcar lastCheckoutAttempt para remarketing
+        await prisma.user.update({
+          where: { id: session.user.id },
+          data: {
+            lastCheckoutAttempt: new Date(),
+            leadStatus: "checkout_started",
+          },
+        });
+        console.log("✅ [Checkout API] lastCheckoutAttempt atualizado");
+        
+        // Validar CPF/CNPJ com dígitos verificadores
+        const cpfCnpj = user?.cpf || user?.cnpj || "";
+        const validation = validateCpfCnpjPagarme(cpfCnpj);
+        
+        console.log("🔍 [Checkout API] Validando CPF/CNPJ (Pagar.me):", { 
+          original: cpfCnpj,
+          cleaned: validation.cleanValue,
+          isValid: validation.isValid,
+          message: validation.isValid 
+            ? "CPF/CNPJ válido - SERÁ ENVIADO ao Pagar.me" 
+            : "CPF/CNPJ inválido ou vazio - NÃO SERÁ ENVIADO ao Pagar.me"
+        });
+
+        // Criar ordem no Pagar.me (método PIX por padrão)
+        // Para suportar múltiplos métodos, você pode adicionar um campo no body
+        const paymentMethod = (body.paymentMethod as "pix" | "boleto" | "credit_card") || "pix";
+        
+        console.log("📝 [Checkout API] Criando ordem no Pagar.me...");
+        console.log("Método de pagamento:", paymentMethod);
+        
+        const order = await createPagarmeOrder({
+          customerId: userId,
+          customerName: userName,
+          customerEmail: userEmail,
+          customerDocument: validation.isValid ? validation.cleanValue : undefined,
+          amount: Math.round(plan.price * 100), // Pagar.me usa centavos
+          planName: plan.name,
+          paymentMethod,
+          installments: body.installments || 1, // Para cartão de crédito
+          cardToken: body.cardToken, // Para cartão de crédito
+        });
+        
+        console.log("✅ [Checkout API] Ordem criada no Pagar.me:", { 
+          id: order.id, 
+          status: order.status
+        });
+
+        // Atualizar pagamento com ID do Pagar.me
+        console.log("💾 [Checkout API] Atualizando registro de pagamento...");
+        await prisma.payment.update({
+          where: { id: payment.id },
+          data: { 
+            stripeSessionId: order.id, // Reutilizamos este campo para o Pagar.me Order ID
+            gateway: "pagarme",
+          },
+        });
+        console.log("✅ [Checkout API] Pagamento atualizado com sucesso!");
+
+        // Preparar dados de resposta com base no método de pagamento
+        let responseData: any = {
+          gateway: "pagarme",
+          paymentId: payment.id,
+          orderId: order.id,
+          status: order.status,
+        };
+
+        // Se for PIX, incluir QR Code e código
+        if (paymentMethod === "pix" && order.charges?.[0]?.last_transaction?.qr_code) {
+          const pixData = order.charges[0].last_transaction;
+          responseData.pixData = {
+            qrCode: pixData.qr_code,
+            qrCodeUrl: pixData.qr_code_url,
+            expiresAt: pixData.expires_at,
+          };
+          console.log("✅ [Checkout API] PIX QR Code gerado");
+        }
+
+        // Se for boleto, incluir URL e linha digitável
+        if (paymentMethod === "boleto" && order.charges?.[0]?.last_transaction?.url) {
+          const boletoData = order.charges[0].last_transaction;
+          responseData.boletoData = {
+            url: boletoData.url,
+            barcode: boletoData.barcode,
+            line: boletoData.line,
+            dueAt: boletoData.boleto_due_at,
+          };
+          responseData.url = boletoData.url; // URL do boleto para redirecionamento
+          console.log("✅ [Checkout API] Boleto gerado");
+        }
+
+        // Se for cartão, incluir status da transação
+        if (paymentMethod === "credit_card" && order.charges?.[0]?.last_transaction) {
+          const cardData = order.charges[0].last_transaction;
+          responseData.cardData = {
+            status: cardData.status,
+            acquirerMessage: cardData.acquirer_message,
+            authorizationCode: cardData.acquirer_auth_code,
+          };
+          
+          // Se aprovado, redirecionar para dashboard
+          if (cardData.status === "paid") {
+            responseData.url = `${origin}/dashboard?payment=success`;
+          }
+          console.log("✅ [Checkout API] Transação de cartão processada");
+        }
+
+        console.log("🎉 [Checkout API] Checkout concluído com sucesso (Pagar.me)!");
+        return NextResponse.json(responseData);
+      } catch (pagarmeError: any) {
+        console.error("❌ [Checkout API] Erro ao processar com Pagar.me:", pagarmeError);
+        return NextResponse.json(
+          { 
+            error: "Erro ao processar pagamento com Pagar.me",
+            details: pagarmeError.message || "Erro desconhecido"
           },
           { status: 500 }
         );

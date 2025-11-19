@@ -254,6 +254,17 @@ async function main() {
   console.log("✅ Gateway CORA created");
 
   await prisma.gateway.upsert({
+    where: { name: "pagarme" },
+    update: {},
+    create: {
+      name: "pagarme",
+      displayName: "Pagar.me",
+      isEnabled: false, // Disabled by default
+    },
+  });
+  console.log("✅ Gateway Pagar.me created");
+
+  await prisma.gateway.upsert({
     where: { name: "stripe" },
     update: {},
     create: {

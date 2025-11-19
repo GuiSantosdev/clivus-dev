@@ -56,6 +56,7 @@ export default function GatewaysManagementPage() {
     asaas: true,
     stripe: true,
     cora: true,
+    pagarme: false,
   });
 
   const gateways: GatewayConfig[] = [
@@ -120,6 +121,37 @@ export default function GatewaysManagementPage() {
       ],
       isConfigured: false,
       webhookUrl: `${process.env.NEXT_PUBLIC_APP_URL || "https://seu-dominio.com.br"}/api/webhook/cora`,
+    },
+    {
+      name: "pagarme",
+      displayName: "Pagar.me",
+      description: "Gateway brasileiro com PIX, Boleto e Cartão de Crédito",
+      icon: "💳",
+      fields: [
+        {
+          key: "apiKey",
+          label: "API Key (Secret Key)",
+          placeholder: "sk_test_... ou sk_live_...",
+          type: "password",
+          envVar: "PAGARME_API_KEY",
+        },
+        {
+          key: "webhookSecret",
+          label: "Webhook Secret",
+          placeholder: "wh_secret_...",
+          type: "password",
+          envVar: "PAGARME_WEBHOOK_SECRET",
+        },
+        {
+          key: "environment",
+          label: "Ambiente",
+          placeholder: "test ou live",
+          type: "text",
+          envVar: "PAGARME_ENVIRONMENT",
+        },
+      ],
+      isConfigured: false,
+      webhookUrl: `${process.env.NEXT_PUBLIC_APP_URL || "https://seu-dominio.com.br"}/api/webhook/pagarme`,
     },
     {
       name: "stripe",
