@@ -552,7 +552,7 @@ export async function POST(request: Request) {
         await prisma.payment.update({
           where: { id: payment.id },
           data: { 
-            stripeSessionId: charge.chargeId, // Reutilizamos este campo para o EFI Charge ID
+            stripeSessionId: String(charge.chargeId), // Converter para string
             gateway: "efi",
           },
         });
