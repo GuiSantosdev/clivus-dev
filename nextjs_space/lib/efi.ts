@@ -44,8 +44,8 @@ async function efiRequest(
   const config = getEfiConfig();
   const baseUrl =
     config.environment === "production"
-      ? "https://api.gerencianet.com.br/v1"
-      : "https://sandbox.gerencianet.com.br/v1";
+      ? "https://cobrancas.api.efipay.com.br/v1"
+      : "https://cobrancas-h.api.efipay.com.br/v1";
 
   const url = `${baseUrl}${endpoint}`;
 
@@ -100,8 +100,8 @@ export async function getEfiAccessToken(): Promise<string> {
 
   const baseUrl =
     config.environment === "production"
-      ? "https://api.gerencianet.com.br/v1"
-      : "https://sandbox.gerencianet.com.br/v1";
+      ? "https://cobrancas.api.efipay.com.br/v1"
+      : "https://cobrancas-h.api.efipay.com.br/v1";
 
   const url = `${baseUrl}/authorize`;
 
