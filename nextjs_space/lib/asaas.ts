@@ -78,14 +78,23 @@ async function asaasRequest(
     options.body = JSON.stringify(body);
   }
 
+  console.log(`[Asaas Request] ${method} ${url}`);
+  console.log(`[Asaas Request] Headers:`, headers);
+  if (body) {
+    console.log(`[Asaas Request] Body:`, JSON.stringify(body, null, 2));
+  }
+  
   const response = await fetch(url, options);
   const data = await response.json();
 
+  console.log(`[Asaas Response] Status: ${response.status}`);
+  console.log(`[Asaas Response] Data:`, JSON.stringify(data, null, 2));
+
   if (!response.ok) {
-    console.error("Erro na API Asaas:", data);
-    throw new Error(
-      data.errors?.[0]?.description || "Erro ao processar pagamento"
-    );
+    console.error("❌ Erro na API Asaas:", data);
+    const errorMessage = data.errors?.[0]?.description || data.errors?.[0]?.message || data.message || "Erro ao processar pagamento";
+    console.error("❌ Mensagem de erro:", errorMessage);
+    throw new Error(errorMessage);
   }
 
   return data;
