@@ -250,6 +250,13 @@ export async function createEfiCharge(params: CreateChargeParams): Promise<any> 
       custom_id: planName,
       notification_url: `${process.env.NEXT_PUBLIC_APP_URL}/api/webhook/efi`,
     },
+    settings: {
+      payment_method: "all",
+      expire_at: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000)
+        .toISOString()
+        .split("T")[0],
+      request_delivery_address: false, // Campo obrigatório pela API EFI
+    },
   };
 
   // Add customer data if CPF/CNPJ is valid
