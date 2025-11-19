@@ -25,13 +25,20 @@ export async function GET(request: NextRequest) {
     const realIp = request.headers.get("x-real-ip");
     const cfConnectingIp = request.headers.get("cf-connecting-ip");
     
+    // Debug: Log all headers
+    console.log("🔍 [Geolocation API] Headers:", {
+      "x-forwarded-for": forwarded,
+      "x-real-ip": realIp,
+      "cf-connecting-ip": cfConnectingIp
+    });
+    
     // Prioridade: CF > X-Real-IP > X-Forwarded-For > IP direto
     let clientIp = cfConnectingIp || realIp || forwarded?.split(",")[0] || "unknown";
     
     // Remove espaços em branco
     clientIp = clientIp.trim();
 
-    console.log("🌍 [Geolocation API] IP detectado:", clientIp);
+    console.log("🌍 [Geolocation API] IP final detectado:", clientIp);
 
     // 2. Se for IP local (desenvolvimento), usa IP público de teste
     if (

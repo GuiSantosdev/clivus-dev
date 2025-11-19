@@ -97,6 +97,7 @@ export default function CheckoutPage() {
     }
 
     setLoading(true);
+    console.log("🛒 [Checkout] Iniciando pagamento:", { plan: plan.slug, gateway, amount: plan.price });
     
     try {
       const response = await fetch("/api/checkout", {
@@ -112,9 +113,14 @@ export default function CheckoutPage() {
       });
 
       const data = await response.json();
+      console.log("✅ [Checkout] Resposta da API:", { status: response.status, data });
 
       if (response.ok && data.url) {
-        window.location.href = data.url;
+        console.log("🌐 [Checkout] Redirecionando para:", data.url);
+        toast.success("🎉 Redirecionando para o pagamento...", { duration: 2000 });
+        setTimeout(() => {
+          window.location.href = data.url;
+        }, 1000);
       } else {
         // Mensagens de erro específicas
         if (response.status === 503) {
@@ -128,9 +134,10 @@ export default function CheckoutPage() {
           toast.error("Erro ao processar pagamento. Tente novamente.");
         }
         setLoading(false);
+        setLoading(false);
       }
     } catch (error) {
-      console.error("Checkout error:", error);
+      console.error("❌ [Checkout] Erro:", error);
       toast.error("Erro de conexão. Verifique sua internet e tente novamente.");
       setLoading(false);
     }

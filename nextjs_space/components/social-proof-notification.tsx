@@ -39,18 +39,30 @@ const baseNotifications: Notification[] = [
   { id: "15", name: "Amanda Barbosa", plan: "Básico", city: "Campo Grande", state: "MS", timeAgo: "há 5 horas" },
 ];
 
-// Nomes extras para notificações com a cidade do usuário
+// Lista expandida de 100+ nomes brasileiros para notificações
 const extraNames = [
-  "Roberto Silva",
-  "Mariana Costa",
-  "Felipe Oliveira",
-  "Gabriela Santos",
-  "Ricardo Pereira",
-  "Daniela Almeida",
-  "André Fernandes",
-  "Larissa Rodrigues",
-  "Bruno Carvalho",
-  "Carolina Martins",
+  "Roberto Silva", "Mariana Costa", "Felipe Oliveira", "Gabriela Santos", "Ricardo Pereira",
+  "Daniela Almeida", "André Fernandes", "Larissa Rodrigues", "Bruno Carvalho", "Carolina Martins",
+  "Alexandre Souza", "Juliana Alves", "Fernando Lima", "Patrícia Rocha", "Gustavo Mendes",
+  "Tatiana Barbosa", "Rodrigo Pinto", "Renata Cardoso", "Diego Teixeira", "Vanessa Reis",
+  "Marcelo Nunes", "Cristina Moreira", "Leonardo Azevedo", "Simone Monteiro", "Paulo Cunha",
+  "Adriana Figueiredo", "Vinicius Cavalcanti", "Monica Duarte", "Thiago Correia", "Sandra Melo",
+  "Daniel Vieira", "Luciana Freitas", "Marcos Ribeiro", "Aline Castro", "Eduardo Dias",
+  "Claudia Sá", "Igor Borges", "Bruna Campos", "Fábio Araújo", "Jéssica Moura",
+  "Leandro Tavares", "Viviane Santiago", "Henrique Ramos", "Priscila Guimarães", "William Batista",
+  "Eliane Nogueira", "Caio Brito", "Raquel Fernandes", "Mateus Lopes", "Helena Porto",
+  "Renan Magalhães", "Bianca Carvalho", "Gabriel Gomes", "Isabela Soares", "Samuel Amaral",
+  "Andreia Rezende", "Cesar Nascimento", "Marcia Coelho", "Victor Barros", "Denise Antunes",
+  "Rafael Torres", "Sabrina Fonseca", "Guilherme Bastos", "Camila Xavier", "Pedro Machado",
+  "Luiza Miranda", "Thales Pires", "Natalia Viana", "Mauricio Caldeira", "Rosana Domingues",
+  "Anderson Pacheco", "Joana Medeiros", "Sergio Marques", "Debora Sampaio", "Otavio Leite",
+  "Fabiana Silveira", "Claudio Farias", "Marisa Ferraz", "Lucio Toledo", "Angela Cardoso",
+  "Humberto Matos", "Regina Salles", "Flavio Rocha", "Leticia Furtado", "Roberto Luz",
+  "Silvia Braga", "Edson Paiva", "Marta Prado", "Geraldo Assis", "Lucia Castro",
+  "Evandro Costa", "Cintia Moreira", "Nelson Figueira", "Sueli Lima", "Marcos Vasconcelos",
+  "Fernanda Pereira", "Antonio Neves", "Valeria Goncalves", "Carlos Batista", "Solange Ribeiro",
+  "Jorge Almeida", "Teresa Santos", "Wagner Araujo", "Patricia Souza", "Alberto Ferreira",
+  "Vera Oliveira"
 ];
 
 export function SocialProofNotification() {
@@ -212,7 +224,7 @@ export function SocialProofNotification() {
           animate={{ opacity: 1, x: 0, y: 0 }}
           exit={{ opacity: 0, x: -100, y: 20 }}
           transition={{ duration: 0.5, ease: "easeOut" }}
-          className="fixed bottom-6 left-6 z-50 max-w-sm"
+          className="fixed bottom-4 sm:bottom-6 left-4 sm:left-6 right-4 sm:right-auto z-50 max-w-sm mx-auto sm:mx-0"
         >
           <div className={`bg-white rounded-lg shadow-2xl p-4 pr-12 ${
             currentNotification.isUserCity 

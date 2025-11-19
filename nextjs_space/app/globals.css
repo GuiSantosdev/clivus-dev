@@ -223,3 +223,27 @@ html {
     font-size: 0.875rem;
   }
 }
+
+/* Prevent text overflow on mobile */
+* {
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}
+
+html, body {
+  max-width: 100vw;
+  overflow-x: hidden;
+}
+
+/* Ensure images don't overflow */
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+/* Fix for mobile notific actions */
+@media (max-width: 640px) {
+  .fixed {
+    max-width: calc(100vw - 2rem);
+  }
+}

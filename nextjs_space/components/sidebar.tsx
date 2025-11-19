@@ -162,6 +162,11 @@ const superAdminMenuItems: MenuItem[] = [
     href: "/admin/ads",
     icon: Monitor,
   },
+  {
+    title: "Configurações",
+    href: "/admin/settings",
+    icon: Settings,
+  },
 ];
 
 export function Sidebar() {
