@@ -224,6 +224,23 @@ Gerado em ${new Date().toLocaleDateString('pt-BR')} pelo Clivus
                   </div>
 
                   <div className="space-y-2">
+                    <Label htmlFor="variablePay">
+                      Média de Verbas Variáveis (R$)
+                      <span className="text-xs text-gray-500 ml-1">
+                        (horas extras, comissões, etc.)
+                      </span>
+                    </Label>
+                    <Input
+                      id="variablePay"
+                      type="number"
+                      step="0.01"
+                      value={variablePay}
+                      onChange={(e) => setVariablePay(e.target.value)}
+                      placeholder="0.00"
+                    />
+                  </div>
+
+                  <div className="space-y-2">
                     <Label htmlFor="workDays">Dias Trabalhados/Mês</Label>
                     <Input
                       id="workDays"

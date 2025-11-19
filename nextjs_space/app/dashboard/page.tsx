@@ -59,11 +59,24 @@ interface PlanLimits {
   planSlug: string | null;
 }
 
+interface PlanningStats {
+  cpf: {
+    income: { expected: number; actual: number; percentage: number; difference: number };
+    expense: { expected: number; actual: number; percentage: number; difference: number };
+  };
+  cnpj: {
+    income: { expected: number; actual: number; percentage: number; difference: number };
+    expense: { expected: number; actual: number; percentage: number; difference: number };
+  };
+}
+
 export default function DashboardPage() {
   const { data: session, status } = useSession();
   const router = useRouter();
   const [stats, setStats] = useState<DashboardStats | null>(null);
   const [planLimits, setPlanLimits] = useState<PlanLimits | null>(null);
+  const [planningStats, setPlanningStats] = useState<PlanningStats | null>(null);
+  const [planningEnabled, setPlanningEnabled] = useState(false);
   const [loading, setLoading] = useState(true);
   const [showPlansModal, setShowPlansModal] = useState(false);
 
@@ -123,13 +136,34 @@ export default function DashboardPage() {
       if (response.ok) {
         const data = await response.json();
         setPlanLimits(data);
+        
+        // Verificar se o planejamento está habilitado
+        const planningFeature = data.limits?.find((l: any) => l.featureKey === "financial_planning");
+        if (planningFeature?.enabled && planningFeature?.limit !== 0) {
+          setPlanningEnabled(true);
+          fetchPlanningStats();
+        }
       }
     } catch (error) {
       console.error("Erro ao carregar limites do plano:", error);
     }
   };
 
-
+  const fetchPlanningStats = async () => {
+    try {
+      const now = new Date();
+      const month = now.getMonth() + 1;
+      const year = now.getFullYear();
+      
+      const response = await fetch(`/api/planning/stats?month=${month}&year=${year}`);
+      if (response.ok) {
+        const data = await response.json();
+        setPlanningStats(data.stats);
+      }
+    } catch (error) {
+      console.error("Erro ao carregar estatísticas de planejamento:", error);
+    }
+  };
 
   if (loading || status === "loading") {
     return (
@@ -277,6 +311,177 @@ export default function DashboardPage() {
             </CardContent>
           </Card>
         </div>
+
+        {/* Planejamento Financeiro (Previsto vs Realizado) */}
+        {planningEnabled && planningStats && (
+          <Card className="mb-8">
+            <CardHeader className="bg-gradient-to-r from-purple-50 to-blue-50">
+              <div className="flex items-center justify-between">
+                <CardTitle className="flex items-center space-x-2">
+                  <Calendar className="h-5 w-5 text-purple-600" />
+                  <span>📊 Planejamento vs Realizado - {new Date().toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' })}</span>
+                </CardTitle>
+                <Link href="/planej">
+                  <Button variant="outline" size="sm">
+                    Ver Detalhes →
+                  </Button>
+                </Link>
+              </div>
+            </CardHeader>
+            <CardContent className="p-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {/* CPF Section */}
+                <div className="space-y-4">
+                  <h3 className="font-semibold text-gray-900 flex items-center">
+                    <User className="h-4 w-4 mr-2 text-blue-600" />
+                    CPF (Pessoal)
+                  </h3>
+                  
+                  {/* CPF - Receitas */}
+                  <div className="bg-green-50 p-4 rounded-lg border border-green-200">
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="text-sm font-medium text-gray-700">💰 Receitas</span>
+                      <span className={`text-sm font-semibold ${
+                        planningStats.cpf.income.percentage >= 95 ? 'text-green-600' :
+                        planningStats.cpf.income.percentage >= 80 ? 'text-yellow-600' : 'text-red-600'
+                      }`}>
+                        {planningStats.cpf.income.percentage.toFixed(1)}%
+                      </span>
+                    </div>
+                    <div className="space-y-1 text-sm">
+                      <div className="flex justify-between">
+                        <span className="text-gray-600">Previsto:</span>
+                        <span className="font-medium">R$ {planningStats.cpf.income.expected.toFixed(2)}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-gray-600">Realizado:</span>
+                        <span className="font-medium">R$ {planningStats.cpf.income.actual.toFixed(2)}</span>
+                      </div>
+                      {planningStats.cpf.income.difference !== 0 && (
+                        <div className="flex justify-between pt-1 border-t border-green-300">
+                          <span className="text-gray-600">Diferença:</span>
+                          <span className={planningStats.cpf.income.difference >= 0 ? 'text-green-700 font-semibold' : 'text-red-700 font-semibold'}>
+                            {planningStats.cpf.income.difference >= 0 ? '+' : ''}R$ {planningStats.cpf.income.difference.toFixed(2)}
+                          </span>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* CPF - Despesas */}
+                  <div className="bg-red-50 p-4 rounded-lg border border-red-200">
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="text-sm font-medium text-gray-700">💸 Despesas</span>
+                      <span className={`text-sm font-semibold ${
+                        // Para despesas: menos é melhor (verde)
+                        planningStats.cpf.expense.percentage <= 80 ? 'text-green-600' :
+                        planningStats.cpf.expense.percentage <= 100 ? 'text-yellow-600' : 'text-red-600'
+                      }`}>
+                        {planningStats.cpf.expense.percentage.toFixed(1)}%
+                      </span>
+                    </div>
+                    <div className="space-y-1 text-sm">
+                      <div className="flex justify-between">
+                        <span className="text-gray-600">Previsto:</span>
+                        <span className="font-medium">R$ {planningStats.cpf.expense.expected.toFixed(2)}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-gray-600">Realizado:</span>
+                        <span className="font-medium">R$ {planningStats.cpf.expense.actual.toFixed(2)}</span>
+                      </div>
+                      {planningStats.cpf.expense.difference !== 0 && (
+                        <div className="flex justify-between pt-1 border-t border-red-300">
+                          <span className="text-gray-600">Diferença:</span>
+                          <span className={planningStats.cpf.expense.difference <= 0 ? 'text-green-700 font-semibold' : 'text-red-700 font-semibold'}>
+                            {planningStats.cpf.expense.difference >= 0 ? '+' : ''}R$ {planningStats.cpf.expense.difference.toFixed(2)}
+                          </span>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </div>
+
+                {/* CNPJ Section */}
+                <div className="space-y-4">
+                  <h3 className="font-semibold text-gray-900 flex items-center">
+                    <Building2 className="h-4 w-4 mr-2 text-green-600" />
+                    CNPJ (Empresa)
+                  </h3>
+                  
+                  {/* CNPJ - Receitas */}
+                  <div className="bg-green-50 p-4 rounded-lg border border-green-200">
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="text-sm font-medium text-gray-700">💰 Receitas</span>
+                      <span className={`text-sm font-semibold ${
+                        planningStats.cnpj.income.percentage >= 95 ? 'text-green-600' :
+                        planningStats.cnpj.income.percentage >= 80 ? 'text-yellow-600' : 'text-red-600'
+                      }`}>
+                        {planningStats.cnpj.income.percentage.toFixed(1)}%
+                      </span>
+                    </div>
+                    <div className="space-y-1 text-sm">
+                      <div className="flex justify-between">
+                        <span className="text-gray-600">Previsto:</span>
+                        <span className="font-medium">R$ {planningStats.cnpj.income.expected.toFixed(2)}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-gray-600">Realizado:</span>
+                        <span className="font-medium">R$ {planningStats.cnpj.income.actual.toFixed(2)}</span>
+                      </div>
+                      {planningStats.cnpj.income.difference !== 0 && (
+                        <div className="flex justify-between pt-1 border-t border-green-300">
+                          <span className="text-gray-600">Diferença:</span>
+                          <span className={planningStats.cnpj.income.difference >= 0 ? 'text-green-700 font-semibold' : 'text-red-700 font-semibold'}>
+                            {planningStats.cnpj.income.difference >= 0 ? '+' : ''}R$ {planningStats.cnpj.income.difference.toFixed(2)}
+                          </span>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* CNPJ - Despesas */}
+                  <div className="bg-red-50 p-4 rounded-lg border border-red-200">
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="text-sm font-medium text-gray-700">💸 Despesas</span>
+                      <span className={`text-sm font-semibold ${
+                        // Para despesas: menos é melhor (verde)
+                        planningStats.cnpj.expense.percentage <= 80 ? 'text-green-600' :
+                        planningStats.cnpj.expense.percentage <= 100 ? 'text-yellow-600' : 'text-red-600'
+                      }`}>
+                        {planningStats.cnpj.expense.percentage.toFixed(1)}%
+                      </span>
+                    </div>
+                    <div className="space-y-1 text-sm">
+                      <div className="flex justify-between">
+                        <span className="text-gray-600">Previsto:</span>
+                        <span className="font-medium">R$ {planningStats.cnpj.expense.expected.toFixed(2)}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-gray-600">Realizado:</span>
+                        <span className="font-medium">R$ {planningStats.cnpj.expense.actual.toFixed(2)}</span>
+                      </div>
+                      {planningStats.cnpj.expense.difference !== 0 && (
+                        <div className="flex justify-between pt-1 border-t border-red-300">
+                          <span className="text-gray-600">Diferença:</span>
+                          <span className={planningStats.cnpj.expense.difference <= 0 ? 'text-green-700 font-semibold' : 'text-red-700 font-semibold'}>
+                            {planningStats.cnpj.expense.difference >= 0 ? '+' : ''}R$ {planningStats.cnpj.expense.difference.toFixed(2)}
+                          </span>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Legenda */}
+              <div className="mt-4 pt-4 border-t border-gray-200 text-xs text-gray-600 flex items-center gap-4">
+                <span>🟢 95-100% (Receitas) / 0-80% (Despesas): Ótimo</span>
+                <span>🟡 80-94% (Receitas) / 81-100% (Despesas): Atenção</span>
+                <span>🔴 {'<'}80% (Receitas) / {'>'}100% (Despesas): Crítico</span>
+              </div>
+            </CardContent>
+          </Card>
+        )}
 
         {/* Anúncio Entre Conteúdo */}
         <AdBanner position="between_content" className="my-8" />
