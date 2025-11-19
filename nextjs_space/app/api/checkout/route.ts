@@ -17,16 +17,26 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || "", {
 
 export async function POST(request: Request) {
   try {
+    console.log("🛒 [Checkout API] Iniciando processamento...");
+    
     const session = await getServerSession(authOptions);
+    console.log("👤 [Checkout API] Sessão:", { 
+      temSessao: !!session, 
+      temUser: !!session?.user,
+      userEmail: session?.user?.email 
+    });
 
     if (!session?.user) {
+      console.error("❌ [Checkout API] Não autorizado - sem sessão");
       return NextResponse.json({ error: "Não autorizado" }, { status: 401 });
     }
 
     const body = await request.json();
     const { plan: planSlug, gateway = "asaas" } = body; // Default para Asaas
+    console.log("📦 [Checkout API] Dados recebidos:", { planSlug, gateway });
 
     if (!planSlug) {
+      console.error("❌ [Checkout API] Plano não especificado");
       return NextResponse.json({ error: "Plano não especificado" }, { status: 400 });
     }
 
@@ -36,8 +46,11 @@ export async function POST(request: Request) {
     });
 
     if (!plan || !plan.isActive) {
+      console.error("❌ [Checkout API] Plano não encontrado ou inativo:", planSlug);
       return NextResponse.json({ error: "Plano não encontrado ou inativo" }, { status: 404 });
     }
+
+    console.log("✅ [Checkout API] Plano encontrado:", { nome: plan.name, preco: plan.price });
 
     const origin = request.headers.get("origin") || process.env.NEXT_PUBLIC_APP_URL || "";
     const userId = (session.user as any).id;
@@ -49,27 +62,58 @@ export async function POST(request: Request) {
       where: { id: userId },
     });
 
-    // Create payment record with plan relationship
-    const payment = await prisma.payment.create({
-      data: {
-        userId,
-        amount: plan.price,
-        currency: "brl",
-        status: "pending",
-        plan: planSlug,
-        planId: plan.id,
-        gateway: gateway,
-      },
+    console.log("👤 [Checkout API] Dados do usuário:", { 
+      userId, 
+      userName, 
+      userEmail,
+      temCpf: !!user?.cpf,
+      temCnpj: !!user?.cnpj
     });
+
+    // IMPORTANTE: Verificar se já existe um pagamento pendente recente (últimos 5 minutos)
+    const fiveMinutesAgo = new Date(Date.now() - 5 * 60 * 1000);
+    const existingPendingPayment = await prisma.payment.findFirst({
+      where: {
+        userId,
+        planId: plan.id,
+        status: "pending",
+        createdAt: { gte: fiveMinutesAgo },
+      },
+      orderBy: { createdAt: "desc" },
+    });
+
+    let payment;
+
+    if (existingPendingPayment) {
+      console.log("⚠️ [Checkout API] Pagamento pendente encontrado, reutilizando:", existingPendingPayment.id);
+      payment = existingPendingPayment;
+    } else {
+      // Create payment record with plan relationship
+      console.log("💳 [Checkout API] Criando novo registro de pagamento...");
+      payment = await prisma.payment.create({
+        data: {
+          userId,
+          amount: plan.price,
+          currency: "brl",
+          status: "pending",
+          plan: planSlug,
+          planId: plan.id,
+          gateway: gateway,
+        },
+      });
+      console.log("✅ [Checkout API] Pagamento criado:", payment.id);
+    }
 
     // Processar com Asaas (padrão)
     if (gateway === "asaas") {
+      console.log("💳 [Checkout API] Processando com Asaas...");
+      
       // Verificar se Asaas está configurado
-      console.log("🔑 Verificando token Asaas...");
+      console.log("🔑 [Checkout API] Verificando token Asaas...");
       console.log("Token presente?", !!process.env.ASAAS_API_KEY);
       
       if (!process.env.ASAAS_API_KEY) {
-        console.error("❌ Token Asaas não configurado!");
+        console.error("❌ [Checkout API] Token Asaas não configurado!");
         return NextResponse.json(
           { 
             error: "Sistema de pagamento Asaas não configurado. Entre em contato com o suporte.",
@@ -79,39 +123,57 @@ export async function POST(request: Request) {
         );
       }
       
-      console.log("✅ Token Asaas encontrado!");
+      console.log("✅ [Checkout API] Token Asaas encontrado!");
 
-      // Criar ou buscar cliente no Asaas
-      const asaasCustomerId = await createOrGetAsaasCustomer({
-        name: userName,
-        email: userEmail,
-        cpfCnpj: user?.cpf || user?.cnpj || undefined,
-      });
+      try {
+        // Criar ou buscar cliente no Asaas
+        console.log("👤 [Checkout API] Criando/buscando cliente no Asaas...");
+        const asaasCustomerId = await createOrGetAsaasCustomer({
+          name: userName,
+          email: userEmail,
+          cpfCnpj: user?.cpf || user?.cnpj || undefined,
+        });
+        console.log("✅ [Checkout API] Cliente Asaas:", asaasCustomerId);
 
-      // Criar link de pagamento
-      const paymentLink = await createAsaasPaymentLink({
-        name: `Clivus - ${plan.name}`,
-        description: `Acesso completo ao Clivus - Plano ${plan.name}`,
-        billingType: "UNDEFINED", // Permite PIX, Boleto ou Cartão
-        chargeType: "DETACHED",
-        value: plan.price,
-        externalReference: payment.id,
-      });
+        // Criar link de pagamento
+        console.log("🔗 [Checkout API] Criando link de pagamento...");
+        const paymentLink = await createAsaasPaymentLink({
+          name: `Clivus - ${plan.name}`,
+          description: `Acesso completo ao Clivus - Plano ${plan.name}`,
+          billingType: "UNDEFINED", // Permite PIX, Boleto ou Cartão
+          chargeType: "DETACHED",
+          value: plan.price,
+          externalReference: payment.id,
+        });
+        console.log("✅ [Checkout API] Link criado:", { id: paymentLink.id, url: paymentLink.url });
 
-      // Atualizar pagamento com ID do Asaas
-      await prisma.payment.update({
-        where: { id: payment.id },
-        data: { 
-          stripeSessionId: paymentLink.id, // Reutilizamos este campo para o Asaas ID
+        // Atualizar pagamento com ID do Asaas
+        console.log("💾 [Checkout API] Atualizando registro de pagamento...");
+        await prisma.payment.update({
+          where: { id: payment.id },
+          data: { 
+            stripeSessionId: paymentLink.id, // Reutilizamos este campo para o Asaas ID
+            gateway: "asaas",
+          },
+        });
+        console.log("✅ [Checkout API] Pagamento atualizado com sucesso!");
+
+        console.log("🎉 [Checkout API] Checkout concluído com sucesso!");
+        return NextResponse.json({ 
+          url: paymentLink.url,
           gateway: "asaas",
-        },
-      });
-
-      return NextResponse.json({ 
-        url: paymentLink.url,
-        gateway: "asaas",
-        paymentId: payment.id,
-      });
+          paymentId: payment.id,
+        });
+      } catch (asaasError: any) {
+        console.error("❌ [Checkout API] Erro ao processar com Asaas:", asaasError);
+        return NextResponse.json(
+          { 
+            error: "Erro ao processar pagamento com Asaas",
+            details: asaasError.message || "Erro desconhecido"
+          },
+          { status: 500 }
+        );
+      }
     }
 
     // Processar com Stripe (fallback)
