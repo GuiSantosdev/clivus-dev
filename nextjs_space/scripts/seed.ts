@@ -206,6 +206,7 @@ async function main() {
       { featureKey: "investment_tracking", featureName: "Controle de Investimentos", limit: -1, enabled: true },
       { featureKey: "custom_categories", featureName: "Categorias Personalizadas no DRE", limit: -1, enabled: true },
       { featureKey: "bank_reconciliation", featureName: "Conciliação Bancária Automática", limit: -1, enabled: true },
+      { featureKey: "financial_planning", featureName: "Planejamento Financeiro (Previsto vs Realizado)", limit: -1, enabled: true },
       { featureKey: "priority_support", featureName: "Suporte Prioritário", limit: -1, enabled: true },
     ];
     

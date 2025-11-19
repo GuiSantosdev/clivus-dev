@@ -27,6 +27,7 @@ import {
   LucideIcon,
   Briefcase,
   DollarSign,
+  Calendar,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
@@ -63,6 +64,11 @@ const clientMenuItems: MenuItem[] = [
         title: "Transações",
         href: "/transactions",
         icon: CreditCard,
+      },
+      {
+        title: "Planejamento",
+        href: "/planej",
+        icon: Calendar,
       },
       {
         title: "DRE",

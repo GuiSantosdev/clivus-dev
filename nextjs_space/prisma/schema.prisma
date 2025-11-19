@@ -54,25 +54,27 @@ model Session {
 }
 
 model User {
-  id            String        @id @default(cuid())
-  name          String
-  email         String        @unique
-  password      String
-  cpf           String?
-  cnpj          String?
-  businessArea  String?
-  emailVerified DateTime?
-  image         String?
-  role          String        @default("user") // user, admin, superadmin
-  hasAccess     Boolean       @default(false)
-  createdAt     DateTime      @default(now())
-  updatedAt     DateTime      @updatedAt
-  accounts       Account[]
-  sessions       Session[]
-  transactions   Transaction[]
-  payments       Payment[]
-  categories     Category[]
-  paymentMethods PaymentMethod[]
+  id                    String              @id @default(cuid())
+  name                  String
+  email                 String              @unique
+  password              String
+  cpf                   String?
+  cnpj                  String?
+  businessArea          String?
+  emailVerified         DateTime?
+  image                 String?
+  role                  String              @default("user") // user, admin, superadmin
+  hasAccess             Boolean             @default(false)
+  planningEnabled       Boolean             @default(false) // Habilita/desabilita planejamento financeiro
+  createdAt             DateTime            @default(now())
+  updatedAt             DateTime            @updatedAt
+  accounts              Account[]
+  sessions              Session[]
+  transactions          Transaction[]
+  payments              Payment[]
+  categories            Category[]
+  paymentMethods        PaymentMethod[]
+  plannedTransactions   PlannedTransaction[]
 
   @@map("users")
 }
@@ -88,35 +90,40 @@ model VerificationToken {
 
 // Financial Models
 model Transaction {
-  id                 String       @id @default(cuid())
-  userId             String
-  type               String // income, expense
-  category           String
-  description        String
-  amount             Float
-  date               DateTime
-  accountType        String // CPF, CNPJ
-  paymentMethod      String? // Forma de pagamento
+  id                   String              @id @default(cuid())
+  userId               String
+  type                 String // income, expense
+  category             String
+  description          String
+  amount               Float
+  date                 DateTime
+  accountType          String // CPF, CNPJ
+  paymentMethod        String? // Forma de pagamento
   
   // Campos para compra/venda a prazo
-  isInstallment      Boolean      @default(false)
-  installmentNumber  Int? // Número da parcela atual (ex: 1, 2, 3)
-  totalInstallments  Int? // Total de parcelas (ex: 12)
-  installmentAmount  Float? // Valor de cada parcela
-  dueDate            DateTime? // Data de vencimento da parcela
+  isInstallment        Boolean             @default(false)
+  installmentNumber    Int? // Número da parcela atual (ex: 1, 2, 3)
+  totalInstallments    Int? // Total de parcelas (ex: 12)
+  installmentAmount    Float? // Valor de cada parcela
+  dueDate              DateTime? // Data de vencimento da parcela
   
-  attachments        Attachment[]
-  user               User         @relation(fields: [userId], references: [id], onDelete: Cascade)
-  reconciled         Boolean      @default(false)
-  reconciliationDate DateTime?
-  bankStatementId    String?
-  autoImported       Boolean      @default(false)
-  createdAt          DateTime     @default(now())
-  updatedAt          DateTime     @updatedAt
+  // Vinculação ao planejamento financeiro
+  plannedTransactionId String?
+  plannedTransaction   PlannedTransaction? @relation("PlannedTransactionLink", fields: [plannedTransactionId], references: [id], onDelete: SetNull)
+  
+  attachments          Attachment[]
+  user                 User                @relation(fields: [userId], references: [id], onDelete: Cascade)
+  reconciled           Boolean             @default(false)
+  reconciliationDate   DateTime?
+  bankStatementId      String?
+  autoImported         Boolean             @default(false)
+  createdAt            DateTime            @default(now())
+  updatedAt            DateTime            @updatedAt
 
   @@index([userId])
   @@index([accountType])
   @@index([date])
+  @@index([plannedTransactionId])
   @@map("transactions")
 }
 
@@ -239,6 +246,39 @@ model Gateway {
   updatedAt   DateTime @updatedAt
   
   @@map("gateways")
+}
+
+// Planned Transactions (Planejamento Financeiro)
+model PlannedTransaction {
+  id                String        @id @default(cuid())
+  userId            String
+  user              User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  type              String        // "income" ou "expense"
+  accountType       String        // "CPF" ou "CNPJ"
+  category          String
+  description       String
+  
+  expectedAmount    Float         // Valor previsto
+  expectedDate      DateTime      // Data prevista
+  
+  actualAmount      Float?        // Valor realizado (soma das transações vinculadas)
+  actualDate        DateTime?     // Data da primeira transação vinculada
+  
+  isRecurring       Boolean       @default(false) // Se repete todo mês
+  month             Int           // Mês do planejamento (1-12)
+  year              Int           // Ano do planejamento
+  
+  // Relacionamento com transações reais
+  linkedTransactions Transaction[] @relation("PlannedTransactionLink")
+  
+  createdAt         DateTime      @default(now())
+  updatedAt         DateTime      @updatedAt
+  
+  @@index([userId])
+  @@index([month, year])
+  @@index([userId, month, year])
+  @@map("planned_transactions")
 }
 
 model Category {

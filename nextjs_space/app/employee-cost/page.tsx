@@ -35,6 +35,7 @@ export default function EmployeeCostPage() {
 
   // Estados do formulário
   const [salary, setSalary] = useState("");
+  const [variablePay, setVariablePay] = useState(""); // Média mensal de verbas variáveis
   const [transportation, setTransportation] = useState("");
   const [meal, setMeal] = useState("");
   const [health, setHealth] = useState("");
@@ -68,21 +69,31 @@ export default function EmployeeCostPage() {
   useEffect(() => {
     calculateEmployeeCost();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [salary, transportation, meal, health, otherBenefits, workDays]);
+  }, [salary, variablePay, transportation, meal, health, otherBenefits, workDays]);
 
   const calculateEmployeeCost = () => {
     const salaryValue = parseFloat(salary) || 0;
+    const variablePayValue = parseFloat(variablePay) || 0;
     const transportationValue = parseFloat(transportation) || 0;
     const mealValue = parseFloat(meal) || 0;
     const healthValue = parseFloat(health) || 0;
     const otherBenefitsValue = parseFloat(otherBenefits) || 0;
     const workDaysValue = parseInt(workDays) || 22;
 
-    // Encargos obrigatórios (% sobre o salário)
+    // Cálculo correto de férias conforme CLT
+    // 1. Remuneração Mensal Base = Salário Base + Média de Verbas Variáveis
+    const baseRemuneration = salaryValue + variablePayValue;
+    // 2. Valor Mensal das Férias (1/12 avos)
+    const vacationMonthly = baseRemuneration / 12;
+    // 3. Adicional de 1/3 Constitucional Mensal
+    const vacationThird = vacationMonthly / 3;
+    // 4. Total Provisão Mensal de Férias
+    const vacation = vacationMonthly + vacationThird;
+
+    // Encargos obrigatórios (% sobre o salário base)
     const inss = salaryValue * 0.20; // INSS Patronal (20%)
     const fgts = salaryValue * 0.08; // FGTS (8%)
-    const vacation = salaryValue * (1/12) * (1 + 1/3); // Férias + 1/3 (11,11% ao ano)
-    const thirteenthSalary = salaryValue * (1/12); // 13º Salário (8,33% ao ano)
+    const thirteenthSalary = baseRemuneration / 12; // 13º Salário sobre remuneração base
     const rat = salaryValue * 0.03; // RAT (Risco Ambiental do Trabalho - média 3%)
     const educationSalary = salaryValue * 0.025; // Salário Educação (2,5%)
     const systemS = salaryValue * 0.0358; // Sistema S (SESI, SENAI, SEBRAE, etc. - 3,58%)

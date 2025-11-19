@@ -75,7 +75,8 @@ export async function POST(request: Request) {
       installmentNumber,
       totalInstallments,
       installmentAmount,
-      dueDate
+      dueDate,
+      plannedTransactionId
     } = body;
 
     if (!type || !category || !description || !amount || !date || !accountType) {
@@ -100,8 +101,40 @@ export async function POST(request: Request) {
         totalInstallments: totalInstallments ? parseInt(totalInstallments) : null,
         installmentAmount: installmentAmount ? parseFloat(installmentAmount) : null,
         dueDate: dueDate ? new Date(dueDate) : null,
+        plannedTransactionId: plannedTransactionId || null,
       },
     });
+
+    // Atualizar PlannedTransaction se vinculado
+    if (plannedTransactionId) {
+      const plannedTransaction = await prisma.plannedTransaction.findFirst({
+        where: { id: plannedTransactionId, userId },
+        include: { linkedTransactions: true },
+      });
+
+      if (plannedTransaction) {
+        // Calcular o total realizado
+        const totalActual = plannedTransaction.linkedTransactions.reduce(
+          (sum, t) => sum + t.amount,
+          0
+        );
+        const newTotal = totalActual + parseFloat(amount);
+
+        // Obter a primeira data de transação vinculada
+        const firstDate = plannedTransaction.linkedTransactions[0]?.date;
+        const newFirstDate = firstDate && firstDate < new Date(date) 
+          ? firstDate 
+          : new Date(date);
+
+        await prisma.plannedTransaction.update({
+          where: { id: plannedTransactionId },
+          data: {
+            actualAmount: newTotal,
+            actualDate: newFirstDate,
+          },
+        });
+      }
+    }
 
     return NextResponse.json({ transaction });
   } catch (error) {

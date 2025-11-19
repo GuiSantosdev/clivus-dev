@@ -74,10 +74,13 @@ export default function TransactionsPage() {
     totalInstallments: "1",
     installmentAmount: "",
     dueDate: "",
+    plannedTransactionId: "",
   });
 
   const [showNewCategoryInput, setShowNewCategoryInput] = useState(false);
   const [showNewPaymentMethodInput, setShowNewPaymentMethodInput] = useState(false);
+  const [availablePlannedTransactions, setAvailablePlannedTransactions] = useState<any[]>([]);
+  const [planningEnabled, setPlanningEnabled] = useState(false);
 
   useEffect(() => {
     if (status === "unauthenticated") {
@@ -86,8 +89,15 @@ export default function TransactionsPage() {
       fetchTransactions();
       fetchCategories();
       fetchPaymentMethods();
+      checkPlanningEnabled();
     }
   }, [status, router]);
+
+  useEffect(() => {
+    if (planningEnabled && formData.type && formData.accountType && formData.date) {
+      fetchAvailablePlannedTransactions();
+    }
+  }, [planningEnabled, formData.type, formData.accountType, formData.date]);
 
   const fetchTransactions = async () => {
     try {
@@ -124,6 +134,39 @@ export default function TransactionsPage() {
       }
     } catch (error) {
       console.error("Erro ao buscar formas de pagamento:", error);
+    }
+  };
+
+  const checkPlanningEnabled = async () => {
+    try {
+      const response = await fetch("/api/user/plan-limits");
+      if (response.ok) {
+        const data = await response.json();
+        const planningFeature = data.limits?.find((l: any) => l.featureKey === "financial_planning");
+        setPlanningEnabled(planningFeature?.enabled && planningFeature?.limit !== 0);
+      }
+    } catch (error) {
+      console.error("Erro ao verificar planejamento:", error);
+    }
+  };
+
+  const fetchAvailablePlannedTransactions = async () => {
+    if (!planningEnabled) return;
+    
+    try {
+      const transactionDate = new Date(formData.date);
+      const month = transactionDate.getMonth() + 1;
+      const year = transactionDate.getFullYear();
+      
+      const response = await fetch(
+        `/api/planning/available?type=${formData.type}&accountType=${formData.accountType}&month=${month}&year=${year}`
+      );
+      if (response.ok) {
+        const data = await response.json();
+        setAvailablePlannedTransactions(data.plannedTransactions || []);
+      }
+    } catch (error) {
+      console.error("Erro ao buscar planejamentos:", error);
     }
   };
 
@@ -205,6 +248,7 @@ export default function TransactionsPage() {
         date: formData.date,
         accountType: formData.accountType,
         paymentMethod: formData.paymentMethod || null,
+        plannedTransactionId: formData.plannedTransactionId || null,
       };
 
       if (formData.isInstallment) {
@@ -240,6 +284,7 @@ export default function TransactionsPage() {
           totalInstallments: "1",
           installmentAmount: "",
           dueDate: "",
+          plannedTransactionId: "",
         });
       } else {
         toast.error("Erro ao adicionar transação");
@@ -495,6 +540,41 @@ export default function TransactionsPage() {
                     </div>
                   )}
                 </div>
+
+                {/* Vincular ao Planejamento */}
+                {planningEnabled && availablePlannedTransactions.length > 0 && (
+                  <div className="border p-4 rounded-lg bg-blue-50">
+                    <Label>📌 Vincular ao Planejamento (Opcional)</Label>
+                    <p className="text-sm text-gray-600 mb-2">
+                      Esta transação está relacionada a uma receita/despesa planejada?
+                    </p>
+                    <Select
+                      value={formData.plannedTransactionId}
+                      onValueChange={(value) =>
+                        setFormData({ ...formData, plannedTransactionId: value })
+                      }
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Não vincular" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="">Não vincular</SelectItem>
+                        {availablePlannedTransactions.map((pt: any) => (
+                          <SelectItem key={pt.id} value={pt.id}>
+                            {pt.description} - R$ {pt.expectedAmount.toFixed(2)} (
+                            {pt.category})
+                            {pt.actualAmount && ` • Já vinculado: R$ ${pt.actualAmount.toFixed(2)}`}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    {formData.plannedTransactionId && (
+                      <p className="text-xs text-blue-600 mt-2">
+                        ℹ️ Ao vincular, o sistema atualizará automaticamente o valor realizado
+                      </p>
+                    )}
+                  </div>
+                )}
 
                 {/* Parcelamento */}
                 <div className="border-t pt-4">
