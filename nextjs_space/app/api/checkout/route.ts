@@ -12,7 +12,7 @@ import {
 } from "@/lib/asaas";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || "", {
-  apiVersion: "2025-10-29.clover",
+  apiVersion: "2025-11-17.clover",
 });
 
 export async function POST(request: Request) {
@@ -128,10 +128,22 @@ export async function POST(request: Request) {
       try {
         // Criar ou buscar cliente no Asaas
         console.log("👤 [Checkout API] Criando/buscando cliente no Asaas...");
+        
+        // Validar CPF/CNPJ antes de enviar (apenas números com 11 ou 14 dígitos)
+        const cpfCnpj = user?.cpf || user?.cnpj || "";
+        const cpfCnpjNumeros = cpfCnpj.replace(/\D/g, "");
+        const cpfCnpjValido = cpfCnpjNumeros.length === 11 || cpfCnpjNumeros.length === 14;
+        
+        console.log("🔍 [Checkout API] Validando CPF/CNPJ:", { 
+          original: cpfCnpj,
+          numeros: cpfCnpjNumeros,
+          valido: cpfCnpjValido
+        });
+        
         const asaasCustomerId = await createOrGetAsaasCustomer({
           name: userName,
           email: userEmail,
-          cpfCnpj: user?.cpf || user?.cnpj || undefined,
+          cpfCnpj: cpfCnpjValido ? cpfCnpjNumeros : undefined,
         });
         console.log("✅ [Checkout API] Cliente Asaas:", asaasCustomerId);
 

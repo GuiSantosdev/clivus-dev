@@ -50,11 +50,11 @@ export async function GET(req: NextRequest) {
 
     // Calcular estatísticas
     const totalSales = payments.length;
-    const completedSales = payments.filter(p => p.status === 'completed').length;
-    const pendingSales = payments.filter(p => p.status === 'pending').length;
+    const completedSales = payments.filter((p: any) => p.status === 'completed').length;
+    const pendingSales = payments.filter((p: any) => p.status === 'pending').length;
     const totalRevenue = payments
-      .filter(p => p.status === 'completed')
-      .reduce((sum, p) => sum + p.amount, 0);
+      .filter((p: any) => p.status === 'completed')
+      .reduce((sum: number, p: any) => sum + p.amount, 0);
 
     return NextResponse.json({
       payments,

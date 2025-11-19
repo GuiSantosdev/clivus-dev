@@ -30,22 +30,22 @@ export async function GET() {
     });
 
     // Calculate stats for CPF
-    const cpfTransactions = transactions.filter((t) => t?.accountType === "CPF");
+    const cpfTransactions = transactions.filter((t: any) => t?.accountType === "CPF");
     const cpfIncome = cpfTransactions
-      .filter((t) => t?.type === "income")
-      .reduce((sum, t) => sum + (t?.amount ?? 0), 0);
+      .filter((t: any) => t?.type === "income")
+      .reduce((sum: number, t: any) => sum + (t?.amount ?? 0), 0);
     const cpfExpenses = cpfTransactions
-      .filter((t) => t?.type === "expense")
-      .reduce((sum, t) => sum + (t?.amount ?? 0), 0);
+      .filter((t: any) => t?.type === "expense")
+      .reduce((sum: number, t: any) => sum + (t?.amount ?? 0), 0);
 
     // Calculate stats for CNPJ
-    const cnpjTransactions = transactions.filter((t) => t?.accountType === "CNPJ");
+    const cnpjTransactions = transactions.filter((t: any) => t?.accountType === "CNPJ");
     const cnpjIncome = cnpjTransactions
-      .filter((t) => t?.type === "income")
-      .reduce((sum, t) => sum + (t?.amount ?? 0), 0);
+      .filter((t: any) => t?.type === "income")
+      .reduce((sum: number, t: any) => sum + (t?.amount ?? 0), 0);
     const cnpjExpenses = cnpjTransactions
-      .filter((t) => t?.type === "expense")
-      .reduce((sum, t) => sum + (t?.amount ?? 0), 0);
+      .filter((t: any) => t?.type === "expense")
+      .reduce((sum: number, t: any) => sum + (t?.amount ?? 0), 0);
 
     return NextResponse.json({
       cpf: {
@@ -58,7 +58,7 @@ export async function GET() {
         income: cnpjIncome,
         expenses: cnpjExpenses,
       },
-      recentTransactions: transactions.map((t) => ({
+      recentTransactions: transactions.map((t: any) => ({
         id: t?.id,
         type: t?.type,
         category: t?.category,

@@ -39,7 +39,7 @@ export async function getUserPlanLimits(userId: string): Promise<PlanLimits> {
 
     // Converter funcionalidades do plano em um mapa
     const limits: PlanLimits = {};
-    payment.planDetails.planFeatures.forEach((feature) => {
+    payment.planDetails.planFeatures.forEach((feature: any) => {
       if (feature.enabled) {
         limits[feature.featureKey] = feature.limit;
       } else {

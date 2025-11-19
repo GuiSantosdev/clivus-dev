@@ -115,7 +115,7 @@ export async function POST(request: Request) {
       if (plannedTransaction) {
         // Calcular o total realizado
         const totalActual = plannedTransaction.linkedTransactions.reduce(
-          (sum, t) => sum + t.amount,
+          (sum: number, t: any) => sum + t.amount,
           0
         );
         const newTotal = totalActual + parseFloat(amount);

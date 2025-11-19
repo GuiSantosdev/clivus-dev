@@ -63,26 +63,26 @@ export async function GET(request: Request) {
     
     // Vendas nos últimos 30 dias
     const salesLast30Days = completedPayments.filter(
-      p => p.createdAt >= thirtyDaysAgo
+      (p: any) => p.createdAt >= thirtyDaysAgo
     ).length;
     
     // Vendas nos últimos 7 dias
     const salesLast7Days = completedPayments.filter(
-      p => p.createdAt >= sevenDaysAgo
+      (p: any) => p.createdAt >= sevenDaysAgo
     ).length;
     
     // Receita total
-    const totalRevenue = completedPayments.reduce((sum, payment) => sum + payment.amount, 0);
+    const totalRevenue = completedPayments.reduce((sum: number, payment: any) => sum + payment.amount, 0);
     
     // Receita últimos 30 dias
     const revenueLast30Days = completedPayments
-      .filter(p => p.createdAt >= thirtyDaysAgo)
-      .reduce((sum, payment) => sum + payment.amount, 0);
+      .filter((p: any) => p.createdAt >= thirtyDaysAgo)
+      .reduce((sum: number, payment: any) => sum + payment.amount, 0);
     
     // Receita últimos 7 dias
     const revenueLast7Days = completedPayments
-      .filter(p => p.createdAt >= sevenDaysAgo)
-      .reduce((sum, payment) => sum + payment.amount, 0);
+      .filter((p: any) => p.createdAt >= sevenDaysAgo)
+      .reduce((sum: number, payment: any) => sum + payment.amount, 0);
     
     // Média de vendas por dia (últimos 30 dias)
     const avgSalesPerDay = salesLast30Days / 30;
@@ -99,13 +99,13 @@ export async function GET(request: Request) {
       const endOfDay = new Date(date.setHours(23, 59, 59, 999));
       
       const daySales = completedPayments.filter(
-        p => p.createdAt >= startOfDay && p.createdAt <= endOfDay
+        (p: any) => p.createdAt >= startOfDay && p.createdAt <= endOfDay
       );
       
       salesHistory.push({
         date: dateStr,
         sales: daySales.length,
-        revenue: daySales.reduce((sum, p) => sum + p.amount, 0)
+        revenue: daySales.reduce((sum: number, p: any) => sum + p.amount, 0)
       });
     }
     
@@ -141,7 +141,7 @@ export async function GET(request: Request) {
       averageTicket,
       conversionRate,
       salesHistory,
-      salesByPlan: salesByPlan.map(s => ({
+      salesByPlan: salesByPlan.map((s: any) => ({
         plan: s.plan,
         count: s._count.id,
         revenue: s._sum.amount || 0
