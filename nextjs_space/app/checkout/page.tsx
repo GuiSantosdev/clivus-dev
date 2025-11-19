@@ -247,68 +247,19 @@ export default function CheckoutPage() {
                 </p>
               </CardHeader>
               <CardContent className="p-6">
-                {/* Seleção de Gateway de Pagamento */}
-                {activeGateways.length > 0 && (
-                  <div className="mb-6">
-                    <label className="block text-sm font-semibold text-gray-700 mb-3">
-                      Escolha a forma de pagamento:
-                    </label>
-                    <div className={activeGateways.length === 1 ? "grid grid-cols-1 gap-4" : "grid grid-cols-2 gap-4"}>
-                      {activeGateways.map((gw) => {
-                        const isAsaas = gw.name.toLowerCase() === "asaas";
-                        const isStripe = gw.name.toLowerCase() === "stripe";
-                        const gwName = gw.name.toLowerCase() as "asaas" | "stripe";
-                        
-                        if (!isAsaas && !isStripe) return null;
-                        
-                        return (
-                          <button
-                            key={gw.name}
-                            onClick={() => setGateway(gwName)}
-                            className={`p-4 rounded-lg border-2 transition-all duration-200 ${
-                              gateway === gwName
-                                ? isAsaas 
-                                  ? "border-blue-600 bg-blue-50 shadow-md"
-                                  : "border-purple-600 bg-purple-50 shadow-md"
-                                : "border-gray-300 hover:border-gray-400"
-                            }`}
-                          >
-                            <div className="flex flex-col items-center">
-                              <div className={`text-2xl font-bold mb-1 ${
-                                isAsaas ? "text-blue-600" : "text-purple-600"
-                              }`}>
-                                {gw.displayName}
-                              </div>
-                              <div className="text-xs text-gray-600">
-                                {isAsaas ? "PIX • Boleto • Cartão" : "Cartão de Crédito"}
-                              </div>
-                            </div>
-                          </button>
-                        );
-                      })}
-                    </div>
-                  </div>
-                )}
-
-                {activeGateways.length === 0 && (
-                  <div className="mb-6 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
-                    <p className="text-sm text-yellow-800">
-                      ⚠️ Nenhum gateway de pagamento está configurado no momento. Entre em contato com o suporte.
-                    </p>
-                  </div>
-                )}
-
                 <Button
                   onClick={handleCheckout}
-                  disabled={loading}
-                  className="w-full bg-gradient-to-r from-blue-600 to-blue-800 hover:from-blue-700 hover:to-blue-900 text-white text-lg font-bold py-6 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300"
+                  disabled={loading || activeGateways.length === 0}
+                  className="w-full bg-gradient-to-r from-green-600 to-emerald-700 hover:from-green-700 hover:to-emerald-800 text-white text-lg font-bold py-6 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {loading ? (
                     "Processando..."
+                  ) : activeGateways.length === 0 ? (
+                    "Sistema de Pagamento Indisponível"
                   ) : (
                     <>
                       <CreditCard className="mr-2 h-5 w-5" />
-                      Comprar Agora
+                      Confirmar Compra
                     </>
                   )}
                 </Button>
@@ -316,7 +267,11 @@ export default function CheckoutPage() {
                 <div className="mt-6 space-y-3">
                   <div className="flex items-center justify-center space-x-2 text-sm text-gray-600">
                     <Check className="h-4 w-4 text-green-600" />
-                    <span>Pagamento 100% seguro via {gateway === "asaas" ? "Asaas" : "Stripe"}</span>
+                    <span>Pagamento 100% seguro e protegido</span>
+                  </div>
+                  <div className="flex items-center justify-center space-x-2 text-sm text-gray-600">
+                    <Check className="h-4 w-4 text-green-600" />
+                    <span>PIX, Boleto ou Cartão de Crédito</span>
                   </div>
                   <div className="flex items-center justify-center space-x-2 text-sm text-gray-600">
                     <Check className="h-4 w-4 text-green-600" />
