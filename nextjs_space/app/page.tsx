@@ -9,6 +9,7 @@ import { OfferSection } from "@/components/offer-section";
 import { FaqSection } from "@/components/faq-section";
 import { LeadForm } from "@/components/lead-form";
 import { Footer } from "@/components/footer";
+import { SocialProofNotification } from "@/components/social-proof-notification";
 
 export default function HomePage() {
   return (
@@ -23,6 +24,9 @@ export default function HomePage() {
       <FaqSection />
       <LeadForm />
       <Footer />
+      
+      {/* Social Proof Notifications */}
+      <SocialProofNotification />
     </main>
   );
 }
