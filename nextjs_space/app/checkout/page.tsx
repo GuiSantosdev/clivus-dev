@@ -30,7 +30,7 @@ export default function CheckoutPage() {
   const [loading, setLoading] = useState(false);
   const [plan, setPlan] = useState<Plan | null>(null);
   const [loadingPlan, setLoadingPlan] = useState(true);
-  const [gateway, setGateway] = useState<"asaas" | "stripe">("asaas"); // Default para Asaas
+  const [gateway, setGateway] = useState<string>("efi"); // Default para primeiro gateway ativo
   const [activeGateways, setActiveGateways] = useState<Array<{name: string; displayName: string}>>([]);
 
   const planSlug = searchParams.get("plan") || "basic";
@@ -51,9 +51,8 @@ export default function CheckoutPage() {
         // Definir gateway padrão baseado nos gateways ativos
         if (gateways.length > 0) {
           const firstGateway = gateways[0].name.toLowerCase();
-          if (firstGateway === "asaas" || firstGateway === "stripe") {
-            setGateway(firstGateway as "asaas" | "stripe");
-          }
+          setGateway(firstGateway as any); // Aceita qualquer gateway ativo
+          console.log("✅ [Checkout] Gateway selecionado automaticamente:", firstGateway);
         }
       }
     } catch (error) {
