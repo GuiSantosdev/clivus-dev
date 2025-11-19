@@ -1,176 +1,179 @@
-
 "use client";
 
-import { useState } from "react";
-import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { signOut, useSession } from "next-auth/react";
-import Image from "next/image";
+import Link from "next/link";
+import { useSession, signOut } from "next-auth/react";
+import { useState } from "react";
 import {
   LayoutDashboard,
-  CreditCard,
+  ArrowLeftRight,
   FileText,
-  Calculator,
-  ShieldCheck,
-  TrendingUp,
   Users,
-  Settings,
+  TrendingUp,
+  DollarSign,
+  Shield,
+  Briefcase,
   LogOut,
+  Settings as SettingsIcon,
   Menu,
   X,
-  Home,
   Package,
   ShoppingCart,
-  UserCog,
-  Crown,
-  Monitor,
-  LucideIcon,
-  Briefcase,
-  DollarSign,
+  CreditCard,
+  Mail,
   Calendar,
+  BarChart3,
+  PieChart,
 } from "lucide-react";
-import { Button } from "@/components/ui/button";
 
-// Tipos para os itens do menu
-interface MenuItem {
-  title: string;
-  href?: string;
-  icon?: LucideIcon;
-  isGroup?: boolean;
-  items?: {
-    title: string;
-    href: string;
-    icon: LucideIcon;
-  }[];
-}
-
-// Menu para clientes do Clivus (usuários normais) - Agrupado por funcionalidade
-const clientMenuItems: MenuItem[] = [
+const clientMenuItems = [
   {
-    title: "Início",
-    href: "/dashboard",
-    icon: Home,
-  },
-  {
-    title: "Dashboard",
-    href: "/dashboard",
-    icon: LayoutDashboard,
-  },
-  {
-    title: "💰 Financeiro",
-    isGroup: true,
+    group: "Principal",
     items: [
       {
-        title: "Transações",
+        name: "Início",
+        href: "/dashboard",
+        icon: LayoutDashboard,
+        description: "Visão geral das finanças",
+      },
+    ],
+  },
+  {
+    group: "Financeiro",
+    items: [
+      {
+        name: "Transações",
         href: "/transactions",
-        icon: CreditCard,
+        icon: ArrowLeftRight,
+        description: "Lançamentos PF e PJ",
       },
       {
-        title: "Planejamento",
+        name: "Planejamento",
         href: "/planej",
         icon: Calendar,
+        description: "Previsto x Realizado",
       },
       {
-        title: "DRE",
-        href: "/dre",
-        icon: FileText,
-      },
-      {
-        title: "Conciliação Bancária",
+        name: "Conciliação",
         href: "/reconciliation",
         icon: FileText,
+        description: "Importar extrato",
+      },
+      {
+        name: "DRE",
+        href: "/dre",
+        icon: BarChart3,
+        description: "Demonstrativo de Resultados",
+      },
+      {
+        name: "Relatórios",
+        href: "/reports",
+        icon: PieChart,
+        description: "Análises e gráficos",
       },
     ],
   },
   {
-    title: "📈 Gestão",
-    isGroup: true,
+    group: "Ferramentas",
     items: [
       {
-        title: "Pró-labore",
-        href: "/prolabore",
-        icon: Calculator,
-      },
-      {
-        title: "Precificação",
-        href: "/pricing",
-        icon: DollarSign,
-      },
-      {
-        title: "Custo de Funcionário",
-        href: "/employee-cost",
-        icon: Briefcase,
-      },
-      {
-        title: "Investimentos",
+        name: "Investimentos",
         href: "/investments",
         icon: TrendingUp,
+        description: "Controle de investimentos",
       },
       {
-        title: "Compliance Fiscal",
+        name: "Pró-labore",
+        href: "/prolabore",
+        icon: DollarSign,
+        description: "Calculadora",
+      },
+      {
+        name: "Precificação",
+        href: "/pricing",
+        icon: DollarSign,
+        description: "Calcular preços",
+      },
+      {
+        name: "Custo Funcionário",
+        href: "/employee-cost",
+        icon: Users,
+        description: "Calcular custos CLT",
+      },
+      {
+        name: "Compliance",
         href: "/compliance",
-        icon: ShieldCheck,
+        icon: Shield,
+        description: "Conformidade fiscal",
       },
     ],
   },
   {
-    title: "Equipe",
-    href: "/team",
-    icon: Users,
-  },
-  {
-    title: "Relatórios",
-    href: "/reports",
-    icon: FileText,
+    group: "Gestão",
+    items: [
+      {
+        name: "Equipe",
+        href: "/team",
+        icon: Users,
+        description: "Multi-usuário",
+      },
+    ],
   },
 ];
 
-// Menu para SuperAdmin (gestão do negócio Clivus)
-const superAdminMenuItems: MenuItem[] = [
+const superAdminMenuItems = [
   {
-    title: "Início",
-    href: "/admin",
-    icon: Home,
-  },
-  {
-    title: "Dashboard Admin",
-    href: "/admin",
-    icon: Crown,
-  },
-  {
-    title: "Gerenciar Planos",
-    href: "/admin/plans",
-    icon: Package,
-  },
-  {
-    title: "Gestão de Vendas",
-    href: "/admin/sales",
-    icon: ShoppingCart,
-  },
-  {
-    title: "Leads & Remarketing",
-    href: "/admin/leads",
-    icon: Users,
-  },
-  {
-    title: "Gestão de Clientes",
-    href: "/admin/clients",
-    icon: UserCog,
-  },
-  {
-    title: "Gateways de Pagamento",
-    href: "/admin/gateways",
-    icon: CreditCard,
-  },
-  {
-    title: "Anúncios",
-    href: "/admin/ads",
-    icon: Monitor,
-  },
-  {
-    title: "Configurações",
-    href: "/admin/settings",
-    icon: Settings,
+    group: "SuperAdmin",
+    items: [
+      {
+        name: "Início",
+        href: "/admin",
+        icon: LayoutDashboard,
+        description: "Dashboard SuperAdmin",
+      },
+      {
+        name: "Clientes Pagantes",
+        href: "/admin/clients",
+        icon: Users,
+        description: "Gerenciar clientes ativos",
+      },
+      {
+        name: "Leads & Remarketing",
+        href: "/admin/leads",
+        icon: Mail,
+        description: "Funil de vendas",
+      },
+      {
+        name: "Vendas",
+        href: "/admin/sales",
+        icon: ShoppingCart,
+        description: "Pagamentos e credenciais",
+      },
+      {
+        name: "Planos",
+        href: "/admin/plans",
+        icon: Package,
+        description: "Gerenciar planos",
+      },
+      {
+        name: "Gateways",
+        href: "/admin/gateways",
+        icon: CreditCard,
+        description: "Pagamento (Asaas/Stripe)",
+      },
+      {
+        name: "Anúncios",
+        href: "/admin/ads",
+        icon: BarChart3,
+        description: "Gerenciar ads",
+      },
+      {
+        name: "Configurações",
+        href: "/admin/settings",
+        icon: SettingsIcon,
+        description: "Sistema e emails",
+      },
+    ],
   },
 ];
 
@@ -213,109 +216,105 @@ export function Sidebar() {
       <aside
         className={`
           fixed top-0 left-0 h-full bg-white border-r border-gray-200 
-          transition-transform duration-300 z-40 flex flex-col
+          transition-all duration-300 z-40 flex flex-col
           ${isMobileMenuOpen ? "translate-x-0" : "-translate-x-full"}
-          lg:translate-x-0 w-64
+          lg:translate-x-0
+          w-20 lg:w-64
+          hover:w-64
         `}
       >
         {/* Logo */}
-        <div className="p-6 border-b border-gray-200">
-          <Link href="/dashboard" className="flex items-center gap-3">
-            <div className="relative w-12 h-12">
-              <Image
-                src="/logo-clivus.png"
-                alt="Clivus"
-                fill
-                className="object-contain"
-              />
-            </div>
-            <div className="flex flex-col">
-              <span className="font-bold text-xl text-gray-800">Clivus</span>
-              {userRole === "superadmin" && (
-                <span className="text-xs font-semibold text-purple-600 bg-purple-100 px-2 py-0.5 rounded-full inline-block w-fit">
-                  🔐 SuperAdmin
-                </span>
-              )}
+        <div className="p-4 border-b border-gray-200">
+          <Link href={userRole === "superadmin" ? "/admin" : "/dashboard"}>
+            <div className="flex items-center gap-3 group">
+              <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center flex-shrink-0">
+                <Briefcase className="h-6 w-6 text-white" />
+              </div>
+              <div className="hidden lg:block whitespace-nowrap overflow-hidden">
+                <h1 className="font-bold text-lg text-gray-900">
+                  {userRole === "superadmin" ? "SuperAdmin" : "Clivus"}
+                </h1>
+                <p className="text-xs text-gray-500">
+                  {userRole === "superadmin" ? "Painel Admin" : "Gestão Financeira"}
+                </p>
+              </div>
             </div>
           </Link>
         </div>
 
-        {/* Navigation Menu */}
-        <nav className="flex-1 p-4 space-y-2 overflow-y-auto">
-          {menuItems.map((item, index) => {
-            // Se for um grupo de itens
-            if (item.isGroup && item.items) {
-              return (
-                <div key={`group-${index}`} className="space-y-1">
-                  <div className="px-4 py-2 text-xs font-semibold text-gray-500 uppercase tracking-wider">
-                    {item.title}
-                  </div>
-                  {item.items.map((subItem) => {
-                    const SubIcon = subItem.icon;
-                    const isActive = pathname === subItem.href;
+        {/* Navigation */}
+        <nav className="flex-1 overflow-y-auto p-4 space-y-6">
+          {menuItems.map((group, groupIdx) => (
+            <div key={groupIdx}>
+              <h2 className="hidden lg:block text-xs font-semibold text-gray-400 uppercase tracking-wide mb-3 px-2">
+                {group.group}
+              </h2>
+              <ul className="space-y-1">
+                {group.items.map((item) => {
+                  const isActive = pathname === item.href;
+                  const Icon = item.icon;
 
-                    return (
+                  return (
+                    <li key={item.href}>
                       <Link
-                        key={subItem.href}
-                        href={subItem.href}
+                        href={item.href}
                         onClick={() => setIsMobileMenuOpen(false)}
                         className={`
-                          flex items-center gap-3 px-4 py-2.5 rounded-lg ml-2
-                          transition-colors duration-200
+                          flex items-center gap-3 px-3 py-2.5 rounded-lg
+                          transition-all duration-200 group relative
                           ${
                             isActive
                               ? "bg-blue-50 text-blue-600 font-medium"
-                              : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
+                              : "text-gray-700 hover:bg-gray-100"
                           }
                         `}
                       >
-                        <SubIcon className="h-4 w-4" />
-                        <span className="text-sm">{subItem.title}</span>
+                        <Icon className={`h-5 w-5 flex-shrink-0 ${isActive ? "text-blue-600" : "text-gray-500"}`} />
+                        <div className="hidden lg:block whitespace-nowrap overflow-hidden">
+                          <span className="text-sm">{item.name}</span>
+                          <span className="block text-xs text-gray-500 mt-0.5">
+                            {item.description}
+                          </span>
+                        </div>
+
+                        {/* Tooltip for collapsed state */}
+                        <div className="lg:hidden absolute left-full ml-2 px-3 py-2 bg-gray-900 text-white text-sm rounded-lg opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-50">
+                          {item.name}
+                          <div className="absolute left-0 top-1/2 -translate-x-1/2 -translate-y-1/2 w-2 h-2 bg-gray-900 rotate-45"></div>
+                        </div>
                       </Link>
-                    );
-                  })}
-                </div>
-              );
-            }
-
-            // Se for um item normal
-            if (!item.href || !item.icon) return null;
-            
-            const Icon = item.icon;
-            const isActive = pathname === item.href;
-
-            return (
-              <Link
-                key={item.href}
-                href={item.href}
-                onClick={() => setIsMobileMenuOpen(false)}
-                className={`
-                  flex items-center gap-3 px-4 py-3 rounded-lg
-                  transition-colors duration-200
-                  ${
-                    isActive
-                      ? "bg-blue-50 text-blue-600 font-medium"
-                      : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
-                  }
-                `}
-              >
-                <Icon className="h-5 w-5" />
-                <span>{item.title}</span>
-              </Link>
-            );
-          })}
+                    </li>
+                  );
+                })}
+              </ul>
+            </div>
+          ))}
         </nav>
 
-        {/* Logout Button */}
-        <div className="p-4 border-t border-gray-200">
-          <Button
+        {/* User Info & Logout */}
+        <div className="border-t border-gray-200 p-4">
+          <div className="flex items-center gap-3 mb-3">
+            <div className="w-10 h-10 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full flex items-center justify-center flex-shrink-0">
+              <span className="text-white font-semibold text-sm">
+                {session?.user?.name?.charAt(0) || "U"}
+              </span>
+            </div>
+            <div className="hidden lg:block flex-1 min-w-0">
+              <p className="text-sm font-medium text-gray-900 truncate">
+                {session?.user?.name || "Usuário"}
+              </p>
+              <p className="text-xs text-gray-500 truncate">
+                {session?.user?.email || ""}
+              </p>
+            </div>
+          </div>
+          <button
             onClick={handleLogout}
-            variant="outline"
-            className="w-full justify-start gap-3 text-red-600 hover:bg-red-50 hover:text-red-700 border-red-200"
+            className="w-full flex items-center gap-3 px-3 py-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
           >
-            <LogOut className="h-5 w-5" />
-            Sair
-          </Button>
+            <LogOut className="h-5 w-5 flex-shrink-0" />
+            <span className="hidden lg:block text-sm font-medium">Sair</span>
+          </button>
         </div>
       </aside>
     </>
