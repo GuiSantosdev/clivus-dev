@@ -20,6 +20,10 @@ import {
   createPagarmeOrder,
   validateCpfCnpj as validateCpfCnpjPagarme,
 } from "@/lib/pagarme";
+import {
+  createEfiCharge,
+  validateCpfCnpj as validateCpfCnpjEfi,
+} from "@/lib/efi";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || "", {
   apiVersion: "2025-11-17.clover",
@@ -470,6 +474,141 @@ export async function POST(request: Request) {
           { 
             error: "Erro ao processar pagamento com Pagar.me",
             details: pagarmeError.message || "Erro desconhecido"
+          },
+          { status: 500 }
+        );
+      }
+    }
+
+    // Processar com EFI (Gerencianet) - PIX, Boleto, Cartão
+    if (gateway === "efi") {
+      console.log("💳 [Checkout API] Processando com EFI (Gerencianet)...");
+      
+      // Verificar se EFI está configurado
+      console.log("🔑 [Checkout API] Verificando credenciais EFI...");
+      console.log("Client ID presente?", !!process.env.EFI_CLIENT_ID);
+      console.log("Client Secret presente?", !!process.env.EFI_CLIENT_SECRET);
+      
+      if (!process.env.EFI_CLIENT_ID || !process.env.EFI_CLIENT_SECRET) {
+        console.error("❌ [Checkout API] Credenciais EFI não configuradas!");
+        return NextResponse.json(
+          { 
+            error: "Sistema de pagamento EFI não configurado. Entre em contato com o suporte.",
+            details: "Variáveis EFI_CLIENT_ID ou EFI_CLIENT_SECRET não encontradas"
+          },
+          { status: 503 }
+        );
+      }
+      
+      console.log("✅ [Checkout API] Credenciais EFI encontradas!");
+
+      try {
+        // Marcar lastCheckoutAttempt para remarketing
+        await prisma.user.update({
+          where: { id: session.user.id },
+          data: {
+            lastCheckoutAttempt: new Date(),
+            leadStatus: "checkout_started",
+          },
+        });
+        console.log("✅ [Checkout API] lastCheckoutAttempt atualizado");
+        
+        // Validar CPF/CNPJ com dígitos verificadores
+        const cpfCnpj = user?.cpf || user?.cnpj || "";
+        const validation = validateCpfCnpjEfi(cpfCnpj);
+        
+        console.log("🔍 [Checkout API] Validando CPF/CNPJ (EFI):", { 
+          original: cpfCnpj,
+          cleaned: validation.cleanValue,
+          isValid: validation.isValid,
+          message: validation.isValid 
+            ? "CPF/CNPJ válido - SERÁ ENVIADO ao EFI" 
+            : "CPF/CNPJ inválido ou vazio - NÃO SERÁ ENVIADO ao EFI"
+        });
+
+        // Método de pagamento (PIX, boleto ou card)
+        const paymentMethod = (body.paymentMethod as "pix" | "boleto" | "card") || "pix";
+        
+        console.log("📝 [Checkout API] Criando cobrança no EFI...");
+        console.log("Método de pagamento:", paymentMethod);
+        
+        const charge = await createEfiCharge({
+          userName,
+          userEmail,
+          userCpfCnpj: validation.isValid ? validation.cleanValue : undefined,
+          planName: plan.name,
+          amount: Math.round(plan.price * 100), // EFI usa centavos
+          paymentMethod,
+          cardToken: body.cardToken, // Para cartão de crédito
+          installments: body.installments || 1, // Para cartão de crédito
+        });
+        
+        console.log("✅ [Checkout API] Cobrança criada no EFI:", { 
+          chargeId: charge.chargeId
+        });
+
+        // Atualizar pagamento com ID do EFI
+        console.log("💾 [Checkout API] Atualizando registro de pagamento...");
+        await prisma.payment.update({
+          where: { id: payment.id },
+          data: { 
+            stripeSessionId: charge.chargeId, // Reutilizamos este campo para o EFI Charge ID
+            gateway: "efi",
+          },
+        });
+        console.log("✅ [Checkout API] Pagamento atualizado com sucesso!");
+
+        // Preparar dados de resposta com base no método de pagamento
+        let responseData: any = {
+          gateway: "efi",
+          paymentId: payment.id,
+          chargeId: charge.chargeId,
+        };
+
+        // Se for PIX, incluir QR Code
+        if (paymentMethod === "pix" && charge.pixQrCode) {
+          responseData.pixData = {
+            qrCode: charge.pixQrCode,
+            copyPaste: charge.pixCopyPaste,
+            expiresAt: charge.expiresAt,
+          };
+          console.log("✅ [Checkout API] PIX QR Code gerado (EFI)");
+        }
+
+        // Se for boleto, incluir URL e código de barras
+        if (paymentMethod === "boleto" && charge.boletoUrl) {
+          responseData.boletoData = {
+            url: charge.boletoUrl,
+            barcode: charge.boletoBarcode,
+            expiresAt: charge.expiresAt,
+          };
+          responseData.url = charge.boletoUrl; // URL do boleto para redirecionamento
+          console.log("✅ [Checkout API] Boleto gerado (EFI)");
+        }
+
+        // Se for cartão, incluir status da transação
+        if (paymentMethod === "card" && charge.status) {
+          responseData.cardData = {
+            status: charge.status,
+            installments: charge.installments,
+            total: charge.total,
+          };
+          
+          // Se aprovado, redirecionar para dashboard
+          if (charge.status === "paid") {
+            responseData.url = `${origin}/dashboard?payment=success`;
+          }
+          console.log("✅ [Checkout API] Transação de cartão processada (EFI)");
+        }
+
+        console.log("🎉 [Checkout API] Checkout concluído com sucesso (EFI)!");
+        return NextResponse.json(responseData);
+      } catch (efiError: any) {
+        console.error("❌ [Checkout API] Erro ao processar com EFI:", efiError);
+        return NextResponse.json(
+          { 
+            error: "Erro ao processar pagamento com EFI",
+            details: efiError.message || "Erro desconhecido"
           },
           { status: 500 }
         );

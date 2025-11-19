@@ -57,6 +57,7 @@ export default function GatewaysManagementPage() {
     stripe: true,
     cora: true,
     pagarme: false,
+    efi: false,
   });
 
   const gateways: GatewayConfig[] = [
@@ -152,6 +153,44 @@ export default function GatewaysManagementPage() {
       ],
       isConfigured: false,
       webhookUrl: `${process.env.NEXT_PUBLIC_APP_URL || "https://seu-dominio.com.br"}/api/webhook/pagarme`,
+    },
+    {
+      name: "efi",
+      displayName: "EFI (Gerencianet)",
+      description: "Gateway brasileiro com PIX, Boleto e Cartão de Crédito",
+      icon: "🟢",
+      fields: [
+        {
+          key: "clientId",
+          label: "Client ID",
+          placeholder: "Client_Id_...",
+          type: "password",
+          envVar: "EFI_CLIENT_ID",
+        },
+        {
+          key: "clientSecret",
+          label: "Client Secret",
+          placeholder: "Client_Secret_...",
+          type: "password",
+          envVar: "EFI_CLIENT_SECRET",
+        },
+        {
+          key: "webhookSecret",
+          label: "Webhook Secret (Opcional)",
+          placeholder: "seu_secret_aqui",
+          type: "password",
+          envVar: "EFI_WEBHOOK_SECRET",
+        },
+        {
+          key: "environment",
+          label: "Ambiente",
+          placeholder: "sandbox ou production",
+          type: "text",
+          envVar: "EFI_ENVIRONMENT",
+        },
+      ],
+      isConfigured: false,
+      webhookUrl: `${process.env.NEXT_PUBLIC_APP_URL || "https://seu-dominio.com.br"}/api/webhook/efi`,
     },
     {
       name: "stripe",

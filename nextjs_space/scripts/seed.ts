@@ -265,6 +265,17 @@ async function main() {
   console.log("✅ Gateway Pagar.me created");
 
   await prisma.gateway.upsert({
+    where: { name: "efi" },
+    update: {},
+    create: {
+      name: "efi",
+      displayName: "EFI (Gerencianet)",
+      isEnabled: false, // Disabled by default
+    },
+  });
+  console.log("✅ Gateway EFI created");
+
+  await prisma.gateway.upsert({
     where: { name: "stripe" },
     update: {},
     create: {
