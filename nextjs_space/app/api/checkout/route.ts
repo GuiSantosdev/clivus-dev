@@ -1,4 +1,4 @@
-
+// Updated: 2024-11-19 03:40 UTC - Fixed Asaas token format
 export const dynamic = "force-dynamic";
 
 import { NextResponse } from "next/server";
