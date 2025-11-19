@@ -228,6 +228,42 @@ async function main() {
     console.log(`✅ Features created for ${advancedPlan.name}`);
   }
 
+  // Create gateways
+  console.log("\n💳 Creating payment gateways...");
+  
+  await prisma.gateway.upsert({
+    where: { name: "asaas" },
+    update: {},
+    create: {
+      name: "asaas",
+      displayName: "Asaas",
+      isEnabled: true,
+    },
+  });
+  console.log("✅ Gateway Asaas created");
+
+  await prisma.gateway.upsert({
+    where: { name: "cora" },
+    update: {},
+    create: {
+      name: "cora",
+      displayName: "CORA",
+      isEnabled: true,
+    },
+  });
+  console.log("✅ Gateway CORA created");
+
+  await prisma.gateway.upsert({
+    where: { name: "stripe" },
+    update: {},
+    create: {
+      name: "stripe",
+      displayName: "Stripe",
+      isEnabled: false, // Disabled by default
+    },
+  });
+  console.log("✅ Gateway Stripe created");
+
   // Create transactions for test client (admin)
   console.log("\n📊 Creating transactions...");
   

@@ -55,6 +55,7 @@ export default function GatewaysManagementPage() {
   const [gatewayStatuses, setGatewayStatuses] = useState<Record<string, boolean>>({
     asaas: true,
     stripe: true,
+    cora: true,
   });
 
   const gateways: GatewayConfig[] = [
@@ -88,6 +89,37 @@ export default function GatewaysManagementPage() {
       ],
       isConfigured: false,
       webhookUrl: `${process.env.NEXT_PUBLIC_APP_URL || "https://seu-dominio.com.br"}/api/webhook/asaas`,
+    },
+    {
+      name: "cora",
+      displayName: "CORA",
+      description: "Banco brasileiro com boletos + QR Code PIX integrado",
+      icon: "🏦",
+      fields: [
+        {
+          key: "apiKey",
+          label: "API Key (Client ID)",
+          placeholder: "cora_api_key_...",
+          type: "password",
+          envVar: "CORA_API_KEY",
+        },
+        {
+          key: "webhookSecret",
+          label: "Webhook Secret (Opcional)",
+          placeholder: "seu_secret_aqui",
+          type: "password",
+          envVar: "CORA_WEBHOOK_SECRET",
+        },
+        {
+          key: "environment",
+          label: "Ambiente",
+          placeholder: "production ou sandbox",
+          type: "text",
+          envVar: "CORA_ENVIRONMENT",
+        },
+      ],
+      isConfigured: false,
+      webhookUrl: `${process.env.NEXT_PUBLIC_APP_URL || "https://seu-dominio.com.br"}/api/webhook/cora`,
     },
     {
       name: "stripe",

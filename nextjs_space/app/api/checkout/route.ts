@@ -9,8 +9,13 @@ import prisma from "@/lib/db";
 import {
   createOrGetAsaasCustomer,
   createAsaasPaymentLink,
-  validateCpfCnpj,
+  validateCpfCnpj as validateCpfCnpjAsaas,
 } from "@/lib/asaas";
+import {
+  createCoraBoleto,
+  getDefaultAddress,
+  validateCpfCnpj as validateCpfCnpjCora,
+} from "@/lib/cora";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || "", {
   apiVersion: "2025-11-17.clover",
@@ -142,7 +147,7 @@ export async function POST(request: Request) {
         
         // Validar CPF/CNPJ com dígitos verificadores
         const cpfCnpj = user?.cpf || user?.cnpj || "";
-        const validation = validateCpfCnpj(cpfCnpj);
+        const validation = validateCpfCnpjAsaas(cpfCnpj);
         
         console.log("🔍 [Checkout API] Validando CPF/CNPJ:", { 
           original: cpfCnpj,
@@ -195,6 +200,130 @@ export async function POST(request: Request) {
           { 
             error: "Erro ao processar pagamento com Asaas",
             details: asaasError.message || "Erro desconhecido"
+          },
+          { status: 500 }
+        );
+      }
+    }
+
+    // Processar com CORA (Boleto + PIX)
+    if (gateway === "cora") {
+      console.log("💳 [Checkout API] Processando com CORA...");
+      
+      // Verificar se CORA está configurado
+      console.log("🔑 [Checkout API] Verificando token CORA...");
+      console.log("Token presente?", !!process.env.CORA_API_KEY);
+      
+      if (!process.env.CORA_API_KEY) {
+        console.error("❌ [Checkout API] Token CORA não configurado!");
+        return NextResponse.json(
+          { 
+            error: "Sistema de pagamento CORA não configurado. Entre em contato com o suporte.",
+            details: "Variável CORA_API_KEY não encontrada"
+          },
+          { status: 503 }
+        );
+      }
+      
+      console.log("✅ [Checkout API] Token CORA encontrado!");
+
+      try {
+        // Marcar lastCheckoutAttempt para remarketing
+        await prisma.user.update({
+          where: { id: session.user.id },
+          data: {
+            lastCheckoutAttempt: new Date(),
+            leadStatus: "checkout_started",
+          },
+        });
+        console.log("✅ [Checkout API] lastCheckoutAttempt atualizado");
+        
+        // Validar CPF/CNPJ com dígitos verificadores
+        const cpfCnpj = user?.cpf || user?.cnpj || "";
+        const validation = validateCpfCnpjCora(cpfCnpj);
+        
+        console.log("🔍 [Checkout API] Validando CPF/CNPJ (CORA):", { 
+          original: cpfCnpj,
+          cleaned: validation.cleaned,
+          isValid: validation.isValid,
+          message: validation.isValid 
+            ? "CPF/CNPJ válido - SERÁ ENVIADO ao CORA" 
+            : "CPF/CNPJ inválido ou vazio - Checkout não prosseguirá"
+        });
+
+        // CORA exige CPF/CNPJ válido
+        if (!validation.isValid) {
+          console.error("❌ [Checkout API] CPF/CNPJ inválido ou não fornecido!");
+          return NextResponse.json(
+            { 
+              error: "CPF/CNPJ é obrigatório para pagamento via CORA",
+              details: "Por favor, atualize seu cadastro com um CPF/CNPJ válido antes de prosseguir."
+            },
+            { status: 400 }
+          );
+        }
+
+        // Calcular data de vencimento (5 dias úteis a partir de hoje)
+        const dueDate = new Date();
+        dueDate.setDate(dueDate.getDate() + 5);
+        const dueDateString = dueDate.toISOString().split("T")[0]; // YYYY-MM-DD
+
+        // Criar boleto no CORA
+        console.log("📄 [Checkout API] Criando boleto no CORA...");
+        const boleto = await createCoraBoleto({
+          customer: {
+            name: userName,
+            document: validation.cleaned,
+            email: userEmail,
+          },
+          address: getDefaultAddress(), // Endereço padrão (pode ser customizado depois)
+          amount: Math.round(plan.price * 100), // CORA usa centavos
+          dueDate: dueDateString,
+          description: `Clivus - ${plan.name}`,
+          reference: payment.id,
+          notifications: {
+            email: true,
+            sms: false,
+          },
+        });
+        
+        console.log("✅ [Checkout API] Boleto criado:", { 
+          id: boleto.id, 
+          digitableLine: boleto.digitableLine,
+          pixQrCode: !!boleto.pixQrCode
+        });
+
+        // Atualizar pagamento com ID do CORA
+        console.log("💾 [Checkout API] Atualizando registro de pagamento...");
+        await prisma.payment.update({
+          where: { id: payment.id },
+          data: { 
+            stripeSessionId: boleto.id, // Reutilizamos este campo para o CORA ID
+            gateway: "cora",
+          },
+        });
+        console.log("✅ [Checkout API] Pagamento atualizado com sucesso!");
+
+        // Retornar URL do PDF do boleto para visualização
+        console.log("🎉 [Checkout API] Checkout concluído com sucesso (CORA)!");
+        return NextResponse.json({ 
+          url: boleto.pdfUrl, // URL do PDF do boleto
+          gateway: "cora",
+          paymentId: payment.id,
+          boletoData: {
+            digitableLine: boleto.digitableLine,
+            barCode: boleto.barCode,
+            pixQrCode: boleto.pixQrCode,
+            pixKey: boleto.pixKey,
+            dueDate: boleto.dueDate,
+          },
+        });
+      } catch (coraError: any) {
+        console.error("❌ [Checkout API] Erro ao processar com CORA:", coraError);
+        return NextResponse.json(
+          { 
+            error: "Erro ao processar pagamento com CORA",
+            details: coraError.message || "Erro desconhecido"
           },
           { status: 500 }
         );
