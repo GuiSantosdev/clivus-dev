@@ -1,199 +1,189 @@
-# 🎯 PROBLEMA RESOLVIDO - Erro Asaas Checkout
+# 🎯 PROBLEMA RESOLVIDO - Checkout EFI
 
-## 📋 Resumo do Problema
-
-**Erro Apresentado:**
-```
-"Erro ao processar pagamento com Asaas"
-HTTP 500 (Internal Server Error)
-```
-
-**Causa Raiz Identificada:**
-O Asaas estava **rejeitando** a criação de clientes porque os CPF/CNPJs enviados eram **inválidos** (não passavam na validação de dígitos verificadores).
+## ✅ STATUS: **CORRIGIDO E DEPLOYADO**
 
 ---
 
-## 🔍 Diagnóstico Detalhado
+## 🔍 PROBLEMA IDENTIFICADO
 
-### 1. O Que Foi Testado
+### Erro que o usuário estava vendo:
+```
+Erro ao processar pagamento com EFI
+```
 
-✅ **Gateway Asaas no Banco**: ATIVO e configurado corretamente
-✅ **Token da API Asaas**: Presente e FUNCIONANDO (Status 200)
-✅ **Planos no Sistema**: 3 planos disponíveis (Básico, Intermediário, Avançado)
-❌ **Validação de CPF/CNPJ**: Código antigo só verificava o **comprimento** (11 ou 14 dígitos)
+### Causa Raiz:
+A API da EFI **rejeita** o campo `customer.name` no endpoint `/charge/one-step/link`.
 
-### 2. Erro Específico do Asaas
-
-Ao tentar criar um cliente com CPF "111.111.111-11" (comum em dados de teste):
-
+**Erro técnico da API:**
 ```json
 {
-  "errors": [
-    {
-      "code": "invalid_object",
-      "description": "O CPF/CNPJ informado é inválido."
-    }
-  ]
-}
-```
-
-**Motivo:** O Asaas valida os **dígitos verificadores** do CPF/CNPJ, e os dados de teste não passavam nessa validação.
-
----
-
-## ✅ Solução Implementada
-
-### 1. Nova Função de Validação (`lib/asaas.ts`)
-
-Implementamos validação **rigorosa** de CPF/CNPJ com verificação de dígitos:
-
-```typescript
-export function validateCpfCnpj(value: string): { valid: boolean; cleaned: string } {
-  const cleaned = value.replace(/\D/g, "");
-  
-  if (cleaned.length === 11) {
-    return { valid: isValidCPF(cleaned), cleaned };
-  } else if (cleaned.length === 14) {
-    return { valid: isValidCNPJ(cleaned), cleaned };
+  "code": 3500034,
+  "error": "validation_error",
+  "error_description": {
+    "property": "/customer/name",
+    "message": "Propriedade desconhecida (não está no schema)."
   }
-  
-  return { valid: false, cleaned };
 }
 ```
 
-**Validações Implementadas:**
-- ✅ Verificação de comprimento (11 para CPF, 14 para CNPJ)
-- ✅ Rejeição de sequências repetidas (111.111.111-11, etc.)
-- ✅ Cálculo e validação de dígitos verificadores
-- ✅ Algoritmos oficiais de CPF e CNPJ
+---
 
-### 2. Atualização do Checkout (`app/api/checkout/route.ts`)
+## 🔧 SOLUÇÃO APLICADA
 
-O código do checkout agora:
+### Arquivo modificado:
+`/nextjs_space/lib/efi.ts`
 
+### Mudança:
+**REMOVIDO** o campo `customer.name` do payload enviado à API da EFI.
+
+### Antes:
 ```typescript
-// Validar CPF/CNPJ com dígitos verificadores
-const cpfCnpj = user?.cpf || user?.cnpj || "";
-const validation = validateCpfCnpj(cpfCnpj);
-
-console.log("🔍 [Checkout API] Validando CPF/CNPJ:", { 
-  original: cpfCnpj,
-  cleaned: validation.cleaned,
-  valid: validation.valid,
-  message: validation.valid 
-    ? "CPF/CNPJ válido - SERÁ ENVIADO ao Asaas" 
-    : "CPF/CNPJ inválido ou vazio - NÃO SERÁ ENVIADO ao Asaas"
-});
-
-const asaasCustomerId = await createOrGetAsaasCustomer({
-  name: userName,
+body.customer = {
   email: userEmail,
-  cpfCnpj: validation.valid ? validation.cleaned : undefined, // Só envia se válido!
-});
-```
+};
 
-**Comportamento Novo:**
-- ✅ Se CPF/CNPJ é **válido**: Envia para o Asaas
-- ✅ Se CPF/CNPJ é **inválido ou vazio**: Cria cliente **sem** CPF/CNPJ (permitido pelo Asaas)
-- ✅ Logs detalhados para debug futuro
-
----
-
-## 🧪 Como Testar
-
-### 1. Para Usuários COM CPF/CNPJ Válido
-
-1. Faça login com um usuário que tenha CPF/CNPJ real
-2. Acesse: https://clivus.marcosleandru.com.br/checkout?plan=basic
-3. Clique em "Confirmar Compra"
-4. **Resultado Esperado:** Redireciona para o pagamento Asaas com sucesso ✅
-
-### 2. Para Usuários SEM CPF/CNPJ ou Com CPF/CNPJ Inválido
-
-1. Faça login (ou crie uma conta nova **sem** preencher CPF/CNPJ)
-2. Acesse: https://clivus.marcosleandru.com.br/checkout?plan=basic
-3. Clique em "Confirmar Compra"
-4. **Resultado Esperado:** Redireciona para o pagamento Asaas com sucesso ✅
-
----
-
-## 📊 Status Atual
-
-| Item | Status |
-|------|--------|
-| ✅ Build/Compilação | Sucesso |
-| ✅ Deploy em Produção | Concluído |
-| ✅ Validação de CPF/CNPJ | Implementada |
-| ✅ Logs Detalhados | Adicionados |
-| ✅ Checkout com CPF/CNPJ Válido | Funcionando |
-| ✅ Checkout sem CPF/CNPJ | Funcionando |
-
----
-
-## 🔐 Sobre CPF/CNPJ no Sistema
-
-### Quando CPF/CNPJ é Obrigatório?
-
-❌ **NO CADASTRO**: CPF/CNPJ **NÃO** são obrigatórios para criar conta
-✅ **NO ASAAS**: Será enviado **APENAS** se for um CPF/CNPJ válido
-
-### Recomendação para Produção
-
-Para **facilitar o uso** e **aumentar conversões**, recomendamos:
-
-1. **Manter CPF/CNPJ opcional** no cadastro
-2. **Solicitar CPF/CNPJ válido** apenas quando necessário:
-   - Emissão de nota fiscal
-   - Relatórios fiscais
-   - Comprovantes contábeis
-
----
-
-## 📝 Logs para Debug
-
-O sistema agora gera logs detalhados no console do servidor:
-
-```
-🛒 [Checkout API] Iniciando processamento...
-👤 [Checkout API] Sessão: { temSessao: true, userEmail: 'usuario@email.com' }
-📦 [Checkout API] Plano encontrado: { nome: 'Básico', preco: 97 }
-🔍 [Checkout API] Validando CPF/CNPJ: {
-  original: '123.456.789-10',
-  cleaned: '12345678910',
-  valid: false,
-  message: 'CPF/CNPJ inválido ou vazio - NÃO SERÁ ENVIADO ao Asaas'
+if (userName) {
+  body.customer.name = userName;  // ❌ ESTE CAMPO CAUSAVA O ERRO
 }
-✅ [Checkout API] Cliente Asaas: cus_000149081399
-✅ [Checkout API] Link criado: { id: 'pay_...' }
-🎉 [Checkout API] Checkout concluído com sucesso!
+```
+
+### Depois:
+```typescript
+// Add customer data (apenas email é aceito pelo one-step link)
+// IMPORTANTE: A API da EFI NÃO aceita o campo "name" neste endpoint
+body.customer = {
+  email: userEmail,
+};
+
+// Adicionar CPF/CNPJ se disponível (name NÃO é suportado)
+if (cleanCpfCnpj) {
+  if (cleanCpfCnpj.length === 11) {
+    body.customer.cpf = cleanCpfCnpj;
+  } else if (cleanCpfCnpj.length === 14) {
+    body.customer.cnpj = cleanCpfCnpj;
+  }
+}
 ```
 
 ---
 
-## 🎉 Conclusão
+## ✅ VALIDAÇÃO
 
-O problema está **RESOLVIDO**! 
+### Testes realizados:
 
-**O checkout agora funciona para:**
-- ✅ Usuários com CPF/CNPJ válido
-- ✅ Usuários sem CPF/CNPJ
-- ✅ Usuários com CPF/CNPJ inválido (cria cliente sem enviar o documento)
+1. **Autenticação EFI**: ✅ Sucesso
+2. **Criação de cobrança (COM campo `name`)**: ❌ Erro 400
+3. **Criação de cobrança (SEM campo `name`)**: ✅ Sucesso
 
-**Deploy realizado em:** 19/11/2025
-**URL:** https://clivus.marcosleandru.com.br
+### Resultado do teste final:
+```
+✅ ✅ ✅ SUCESSO TOTAL!
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Charge ID: 933517998
+Payment URL: https://pagamento.sejaefi.com.br/8976ea6d-2eb3-42b9-b3db-5220b886b110
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+```
 
 ---
 
-## 📞 Dúvidas ou Problemas?
+## 🚀 DEPLOY
 
-Se você continuar tendo problemas:
+- ✅ Build concluído com sucesso
+- ✅ Checkpoint salvo
+- ✅ Deploy realizado para: **clivus.marcosleandru.com.br**
+- ⏰ O site estará atualizado em alguns minutos
 
-1. **Limpe o cache do navegador** (Cmd+Shift+R no Mac)
-2. **Faça logout e login novamente**
-3. **Tente com um email novo** (evita conflitos de sessão)
-4. **Verifique os logs do Console** (Cmd+Option+J no Chrome/Mac)
+---
 
-Se o erro persistir, me envie:
-- Print da tela com o erro
-- Logs do Console (F12 → Console)
-- Email usado para login
+## 🧪 COMO TESTAR AGORA
+
+### Passo a passo:
+
+1. **Limpe o cache do navegador**:
+   - Pressione `Ctrl+Shift+Delete`
+   - Marque "Cache" e "Cookies"
+   - Clique em "Limpar dados"
+
+2. **Acesse o site**:
+   ```
+   https://clivus.marcosleandru.com.br/checkout?plan=advanced
+   ```
+
+3. **Faça login** (se não estiver logado):
+   - Email: `cliente@teste.com`
+   - Senha: `senha123`
+
+4. **Clique em "Confirmar Compra"**
+
+5. **RESULTADO ESPERADO**:
+   - ✅ Você será **redirecionado** para a página de pagamento da EFI
+   - ✅ A URL será algo como: `https://pagamento.sejaefi.com.br/...`
+   - ✅ Você poderá escolher PIX, Boleto ou Cartão
+
+---
+
+## 🎯 O QUE MUDOU?
+
+### Antes:
+- ❌ Checkout dava erro "Erro ao processar pagamento com EFI"
+- ❌ Usuário não conseguia finalizar a compra
+
+### Agora:
+- ✅ Checkout funciona perfeitamente
+- ✅ Usuário é redirecionado para página de pagamento da EFI
+- ✅ Cliente escolhe o método de pagamento (PIX/Boleto/Cartão) no site da EFI
+
+---
+
+## 📋 INFORMAÇÕES TÉCNICAS
+
+### Configurações atuais:
+
+**Ambiente**: `production`
+
+**Gateway EFI**:
+- ✅ Ativo no banco de dados
+- ✅ Credenciais configuradas
+- ✅ Endpoint correto: `/charge/one-step/link`
+
+**Campos aceitos pela API EFI**:
+- ✅ `customer.email` (obrigatório)
+- ✅ `customer.cpf` (opcional)
+- ✅ `customer.cnpj` (opcional)
+- ❌ `customer.name` **NÃO é aceito**
+
+---
+
+## 🔐 OBSERVAÇÕES IMPORTANTES
+
+1. **CPF/CNPJ**: Opcional, mas se fornecido, deve ser válido
+2. **Email**: Obrigatório e deve ser válido
+3. **Nome do cliente**: Não é enviado para a EFI, mas é usado internamente pelo Clivus
+4. **Método de pagamento**: O cliente escolhe no site da EFI após ser redirecionado
+
+---
+
+## 📞 PRÓXIMOS PASSOS
+
+1. Teste o checkout agora (seguindo as instruções acima)
+2. Se houver qualquer problema, forneça:
+   - Mensagem de erro exata
+   - Screenshot
+   - Hora do teste (para verificar logs)
+
+---
+
+## ✅ CHECKLIST DE VERIFICAÇÃO
+
+- [x] Erro identificado
+- [x] Solução implementada
+- [x] Testes executados com sucesso
+- [x] Build concluído
+- [x] Deploy realizado
+- [ ] **Teste do usuário final** ← VOCÊ ESTÁ AQUI
+
+---
+
+**Data da correção**: 19/11/2025  
+**Horário**: 17:15 BRT  
+**Status**: ✅ RESOLVIDO E DEPLOYADO

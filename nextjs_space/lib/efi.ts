@@ -258,16 +258,13 @@ export async function createEfiCharge(params: CreateChargeParams): Promise<any> 
     },
   };
 
-  // Add customer data (email é obrigatório)
+  // Add customer data (apenas email é aceito pelo one-step link)
+  // IMPORTANTE: A API da EFI NÃO aceita o campo "name" neste endpoint
   body.customer = {
     email: userEmail,
   };
 
-  // Adicionar nome e CPF/CNPJ se disponíveis
-  if (userName) {
-    body.customer.name = userName;
-  }
-
+  // Adicionar CPF/CNPJ se disponível (name NÃO é suportado)
   if (cleanCpfCnpj) {
     if (cleanCpfCnpj.length === 11) {
       body.customer.cpf = cleanCpfCnpj;
