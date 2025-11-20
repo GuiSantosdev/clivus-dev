@@ -53,7 +53,7 @@ export function ProtectedLayout({
   return (
     <div className="flex min-h-screen bg-gray-50">
       <Sidebar />
-      <main className="flex-1 lg:ml-64 p-4 md:p-8">
+      <main className="flex-1 p-4 md:p-8 transition-all duration-300" style={{ marginLeft: 0 }}>
         <div className="flex gap-6">
           <div className="flex-1 max-w-7xl">{children}</div>
           {/* Anúncio Sidebar (visível apenas em telas grandes) */}
