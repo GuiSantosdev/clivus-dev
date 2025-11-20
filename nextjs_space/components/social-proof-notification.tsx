@@ -160,14 +160,32 @@ export function SocialProofNotification() {
       },
     ];
 
-    // Mescla notificações: intercala notificações da cidade do usuário com as fictícias
-    const mergedNotifications = [...baseNotifications];
-    mergedNotifications.splice(2, 0, userCityNotifications[0]); // Após 2ª notificação
-    mergedNotifications.splice(7, 0, userCityNotifications[1]); // Após 7ª notificação
-    mergedNotifications.splice(12, 0, userCityNotifications[2]); // Após 12ª notificação
+    // Embaralha as notificações fictícias para variar a ordem
+    const shuffledBase = [...baseNotifications].sort(() => Math.random() - 0.5);
+    
+    // Coloca as notificações da cidade do usuário PRIMEIRO, depois intercala com as fictícias
+    const mergedNotifications: Notification[] = [];
+    
+    // Começa com as 3 notificações da cidade do usuário
+    mergedNotifications.push(...userCityNotifications);
+    
+    // Adiciona as notificações fictícias, intercaladas
+    shuffledBase.forEach((notification, index) => {
+      mergedNotifications.push(notification);
+      
+      // Intercala mais notificações da cidade do usuário a cada 5 fictícias
+      if ((index + 1) % 5 === 0 && userCityNotifications.length > 0) {
+        const randomUserNotification = userCityNotifications[Math.floor(Math.random() * userCityNotifications.length)];
+        mergedNotifications.push({
+          ...randomUserNotification,
+          id: `user-extra-${index}`,
+          timeAgo: ["há 15 minutos", "há 32 minutos", "há 47 minutos"][Math.floor(Math.random() * 3)],
+        });
+      }
+    });
 
     setNotifications(mergedNotifications);
-    console.log("🎉 [Social Proof] Notificações personalizadas criadas!");
+    console.log("🎉 [Social Proof] Notificações personalizadas criadas - começando pela cidade do usuário!");
 
   }, [userLocation]);
 

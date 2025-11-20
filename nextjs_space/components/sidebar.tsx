@@ -3,7 +3,6 @@
 import { usePathname } from "next/navigation";
 import Link from "next/link";
 import { useSession, signOut } from "next-auth/react";
-import { useState } from "react";
 import {
   LayoutDashboard,
   ArrowLeftRight,
@@ -15,8 +14,6 @@ import {
   Briefcase,
   LogOut,
   Settings as SettingsIcon,
-  Menu,
-  X,
   Package,
   ShoppingCart,
   CreditCard,
@@ -179,7 +176,6 @@ const superAdminMenuItems = [
 
 export function Sidebar() {
   const pathname = usePathname();
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const { data: session } = useSession();
 
   // Determina qual menu mostrar baseado na role do usuário
@@ -192,37 +188,9 @@ export function Sidebar() {
 
   return (
     <>
-      {/* Mobile Menu Button */}
-      <button
-        onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-        className="lg:hidden fixed top-4 left-4 z-50 p-2 bg-white rounded-lg shadow-lg"
-      >
-        {isMobileMenuOpen ? (
-          <X className="h-6 w-6 text-gray-600" />
-        ) : (
-          <Menu className="h-6 w-6 text-gray-600" />
-        )}
-      </button>
+      {/* Sidebar - Sempre visível, recolhido em ícones */}
+      <aside className="fixed top-0 left-0 h-full bg-white border-r border-gray-200 transition-all duration-300 z-40 flex flex-col w-16 lg:w-20 lg:hover:w-64">
 
-      {/* Overlay for mobile */}
-      {isMobileMenuOpen && (
-        <div
-          className="lg:hidden fixed inset-0 bg-black/50 z-40"
-          onClick={() => setIsMobileMenuOpen(false)}
-        />
-      )}
-
-      {/* Sidebar */}
-      <aside
-        className={`
-          fixed top-0 left-0 h-full bg-white border-r border-gray-200 
-          transition-all duration-300 z-40 flex flex-col
-          ${isMobileMenuOpen ? "translate-x-0" : "-translate-x-full"}
-          lg:translate-x-0
-          w-20 lg:w-64
-          hover:w-64
-        `}
-      >
         {/* Logo */}
         <div className="p-4 border-b border-gray-200">
           <Link href={userRole === "superadmin" ? "/admin" : "/dashboard"}>
@@ -258,7 +226,6 @@ export function Sidebar() {
                     <li key={item.href}>
                       <Link
                         href={item.href}
-                        onClick={() => setIsMobileMenuOpen(false)}
                         className={`
                           flex items-center gap-3 px-3 py-2.5 rounded-lg
                           transition-all duration-200 group relative

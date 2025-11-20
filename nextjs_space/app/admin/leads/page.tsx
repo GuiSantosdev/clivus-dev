@@ -76,6 +76,8 @@ export default function LeadsManagementPage() {
   const [endDate, setEndDate] = useState("");
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [showFilters, setShowFilters] = useState(false);
+  const [selectedLeads, setSelectedLeads] = useState<string[]>([]);
+  const [deletingMultiple, setDeletingMultiple] = useState(false);
 
   useEffect(() => {
     if (status === "unauthenticated") {
@@ -176,6 +178,56 @@ export default function LeadsManagementPage() {
       toast.error("Erro ao excluir lead");
     } finally {
       setDeletingId(null);
+    }
+  };
+
+  const handleToggleSelectAll = () => {
+    if (selectedLeads.length === filteredLeads.length) {
+      setSelectedLeads([]);
+    } else {
+      setSelectedLeads(filteredLeads.map((lead) => lead.id));
+    }
+  };
+
+  const handleToggleSelect = (id: string) => {
+    setSelectedLeads((prev) =>
+      prev.includes(id) ? prev.filter((leadId) => leadId !== id) : [...prev, id]
+    );
+  };
+
+  const handleDeleteSelected = async () => {
+    if (selectedLeads.length === 0) {
+      toast.error("Nenhum lead selecionado");
+      return;
+    }
+
+    if (!confirm(`Tem certeza que deseja excluir ${selectedLeads.length} lead(s)? Esta ação não pode ser desfeita.`)) {
+      return;
+    }
+
+    try {
+      setDeletingMultiple(true);
+      
+      // Deletar cada lead selecionado
+      const deletePromises = selectedLeads.map((id) => {
+        const lead = leads.find((l) => l.id === id);
+        if (!lead) return Promise.resolve();
+        
+        return fetch(`/api/admin/leads?id=${id}&type=${lead.type}`, {
+          method: "DELETE",
+        });
+      });
+
+      await Promise.all(deletePromises);
+
+      toast.success(`${selectedLeads.length} lead(s) excluído(s) com sucesso!`);
+      setSelectedLeads([]);
+      fetchLeads();
+    } catch (error) {
+      console.error("Erro ao excluir leads:", error);
+      toast.error("Erro ao excluir alguns leads");
+    } finally {
+      setDeletingMultiple(false);
     }
   };
 
@@ -676,15 +728,40 @@ export default function LeadsManagementPage() {
       {/* Lista de Leads */}
       <Card>
         <CardHeader>
-          <CardTitle>
-            Lista de Leads ({filteredLeads.length})
-          </CardTitle>
+          <div className="flex items-center justify-between">
+            <CardTitle>
+              Lista de Leads ({filteredLeads.length})
+              {selectedLeads.length > 0 && (
+                <span className="ml-2 text-sm font-normal text-blue-600">
+                  ({selectedLeads.length} selecionado{selectedLeads.length > 1 ? 's' : ''})
+                </span>
+              )}
+            </CardTitle>
+            {selectedLeads.length > 0 && (
+              <Button
+                variant="destructive"
+                size="sm"
+                onClick={handleDeleteSelected}
+                disabled={deletingMultiple}
+              >
+                <Trash2 className="h-4 w-4 mr-2" />
+                {deletingMultiple ? "Excluindo..." : `Excluir ${selectedLeads.length} lead(s)`}
+              </Button>
+            )}
+          </div>
         </CardHeader>
         <CardContent>
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead>
                 <tr className="border-b border-gray-200">
+                  <th className="text-left py-3 px-4 font-medium text-gray-600 w-12">
+                    <Checkbox
+                      checked={selectedLeads.length === filteredLeads.length && filteredLeads.length > 0}
+                      onCheckedChange={handleToggleSelectAll}
+                      aria-label="Selecionar todos"
+                    />
+                  </th>
                   <th className="text-left py-3 px-4 font-medium text-gray-600">Lead</th>
                   <th className="text-left py-3 px-4 font-medium text-gray-600">Origem</th>
                   <th className="text-left py-3 px-4 font-medium text-gray-600">Status</th>
@@ -696,13 +773,20 @@ export default function LeadsManagementPage() {
               <tbody>
                 {filteredLeads.length === 0 ? (
                   <tr>
-                    <td colSpan={6} className="text-center py-8 text-gray-500">
+                    <td colSpan={7} className="text-center py-8 text-gray-500">
                       Nenhum lead encontrado
                     </td>
                   </tr>
                 ) : (
                   filteredLeads.map((lead) => (
                     <tr key={lead.id} className="border-b border-gray-100 hover:bg-gray-50">
+                      <td className="py-4 px-4">
+                        <Checkbox
+                          checked={selectedLeads.includes(lead.id)}
+                          onCheckedChange={() => handleToggleSelect(lead.id)}
+                          aria-label={`Selecionar ${lead.name}`}
+                        />
+                      </td>
                       <td className="py-4 px-4">
                         <div>
                           <p className="font-medium text-gray-900">{lead.name}</p>
