@@ -3,7 +3,7 @@
 import { usePathname } from "next/navigation";
 import Link from "next/link";
 import { useSession, signOut } from "next-auth/react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   LayoutDashboard,
   ArrowLeftRight,
@@ -26,6 +26,9 @@ import {
   PieChart,
   ChevronLeft,
   ChevronRight,
+  Maximize2,
+  Minimize2,
+  MousePointer2,
 } from "lucide-react";
 
 const clientMenuItems = [
@@ -179,15 +182,43 @@ const superAdminMenuItems = [
   },
 ];
 
+type SidebarMode = "fixed-expanded" | "fixed-collapsed" | "hover";
+
 export function Sidebar() {
   const pathname = usePathname();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isCollapsed, setIsCollapsed] = useState(false);
+  const [sidebarMode, setSidebarMode] = useState<SidebarMode>("fixed-expanded");
+  const [isHovering, setIsHovering] = useState(false);
   const { data: session } = useSession();
 
   // Determina qual menu mostrar baseado na role do usuário
   const userRole = session?.user?.role || "user";
   const menuItems = userRole === "superadmin" ? superAdminMenuItems : clientMenuItems;
+
+  // Carrega preferência do localStorage ao montar
+  useEffect(() => {
+    const savedMode = localStorage.getItem("sidebar-mode") as SidebarMode;
+    if (savedMode && ["fixed-expanded", "fixed-collapsed", "hover"].includes(savedMode)) {
+      setSidebarMode(savedMode);
+    }
+  }, []);
+
+  // Aplica a lógica de colapso baseada no modo
+  useEffect(() => {
+    if (sidebarMode === "fixed-expanded") {
+      setIsCollapsed(false);
+    } else if (sidebarMode === "fixed-collapsed") {
+      setIsCollapsed(true);
+    } else if (sidebarMode === "hover") {
+      setIsCollapsed(!isHovering);
+    }
+  }, [sidebarMode, isHovering]);
+
+  const handleModeChange = (newMode: SidebarMode) => {
+    setSidebarMode(newMode);
+    localStorage.setItem("sidebar-mode", newMode);
+  };
 
   const handleLogout = async () => {
     await signOut({ callbackUrl: "/" });
@@ -217,6 +248,8 @@ export function Sidebar() {
 
       {/* Sidebar - Fixo no desktop, recolhível no mobile */}
       <aside
+        onMouseEnter={() => sidebarMode === "hover" && setIsHovering(true)}
+        onMouseLeave={() => sidebarMode === "hover" && setIsHovering(false)}
         className={`
           fixed top-0 left-0 h-full bg-white border-r border-gray-200 
           transition-all duration-300 z-40 flex flex-col
@@ -244,18 +277,47 @@ export function Sidebar() {
             </div>
           </Link>
 
-          {/* Botão de Colapsar/Expandir (Desktop) */}
-          <button
-            onClick={() => setIsCollapsed(!isCollapsed)}
-            className="hidden lg:flex absolute -right-3 top-1/2 -translate-y-1/2 w-6 h-6 bg-white border border-gray-200 rounded-full items-center justify-center hover:bg-gray-50 shadow-sm transition-colors z-50"
-            title={isCollapsed ? "Expandir menu" : "Recolher menu"}
-          >
-            {isCollapsed ? (
-              <ChevronRight className="h-4 w-4 text-gray-600" />
-            ) : (
-              <ChevronLeft className="h-4 w-4 text-gray-600" />
-            )}
-          </button>
+          {/* Seletor de Modo do Menu (Desktop) */}
+          <div className="hidden lg:flex absolute -right-3 top-1/2 -translate-y-1/2 flex-col gap-1 z-50">
+            {/* Fixar Expandido */}
+            <button
+              onClick={() => handleModeChange("fixed-expanded")}
+              className={`w-6 h-6 rounded-full flex items-center justify-center transition-all shadow-sm
+                ${sidebarMode === "fixed-expanded" 
+                  ? "bg-blue-500 text-white border-2 border-blue-600" 
+                  : "bg-white text-gray-600 border border-gray-200 hover:bg-gray-50"
+                }`}
+              title="Fixar Expandido"
+            >
+              <Maximize2 className="h-3 w-3" />
+            </button>
+
+            {/* Fixar Recolhido */}
+            <button
+              onClick={() => handleModeChange("fixed-collapsed")}
+              className={`w-6 h-6 rounded-full flex items-center justify-center transition-all shadow-sm
+                ${sidebarMode === "fixed-collapsed" 
+                  ? "bg-blue-500 text-white border-2 border-blue-600" 
+                  : "bg-white text-gray-600 border border-gray-200 hover:bg-gray-50"
+                }`}
+              title="Fixar Recolhido"
+            >
+              <Minimize2 className="h-3 w-3" />
+            </button>
+
+            {/* Modo Hover */}
+            <button
+              onClick={() => handleModeChange("hover")}
+              className={`w-6 h-6 rounded-full flex items-center justify-center transition-all shadow-sm
+                ${sidebarMode === "hover" 
+                  ? "bg-blue-500 text-white border-2 border-blue-600" 
+                  : "bg-white text-gray-600 border border-gray-200 hover:bg-gray-50"
+                }`}
+              title="Modo Hover (Abre ao passar o mouse)"
+            >
+              <MousePointer2 className="h-3 w-3" />
+            </button>
+          </div>
         </div>
 
         {/* Navigation */}
