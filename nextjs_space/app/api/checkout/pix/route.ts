@@ -55,7 +55,8 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Criar registro de pagamento pendente
+    // Criar registro de pagamento pendente com ID temporário único
+    const tempId = `temp_pix_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
     const payment = await prisma.payment.create({
       data: {
         userId: user.id,
@@ -63,7 +64,7 @@ export async function POST(request: NextRequest) {
         amount: plan.price,
         status: "pending",
         gateway: gateway || "efi",
-        stripeSessionId: "", // Será preenchido com o ID do gateway
+        stripeSessionId: tempId, // ID temporário único para evitar conflitos
       },
     });
 

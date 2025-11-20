@@ -276,17 +276,37 @@ export default function GatewaysManagementPage() {
     }
   };
 
-  const checkGatewaysConfiguration = () => {
-    // Verificar quais gateways estão configurados
-    gateways.forEach((gateway) => {
-      // Se o gateway está HABILITADO no banco de dados, significa que foi configurado
-      const isEnabled = gatewayStatuses[gateway.name];
-      
-      // Gateway está configurado se está habilitado (toggle verde)
-      // Não verificamos os campos do formulário porque as credenciais 
-      // estão no .env do servidor e não são expostas ao cliente
-      gateway.isConfigured = isEnabled === true;
-    });
+  const checkGatewaysConfiguration = async () => {
+    try {
+      // Buscar configurações do servidor
+      const response = await fetch("/api/admin/gateways/check-config");
+      if (!response.ok) {
+        console.error("Erro ao verificar configurações");
+        return;
+      }
+
+      const serverConfigs = await response.json();
+      console.log("📋 [Gateway Config] Configs do servidor:", serverConfigs);
+
+      // Atualizar status de configuração dos gateways
+      gateways.forEach((gateway) => {
+        // Gateway está configurado se:
+        // 1. Tem credenciais no servidor (serverConfigs[gateway.name])
+        // 2. E está habilitado no banco (gatewayStatuses[gateway.name])
+        const hasCredentials = serverConfigs[gateway.name] === true;
+        const isEnabled = gatewayStatuses[gateway.name] === true;
+        
+        gateway.isConfigured = hasCredentials && isEnabled;
+        
+        console.log(`✅ Gateway ${gateway.name}:`, {
+          hasCredentials,
+          isEnabled,
+          isConfigured: gateway.isConfigured
+        });
+      });
+    } catch (error) {
+      console.error("❌ Erro ao verificar configurações:", error);
+    }
   };
 
   const handleSaveConfiguration = async (gatewayName: string) => {

@@ -221,12 +221,16 @@ export default function CheckoutPage() {
 
   const startPaymentPolling = (paymentId: string) => {
     setCheckingPayment(true);
+    let attempts = 0;
+    const maxAttempts = 36; // 36 tentativas x 5 segundos = 3 minutos
+    
     const interval = setInterval(async () => {
       try {
+        attempts++;
         const response = await fetch(`/api/checkout/check-payment?paymentId=${paymentId}`);
         const data = await response.json();
         
-        console.log("🔄 [Polling] Verificando pagamento:", { paymentId, status: data.status });
+        console.log("🔄 [Polling] Verificando pagamento:", { paymentId, status: data.status, attempts });
         
         if (data.status === 'completed') {
           clearInterval(interval);
@@ -239,17 +243,37 @@ export default function CheckoutPage() {
           setCheckingPayment(false);
           toast.error("❌ Pagamento falhou. Tente novamente.");
           setPaymentStep('selection');
+        } else if (attempts >= maxAttempts) {
+          // Após 3 minutos sem confirmação, parar o polling
+          clearInterval(interval);
+          setCheckingPayment(false);
+          toast((t) => (
+            <div className="flex flex-col gap-2">
+              <p className="font-semibold">⏰ Tempo de verificação esgotado</p>
+              <p className="text-sm text-gray-600">
+                Não conseguimos confirmar seu pagamento automaticamente. 
+                Caso tenha finalizado o pagamento, você receberá um e-mail assim que for confirmado.
+              </p>
+              <Button
+                size="sm"
+                onClick={() => {
+                  toast.dismiss(t.id);
+                  router.push('/login');
+                }}
+                className="mt-2"
+              >
+                Ir para Login
+              </Button>
+            </div>
+          ), {
+            duration: 15000,
+            icon: '⏰',
+          });
         }
       } catch (error) {
         console.error("❌ [Polling] Erro ao verificar pagamento:", error);
       }
     }, 5000); // Verifica a cada 5 segundos
-
-    // Limpar polling após 30 minutos
-    setTimeout(() => {
-      clearInterval(interval);
-      setCheckingPayment(false);
-    }, 1800000); // 30 minutos
   };
 
   const copyPixCode = () => {
