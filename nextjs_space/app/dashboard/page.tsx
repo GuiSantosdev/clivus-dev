@@ -531,7 +531,7 @@ export default function DashboardPage() {
             </Card>
           </Link>
 
-          <Link href="/transactions">
+          <Link href="/reports">
             <Card className="hover:shadow-lg transition-shadow cursor-pointer border-purple-200 hover:border-purple-400">
               <CardContent className="p-6">
                 <div className="flex flex-col items-center text-center space-y-2">

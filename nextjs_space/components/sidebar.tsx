@@ -3,6 +3,7 @@
 import { usePathname } from "next/navigation";
 import Link from "next/link";
 import { useSession, signOut } from "next-auth/react";
+import { useState } from "react";
 import {
   LayoutDashboard,
   ArrowLeftRight,
@@ -14,6 +15,8 @@ import {
   Briefcase,
   LogOut,
   Settings as SettingsIcon,
+  Menu,
+  X,
   Package,
   ShoppingCart,
   CreditCard,
@@ -176,6 +179,7 @@ const superAdminMenuItems = [
 
 export function Sidebar() {
   const pathname = usePathname();
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const { data: session } = useSession();
 
   // Determina qual menu mostrar baseado na role do usuário
@@ -188,9 +192,35 @@ export function Sidebar() {
 
   return (
     <>
-      {/* Sidebar - Sempre visível, recolhido em ícones */}
-      <aside className="fixed top-0 left-0 h-full bg-white border-r border-gray-200 transition-all duration-300 z-40 flex flex-col w-16 lg:w-20 lg:hover:w-64">
+      {/* Mobile Menu Button */}
+      <button
+        onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+        className="lg:hidden fixed top-4 left-4 z-50 p-2 bg-white rounded-lg shadow-lg border border-gray-200"
+      >
+        {isMobileMenuOpen ? (
+          <X className="h-6 w-6 text-gray-600" />
+        ) : (
+          <Menu className="h-6 w-6 text-gray-600" />
+        )}
+      </button>
 
+      {/* Overlay for mobile */}
+      {isMobileMenuOpen && (
+        <div
+          className="lg:hidden fixed inset-0 bg-black/50 z-40"
+          onClick={() => setIsMobileMenuOpen(false)}
+        />
+      )}
+
+      {/* Sidebar - Fixo no desktop, recolhível no mobile */}
+      <aside
+        className={`
+          fixed top-0 left-0 h-full bg-white border-r border-gray-200 
+          transition-all duration-300 z-40 flex flex-col w-64
+          ${isMobileMenuOpen ? "translate-x-0" : "-translate-x-full"}
+          lg:translate-x-0
+        `}
+      >
         {/* Logo */}
         <div className="p-4 border-b border-gray-200">
           <Link href={userRole === "superadmin" ? "/admin" : "/dashboard"}>
@@ -198,7 +228,7 @@ export function Sidebar() {
               <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center flex-shrink-0">
                 <Briefcase className="h-6 w-6 text-white" />
               </div>
-              <div className="hidden lg:block whitespace-nowrap overflow-hidden">
+              <div className="whitespace-nowrap overflow-hidden">
                 <h1 className="font-bold text-lg text-gray-900">
                   {userRole === "superadmin" ? "SuperAdmin" : "Clivus"}
                 </h1>
@@ -214,7 +244,7 @@ export function Sidebar() {
         <nav className="flex-1 overflow-y-auto p-4 space-y-6">
           {menuItems.map((group, groupIdx) => (
             <div key={groupIdx}>
-              <h2 className="hidden lg:block text-xs font-semibold text-gray-400 uppercase tracking-wide mb-3 px-2">
+              <h2 className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-3 px-2">
                 {group.group}
               </h2>
               <ul className="space-y-1">
@@ -226,6 +256,7 @@ export function Sidebar() {
                     <li key={item.href}>
                       <Link
                         href={item.href}
+                        onClick={() => setIsMobileMenuOpen(false)}
                         className={`
                           flex items-center gap-3 px-3 py-2.5 rounded-lg
                           transition-all duration-200 group relative
@@ -237,17 +268,11 @@ export function Sidebar() {
                         `}
                       >
                         <Icon className={`h-5 w-5 flex-shrink-0 ${isActive ? "text-blue-600" : "text-gray-500"}`} />
-                        <div className="hidden lg:block whitespace-nowrap overflow-hidden">
+                        <div className="whitespace-nowrap overflow-hidden">
                           <span className="text-sm">{item.name}</span>
                           <span className="block text-xs text-gray-500 mt-0.5">
                             {item.description}
                           </span>
-                        </div>
-
-                        {/* Tooltip for collapsed state */}
-                        <div className="lg:hidden absolute left-full ml-2 px-3 py-2 bg-gray-900 text-white text-sm rounded-lg opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-50">
-                          {item.name}
-                          <div className="absolute left-0 top-1/2 -translate-x-1/2 -translate-y-1/2 w-2 h-2 bg-gray-900 rotate-45"></div>
                         </div>
                       </Link>
                     </li>
@@ -266,7 +291,7 @@ export function Sidebar() {
                 {session?.user?.name?.charAt(0) || "U"}
               </span>
             </div>
-            <div className="hidden lg:block flex-1 min-w-0">
+            <div className="flex-1 min-w-0">
               <p className="text-sm font-medium text-gray-900 truncate">
                 {session?.user?.name || "Usuário"}
               </p>
@@ -280,7 +305,7 @@ export function Sidebar() {
             className="w-full flex items-center gap-3 px-3 py-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
           >
             <LogOut className="h-5 w-5 flex-shrink-0" />
-            <span className="hidden lg:block text-sm font-medium">Sair</span>
+            <span className="text-sm font-medium">Sair</span>
           </button>
         </div>
       </aside>
