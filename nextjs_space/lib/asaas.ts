@@ -323,3 +323,48 @@ export function validateAsaasWebhook(
   // Implementar validação customizada se necessário
   return true;
 }
+
+/**
+ * Cria QR Code PIX no Asaas
+ */
+export async function createAsaasPixQrCode(
+  customer: string,
+  value: number,
+  description: string,
+  externalReference: string
+): Promise<{
+  id: string;
+  encodedImage: string;
+  payload: string;
+  expirationDate: string;
+}> {
+  try {
+    console.log("📱 [Asaas PIX] Criando QR Code:", { customer, value, description });
+
+    const response = await asaasRequest("/payments", "POST", {
+      customer: customer,
+      billingType: "PIX",
+      value: value,
+      dueDate: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString().split('T')[0], // 24 horas
+      description: description,
+      externalReference: externalReference,
+    });
+
+    console.log("✅ [Asaas PIX] Pagamento criado:", response.id);
+
+    // Gerar QR Code PIX
+    const qrCodeResponse = await asaasRequest(`/payments/${response.id}/pixQrCode`, "GET");
+
+    console.log("✅ [Asaas PIX] QR Code gerado");
+
+    return {
+      id: response.id,
+      encodedImage: qrCodeResponse.encodedImage || "",
+      payload: qrCodeResponse.payload || "",
+      expirationDate: qrCodeResponse.expirationDate || "",
+    };
+  } catch (error: any) {
+    console.error("❌ [Asaas PIX] Erro:", error);
+    throw new Error(`Erro ao criar PIX Asaas: ${error.message}`);
+  }
+}
