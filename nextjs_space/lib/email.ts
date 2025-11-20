@@ -1,8 +1,16 @@
 
-import { Resend } from 'resend';
+import nodemailer from 'nodemailer';
 
-// Inicializar Resend com a chave da API
-const resend = new Resend(process.env.RESEND_API_KEY);
+// Configurar transporte SMTP da Hostinger
+const transporter = nodemailer.createTransport({
+  host: process.env.SMTP_HOST || 'smtp.hostinger.com',
+  port: parseInt(process.env.SMTP_PORT || '465'),
+  secure: true, // SSL/TLS
+  auth: {
+    user: process.env.SMTP_USER,
+    pass: process.env.SMTP_PASS,
+  },
+});
 
 interface SendWelcomeEmailParams {
   to: string;
@@ -20,9 +28,9 @@ export async function sendWelcomeEmail({
   planName,
 }: SendWelcomeEmailParams) {
   try {
-    const { data, error } = await resend.emails.send({
-      from: process.env.EMAIL_FROM || 'Clivus <noreply@clivus.com.br>',
-      to: [to],
+    const info = await transporter.sendMail({
+      from: process.env.EMAIL_FROM || 'Clivus <noreply.clivus@marcosleandru.com.br>',
+      to: to,
       subject: '🎉 Bem-vindo ao Clivus! Seus dados de acesso',
       html: `
         <!DOCTYPE html>
@@ -149,14 +157,10 @@ export async function sendWelcomeEmail({
       `,
     });
 
-    if (error) {
-      console.error('Error sending email:', error);
-      return { success: false, error };
-    }
-
-    return { success: true, data };
+    console.log('Email enviado com sucesso:', info.messageId);
+    return { success: true, data: info };
   } catch (error) {
-    console.error('Error sending email:', error);
+    console.error('Erro ao enviar e-mail:', error);
     return { success: false, error };
   }
 }
@@ -175,11 +179,11 @@ export async function sendAdminPurchaseNotification({
   planPrice,
 }: SendPurchaseNotificationParams) {
   try {
-    const adminEmail = process.env.ADMIN_EMAIL || 'admin@clivus.com.br';
+    const adminEmail = process.env.ADMIN_EMAIL || 'admin.clivus@marcosleandru.com.br';
     
-    const { data, error } = await resend.emails.send({
-      from: process.env.EMAIL_FROM || 'Clivus <noreply@clivus.com.br>',
-      to: [adminEmail],
+    const info = await transporter.sendMail({
+      from: process.env.EMAIL_FROM || 'Clivus <noreply.clivus@marcosleandru.com.br>',
+      to: adminEmail,
       subject: `🎉 Nova venda: ${planName} - R$ ${planPrice}`,
       html: `
         <!DOCTYPE html>
@@ -220,14 +224,10 @@ export async function sendAdminPurchaseNotification({
       `,
     });
 
-    if (error) {
-      console.error('Error sending admin notification:', error);
-      return { success: false, error };
-    }
-
-    return { success: true, data };
+    console.log('Notificação admin enviada com sucesso:', info.messageId);
+    return { success: true, data: info };
   } catch (error) {
-    console.error('Error sending admin notification:', error);
+    console.error('Erro ao enviar notificação admin:', error);
     return { success: false, error };
   }
 }

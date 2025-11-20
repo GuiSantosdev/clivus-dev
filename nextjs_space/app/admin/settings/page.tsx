@@ -25,7 +25,10 @@ export default function SettingsPage() {
   const [loading, setLoading] = useState(true);
   const [testing, setTesting] = useState(false);
   const [config, setConfig] = useState({
-    resendApiKey: "",
+    smtpHost: "",
+    smtpPort: "",
+    smtpUser: "",
+    smtpPass: "",
     emailFrom: "",
     adminEmail: "",
     appUrl: "",
@@ -141,20 +144,65 @@ export default function SettingsPage() {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Mail className="h-5 w-5 text-green-600" />
-              Configuração de E-mail (Resend)
+              Configuração de E-mail (SMTP - Hostinger)
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <div>
-              <Label>RESEND_API_KEY</Label>
+              <Label>SMTP_HOST (Servidor SMTP)</Label>
               <Input 
-                type="password"
-                value={config.resendApiKey}
+                type="text"
+                value={config.smtpHost}
                 readOnly
                 className="bg-gray-100"
               />
               <p className="text-sm text-gray-500 mt-1">
-                {config.resendApiKey 
+                {config.smtpHost 
+                  ? "✅ Configurado" 
+                  : "❌ Não configurado"}
+              </p>
+            </div>
+
+            <div>
+              <Label>SMTP_PORT (Porta)</Label>
+              <Input 
+                type="text"
+                value={config.smtpPort}
+                readOnly
+                className="bg-gray-100"
+              />
+              <p className="text-sm text-gray-500 mt-1">
+                {config.smtpPort 
+                  ? "✅ Configurado" 
+                  : "❌ Não configurado"}
+              </p>
+            </div>
+
+            <div>
+              <Label>SMTP_USER (Usuário)</Label>
+              <Input 
+                type="text"
+                value={config.smtpUser}
+                readOnly
+                className="bg-gray-100"
+              />
+              <p className="text-sm text-gray-500 mt-1">
+                {config.smtpUser 
+                  ? "✅ Configurado" 
+                  : "❌ Não configurado - Configure no arquivo .env"}
+              </p>
+            </div>
+
+            <div>
+              <Label>SMTP_PASS (Senha)</Label>
+              <Input 
+                type="password"
+                value={config.smtpPass}
+                readOnly
+                className="bg-gray-100"
+              />
+              <p className="text-sm text-gray-500 mt-1">
+                {config.smtpPass 
                   ? "✅ Configurada" 
                   : "❌ Não configurada - Configure no arquivo .env"}
               </p>
@@ -208,7 +256,7 @@ export default function SettingsPage() {
 
             <Button 
               onClick={handleTestEmail}
-              disabled={testing || !config.resendApiKey}
+              disabled={testing || !config.smtpUser || !config.smtpPass}
               className="w-full"
             >
               {testing ? (
@@ -227,13 +275,13 @@ export default function SettingsPage() {
             <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
               <h4 className="font-semibold text-blue-900 mb-2 flex items-center gap-2">
                 <CheckCircle className="h-4 w-4" />
-                Como Configurar o Resend
+                Como Configurar o SMTP da Hostinger
               </h4>
               <ol className="text-sm text-blue-800 space-y-1 list-decimal list-inside">
-                <li>Acesse <a href="https://resend.com" target="_blank" className="underline">resend.com</a></li>
-                <li>Crie uma conta ou faça login</li>
-                <li>Vá em "API Keys" → "Create API Key"</li>
-                <li>Copie a chave e adicione no arquivo <code>.env</code></li>
+                <li>Acesse seu painel da Hostinger (<a href="https://hpanel.hostinger.com" target="_blank" className="underline">hpanel.hostinger.com</a>)</li>
+                <li>Vá em "E-mails" e configure uma conta de e-mail</li>
+                <li>Use as seguintes configurações: Host: smtp.hostinger.com, Porta: 465 (SSL/TLS)</li>
+                <li>Adicione no <code>.env</code>: <code>SMTP_USER=seu-email@dominio.com</code> e <code>SMTP_PASS=sua-senha</code></li>
                 <li>Reinicie o servidor Next.js</li>
               </ol>
             </div>

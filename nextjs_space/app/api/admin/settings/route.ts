@@ -19,8 +19,11 @@ export async function GET() {
 
     // Retorna configurações mascaradas
     const config = {
-      resendApiKey: process.env.RESEND_API_KEY 
-        ? `${process.env.RESEND_API_KEY.substring(0, 8)}...` 
+      smtpHost: process.env.SMTP_HOST || "",
+      smtpPort: process.env.SMTP_PORT || "",
+      smtpUser: process.env.SMTP_USER || "",
+      smtpPass: process.env.SMTP_PASS 
+        ? `${process.env.SMTP_PASS.substring(0, 4)}...` 
         : "",
       emailFrom: process.env.EMAIL_FROM || "",
       adminEmail: process.env.ADMIN_EMAIL || "",

@@ -2,7 +2,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
-import { Resend } from "resend";
+import nodemailer from "nodemailer";
 
 export const dynamic = "force-dynamic";
 
@@ -21,14 +21,17 @@ export async function POST(request: NextRequest) {
     const { to, type } = await request.json();
 
     // Verifica variáveis de ambiente
-    const resendApiKey = process.env.RESEND_API_KEY;
+    const smtpUser = process.env.SMTP_USER;
+    const smtpPass = process.env.SMTP_PASS;
+    const smtpHost = process.env.SMTP_HOST || 'smtp.hostinger.com';
+    const smtpPort = parseInt(process.env.SMTP_PORT || '465');
     const emailFrom = process.env.EMAIL_FROM;
 
-    if (!resendApiKey) {
+    if (!smtpUser || !smtpPass) {
       return NextResponse.json(
         { 
-          error: "RESEND_API_KEY não configurada",
-          details: "Adicione RESEND_API_KEY no arquivo .env e reinicie o servidor"
+          error: "SMTP não configurado",
+          details: "Adicione SMTP_USER e SMTP_PASS no arquivo .env e reinicie o servidor"
         },
         { status: 400 }
       );
@@ -54,13 +57,21 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Inicializa Resend
-    const resend = new Resend(resendApiKey);
+    // Configura transporte SMTP
+    const transporter = nodemailer.createTransport({
+      host: smtpHost,
+      port: smtpPort,
+      secure: true, // SSL/TLS
+      auth: {
+        user: smtpUser,
+        pass: smtpPass,
+      },
+    });
 
     // Envia e-mail de teste
-    const result = await resend.emails.send({
+    const result = await transporter.sendMail({
       from: emailFrom,
-      to: [to],
+      to: to,
       subject: "🧪 Teste de Configuração - Clivus",
       html: `
         <!DOCTYPE html>
@@ -95,7 +106,10 @@ export async function POST(request: NextRequest) {
 
                 <h3>📋 Checklist de Configuração:</h3>
                 <ul class="checklist">
-                  <li><strong>RESEND_API_KEY</strong> configurada</li>
+                  <li><strong>SMTP_USER</strong> configurado (${smtpUser})</li>
+                  <li><strong>SMTP_PASS</strong> configurado</li>
+                  <li><strong>SMTP_HOST</strong> configurado (${smtpHost})</li>
+                  <li><strong>SMTP_PORT</strong> configurado (${smtpPort})</li>
                   <li><strong>EMAIL_FROM</strong> configurado</li>
                   <li><strong>ADMIN_EMAIL</strong> configurado</li>
                   <li>Servidor Next.js reiniciado</li>
@@ -135,35 +149,37 @@ export async function POST(request: NextRequest) {
       `
     });
 
-    console.log("✅ [Test Email] E-mail enviado com sucesso:", result);
+    console.log("✅ [Test Email] E-mail enviado com sucesso:", result.messageId);
 
     return NextResponse.json({
       message: "E-mail de teste enviado com sucesso!",
-      emailId: result.data?.id,
+      emailId: result.messageId,
       to: to,
       from: emailFrom,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
+      smtpHost: smtpHost,
+      smtpPort: smtpPort
     });
 
   } catch (error: any) {
     console.error("❌ [Test Email] Erro ao enviar:", error);
 
-    // Erros comuns do Resend
-    if (error.message?.includes("API key")) {
+    // Erros comuns do SMTP
+    if (error.message?.includes("authentication") || error.message?.includes("Invalid login")) {
       return NextResponse.json(
         { 
-          error: "Chave API inválida",
-          details: "Verifique se RESEND_API_KEY está correta no arquivo .env"
+          error: "Credenciais SMTP inválidas",
+          details: "Verifique se SMTP_USER e SMTP_PASS estão corretos no arquivo .env"
         },
         { status: 400 }
       );
     }
 
-    if (error.message?.includes("domain")) {
+    if (error.message?.includes("ECONNREFUSED") || error.message?.includes("connection")) {
       return NextResponse.json(
         { 
-          error: "Domínio não verificado",
-          details: "Adicione e verifique seu domínio no painel do Resend"
+          error: "Erro de conexão com servidor SMTP",
+          details: "Verifique se o host e porta estão corretos (smtp.hostinger.com:465)"
         },
         { status: 400 }
       );
