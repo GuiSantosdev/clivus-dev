@@ -1,16 +1,24 @@
 /**
- * CORA Payment Integration Helper
+ * CORA Payment Integration Helper (Direct Integration with mTLS)
  * API Documentation: https://developers.cora.com.br/
+ * Now using certificate-based authentication (mTLS)
  */
+
+import https from "https";
+import fs from "fs";
+import path from "path";
+import crypto from "crypto";
 
 // Tipo de ambiente CORA
 type CoraEnvironment = "sandbox" | "production";
 
 // Configuração do CORA
 interface CoraConfig {
-  apiKey: string;
+  clientId: string;
   environment: CoraEnvironment;
   webhookSecret?: string;
+  certificatePath: string;
+  privateKeyPath: string;
 }
 
 // Cliente CORA
@@ -60,7 +68,7 @@ interface CoraBoleto {
 }
 
 // Resposta do boleto criado
-interface CoraBoletوResponse {
+interface CoraBoletoResponse {
   id: string;
   code: string; // código do boleto
   digitableLine: string; // linha digitável
@@ -83,72 +91,125 @@ type CoraPaymentStatus =
 
 // Obter configuração do CORA
 function getCoraConfig(): CoraConfig {
-  const apiKey = process.env.CORA_API_KEY || "";
+  const clientId = process.env.CORA_API_KEY || "";
   const environment = (process.env.CORA_ENVIRONMENT ||
     "sandbox") as CoraEnvironment;
   const webhookSecret = process.env.CORA_WEBHOOK_SECRET || "";
 
-  if (!apiKey) {
-    throw new Error("CORA_API_KEY não configurada nas variáveis de ambiente");
+  // Caminhos dos certificados
+  const certsPath = path.join(process.cwd(), "certs");
+  const certificatePath = path.join(certsPath, "cora-certificate.pem");
+  const privateKeyPath = path.join(certsPath, "cora-private-key.key");
+
+  if (!clientId) {
+    throw new Error("CORA_API_KEY (Client ID) não configurada nas variáveis de ambiente");
   }
 
-  return { apiKey, environment, webhookSecret };
+  if (!fs.existsSync(certificatePath)) {
+    throw new Error(`Certificado CORA não encontrado em: ${certificatePath}`);
+  }
+
+  if (!fs.existsSync(privateKeyPath)) {
+    throw new Error(`Chave privada CORA não encontrada em: ${privateKeyPath}`);
+  }
+
+  return { clientId, environment, webhookSecret, certificatePath, privateKeyPath };
 }
 
 // Obter URL base da API
 function getCoraBaseUrl(environment: CoraEnvironment): string {
   return environment === "production"
-    ? "https://api.cora.com.br/v1"
-    : "https://api.stage.cora.com.br/v1";
+    ? "https://matls-clients.api.stage.cora.com.br" // Production URL para integração direta
+    : "https://matls-clients.api.stage.cora.com.br"; // Stage URL
 }
 
-// Fazer requisição para a API do CORA
+// Fazer requisição para a API do CORA com mTLS
 async function coraRequest<T>(
   endpoint: string,
-  options: RequestInit = {}
+  options: {
+    method?: string;
+    body?: any;
+    headers?: Record<string, string>;
+  } = {}
 ): Promise<T> {
   const config = getCoraConfig();
   const baseUrl = getCoraBaseUrl(config.environment);
-  const url = `${baseUrl}${endpoint}`;
+  const url = new URL(`${baseUrl}${endpoint}`);
 
-  console.log(`[CORA] ${options.method || "GET"} ${url}`);
+  console.log(`[CORA] ${options.method || "GET"} ${url.toString()}`);
 
-  const headers: HeadersInit = {
-    "Content-Type": "application/json",
-    Authorization: `Bearer ${config.apiKey}`,
-    ...options.headers,
+  // Ler certificados
+  const cert = fs.readFileSync(config.certificatePath, "utf8");
+  const key = fs.readFileSync(config.privateKeyPath, "utf8");
+
+  const requestOptions: https.RequestOptions = {
+    hostname: url.hostname,
+    port: 443,
+    path: url.pathname + url.search,
+    method: options.method || "GET",
+    cert: cert,
+    key: key,
+    headers: {
+      "Content-Type": "application/json",
+      "client-id": config.clientId,
+      ...options.headers,
+    },
   };
 
-  console.log("[CORA] Headers:", headers);
-
+  // Adicionar Content-Length se houver body
   if (options.body) {
-    console.log("[CORA] Request Body:", options.body);
+    const bodyString = JSON.stringify(options.body);
+    requestOptions.headers!["Content-Length"] = Buffer.byteLength(bodyString);
+    console.log("[CORA] Request Body:", bodyString);
   }
 
-  const response = await fetch(url, {
-    ...options,
-    headers,
-  });
+  console.log("[CORA] Request Headers:", requestOptions.headers);
 
-  console.log(`[CORA] Response Status: ${response.status}`);
+  return new Promise((resolve, reject) => {
+    const req = https.request(requestOptions, (res) => {
+      let data = "";
 
-  const responseText = await response.text();
-  console.log("[CORA] Response Body:", responseText);
+      res.on("data", (chunk) => {
+        data += chunk;
+      });
 
-  if (!response.ok) {
-    let errorMessage = `CORA API Error: ${response.status}`;
-    try {
-      const errorData = JSON.parse(responseText);
-      errorMessage = errorData.message || errorData.error || errorMessage;
-    } catch {
-      errorMessage = responseText || errorMessage;
+      res.on("end", () => {
+        console.log(`[CORA] Response Status: ${res.statusCode}`);
+        console.log("[CORA] Response Body:", data);
+
+        if (!res.statusCode || res.statusCode < 200 || res.statusCode >= 300) {
+          let errorMessage = `CORA API Error: ${res.statusCode}`;
+          try {
+            const errorData = JSON.parse(data);
+            errorMessage = errorData.message || errorData.error || errorMessage;
+          } catch {
+            errorMessage = data || errorMessage;
+          }
+
+          console.error("[CORA] Error:", errorMessage);
+          reject(new Error(errorMessage));
+        } else {
+          try {
+            const parsed = JSON.parse(data) as T;
+            resolve(parsed);
+          } catch (e) {
+            reject(new Error("Failed to parse CORA response"));
+          }
+        }
+      });
+    });
+
+    req.on("error", (error) => {
+      console.error("[CORA] Request Error:", error);
+      reject(error);
+    });
+
+    if (options.body) {
+      req.write(JSON.stringify(options.body));
     }
 
-    console.error("[CORA] Error:", errorMessage);
-    throw new Error(errorMessage);
-  }
-
-  return JSON.parse(responseText) as T;
+    req.end();
+  });
 }
 
 /**
@@ -156,10 +217,10 @@ async function coraRequest<T>(
  */
 export async function createCoraBoleto(
   params: CoraBoleto
-): Promise<CoraBoletوResponse> {
+): Promise<CoraBoletoResponse> {
   console.log("[CORA] Criando boleto com params:", params);
 
-  const response = await coraRequest<CoraBoletوResponse>("/invoices", {
+  const response = await coraRequest<CoraBoletoResponse>("/invoices", {
     method: "POST",
     body: JSON.stringify({
       customer: {
@@ -190,10 +251,10 @@ export async function createCoraBoleto(
  */
 export async function getCoraBoletoStatus(
   boletoId: string
-): Promise<CoraBoletوResponse> {
+): Promise<CoraBoletoResponse> {
   console.log(`[CORA] Consultando status do boleto: ${boletoId}`);
 
-  const response = await coraRequest<CoraBoletوResponse>(
+  const response = await coraRequest<CoraBoletoResponse>(
     `/invoices/${boletoId}`,
     {
       method: "GET",
