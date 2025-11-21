@@ -250,7 +250,7 @@ img {
 
 /* Sidebar layout adjustments */
 @media (min-width: 1024px) {
-  body:has(aside.w-64) main {
+  body:has(aside.lg\:w-64) main {
     margin-left: 16rem;
   }
   
