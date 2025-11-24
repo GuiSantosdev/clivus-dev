@@ -40,8 +40,17 @@ interface GatewayConfig {
     type: "text" | "password";
     envVar: string;
   }[];
-  isConfigured: boolean;
   webhookUrl?: string;
+}
+
+interface GatewayStatus {
+  id: string;
+  name: string;
+  displayName: string;
+  enabled: boolean;
+  configured: boolean;
+  lastCheckAt: string;
+  error?: string;
 }
 
 export default function GatewaysManagementPage() {
@@ -52,13 +61,7 @@ export default function GatewaysManagementPage() {
   const [hasChanges, setHasChanges] = useState(false);
   const [showSecrets, setShowSecrets] = useState<Record<string, boolean>>({});
   const [gatewayValues, setGatewayValues] = useState<Record<string, string>>({});
-  const [gatewayStatuses, setGatewayStatuses] = useState<Record<string, boolean>>({
-    asaas: true,
-    stripe: true,
-    cora: true,
-    pagarme: false,
-    efi: false,
-  });
+  const [gatewayStatuses, setGatewayStatuses] = useState<GatewayStatus[]>([]);
 
   const gateways: GatewayConfig[] = [
     {
@@ -89,7 +92,6 @@ export default function GatewaysManagementPage() {
           envVar: "ASAAS_ENVIRONMENT",
         },
       ],
-      isConfigured: false,
       webhookUrl: `${process.env.NEXT_PUBLIC_APP_URL || "https://seu-dominio.com.br"}/api/webhook/asaas`,
     },
     {
@@ -120,7 +122,7 @@ export default function GatewaysManagementPage() {
           envVar: "CORA_ENVIRONMENT",
         },
       ],
-      isConfigured: false,
+
       webhookUrl: `${process.env.NEXT_PUBLIC_APP_URL || "https://seu-dominio.com.br"}/api/webhook/cora`,
     },
     {
@@ -151,7 +153,7 @@ export default function GatewaysManagementPage() {
           envVar: "PAGARME_ENVIRONMENT",
         },
       ],
-      isConfigured: false,
+
       webhookUrl: `${process.env.NEXT_PUBLIC_APP_URL || "https://seu-dominio.com.br"}/api/webhook/pagarme`,
     },
     {
@@ -189,7 +191,7 @@ export default function GatewaysManagementPage() {
           envVar: "EFI_ENVIRONMENT",
         },
       ],
-      isConfigured: false,
+
       webhookUrl: `${process.env.NEXT_PUBLIC_APP_URL || "https://seu-dominio.com.br"}/api/webhook/efi`,
     },
     {
@@ -213,7 +215,7 @@ export default function GatewaysManagementPage() {
           envVar: "STRIPE_WEBHOOK_SECRET",
         },
       ],
-      isConfigured: false,
+
       webhookUrl: `${process.env.NEXT_PUBLIC_APP_URL || "https://seu-dominio.com.br"}/api/webhook`,
     },
   ];
@@ -230,24 +232,22 @@ export default function GatewaysManagementPage() {
     }
   }, [status, session, router]);
 
-  // Re-verificar configuração quando gatewayStatuses mudar
-  useEffect(() => {
-    checkGatewaysConfiguration();
-  }, [gatewayStatuses]);
-
   const fetchGatewayStatuses = async () => {
     try {
-      const response = await fetch("/api/admin/gateways");
+      setLoading(true);
+      const response = await fetch("/api/gateways/status");
       if (response.ok) {
-        const data = await response.json();
-        const statuses: Record<string, boolean> = {};
-        data.gateways.forEach((gw: any) => {
-          statuses[gw.name] = gw.isEnabled;
-        });
-        setGatewayStatuses(statuses);
+        const data: GatewayStatus[] = await response.json();
+        setGatewayStatuses(data);
+        console.log("✅ Status dos gateways carregado:", data);
+      } else {
+        toast.error("Erro ao carregar status dos gateways");
       }
     } catch (error) {
       console.error("Erro ao buscar status dos gateways:", error);
+      toast.error("Erro ao buscar status dos gateways");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -260,13 +260,11 @@ export default function GatewaysManagementPage() {
       });
 
       if (response.ok) {
-        setGatewayStatuses((prev) => ({
-          ...prev,
-          [gatewayName]: !currentStatus,
-        }));
         toast.success(
           `Gateway ${gatewayName} ${!currentStatus ? "habilitado" : "desabilitado"} com sucesso!`
         );
+        // Recarregar status após mudança
+        await fetchGatewayStatuses();
       } else {
         toast.error("Erro ao atualizar status do gateway");
       }
@@ -276,37 +274,9 @@ export default function GatewaysManagementPage() {
     }
   };
 
-  const checkGatewaysConfiguration = async () => {
-    try {
-      // Buscar configurações do servidor
-      const response = await fetch("/api/admin/gateways/check-config");
-      if (!response.ok) {
-        console.error("Erro ao verificar configurações");
-        return;
-      }
-
-      const serverConfigs = await response.json();
-      console.log("📋 [Gateway Config] Configs do servidor:", serverConfigs);
-
-      // Atualizar status de configuração dos gateways
-      gateways.forEach((gateway) => {
-        // Gateway está configurado se:
-        // 1. Tem credenciais no servidor (serverConfigs[gateway.name])
-        // 2. E está habilitado no banco (gatewayStatuses[gateway.name])
-        const hasCredentials = serverConfigs[gateway.name] === true;
-        const isEnabled = gatewayStatuses[gateway.name] === true;
-        
-        gateway.isConfigured = hasCredentials && isEnabled;
-        
-        console.log(`✅ Gateway ${gateway.name}:`, {
-          hasCredentials,
-          isEnabled,
-          isConfigured: gateway.isConfigured
-        });
-      });
-    } catch (error) {
-      console.error("❌ Erro ao verificar configurações:", error);
-    }
+  // Função auxiliar para obter o status de um gateway específico
+  const getGatewayStatus = (gatewayName: string): GatewayStatus | undefined => {
+    return gatewayStatuses.find(status => status.name === gatewayName);
   };
 
   const handleSaveConfiguration = async (gatewayName: string) => {
@@ -358,10 +328,8 @@ export default function GatewaysManagementPage() {
 
       setHasChanges(false);
       
-      // Recarregar após 2 segundos
-      setTimeout(() => {
-        window.location.reload();
-      }, 2000);
+      // Recarregar status após salvar
+      await fetchGatewayStatuses();
 
     } catch (error: any) {
       console.error("Erro ao salvar:", error);
@@ -448,53 +416,67 @@ export default function GatewaysManagementPage() {
 
         {/* Gateways */}
         <div className="space-y-6">
-          {gateways.map((gateway) => (
-            <Card key={gateway.name}>
-              <CardHeader>
-                <div className="flex items-start justify-between">
-                  <div className="flex items-center gap-3">
-                    <span className="text-3xl">{gateway.icon}</span>
-                    <div>
-                      <CardTitle className="flex items-center gap-2">
-                        {gateway.displayName}
-                        {gateway.isConfigured ? (
-                          <span className="inline-flex items-center gap-1 px-2 py-1 bg-green-100 text-green-800 rounded-full text-xs font-medium">
-                            <CheckCircle className="w-3 h-3" />
-                            Configurado
-                          </span>
-                        ) : (
-                          <span className="inline-flex items-center gap-1 px-2 py-1 bg-yellow-100 text-yellow-800 rounded-full text-xs font-medium">
-                            <XCircle className="w-3 h-3" />
-                            Não Configurado
-                          </span>
+          {gateways.map((gateway) => {
+            const status = getGatewayStatus(gateway.name);
+            const isConfigured = status?.configured || false;
+            const isEnabled = status?.enabled || false;
+            const error = status?.error;
+
+            return (
+              <Card key={gateway.name}>
+                <CardHeader>
+                  <div className="flex items-start justify-between">
+                    <div className="flex items-center gap-3">
+                      <span className="text-3xl">{gateway.icon}</span>
+                      <div className="flex-1">
+                        <CardTitle className="flex items-center gap-2 flex-wrap">
+                          {gateway.displayName}
+                          {isEnabled && isConfigured ? (
+                            <span className="inline-flex items-center gap-1 px-2 py-1 bg-green-100 text-green-800 rounded-full text-xs font-medium">
+                              <CheckCircle className="w-3 h-3" />
+                              Configurado
+                            </span>
+                          ) : !isConfigured ? (
+                            <span className="inline-flex items-center gap-1 px-2 py-1 bg-red-100 text-red-800 rounded-full text-xs font-medium">
+                              <XCircle className="w-3 h-3" />
+                              Não Configurado
+                            </span>
+                          ) : (
+                            <span className="inline-flex items-center gap-1 px-2 py-1 bg-yellow-100 text-yellow-800 rounded-full text-xs font-medium">
+                              <AlertCircle className="w-3 h-3" />
+                              Desabilitado
+                            </span>
+                          )}
+                        </CardTitle>
+                        <CardDescription>{gateway.description}</CardDescription>
+                        {error && (
+                          <div className="mt-2 text-xs text-red-600 bg-red-50 border border-red-200 rounded px-2 py-1">
+                            ⚠️ {error}
+                          </div>
                         )}
-                      </CardTitle>
-                      <CardDescription>{gateway.description}</CardDescription>
+                      </div>
+                    </div>
+                    
+                    {/* Toggle para habilitar/desabilitar */}
+                    <div className="flex flex-col items-end gap-2">
+                      <div className="flex items-center gap-2">
+                        <Label htmlFor={`gateway-${gateway.name}-toggle`} className="text-sm font-medium">
+                          {isEnabled ? "Habilitado" : "Desabilitado"}
+                        </Label>
+                        <Switch
+                          id={`gateway-${gateway.name}-toggle`}
+                          checked={isEnabled}
+                          onCheckedChange={() => handleToggleGateway(gateway.name, isEnabled)}
+                        />
+                      </div>
+                      {!isEnabled && (
+                        <span className="text-xs text-red-600 font-medium">
+                          Gateway desabilitado no checkout
+                        </span>
+                      )}
                     </div>
                   </div>
-                  
-                  {/* Toggle para habilitar/desabilitar */}
-                  <div className="flex flex-col items-end gap-2">
-                    <div className="flex items-center gap-2">
-                      <Label htmlFor={`gateway-${gateway.name}-toggle`} className="text-sm font-medium">
-                        {gatewayStatuses[gateway.name] ? "Habilitado" : "Desabilitado"}
-                      </Label>
-                      <Switch
-                        id={`gateway-${gateway.name}-toggle`}
-                        checked={gatewayStatuses[gateway.name] !== false}
-                        onCheckedChange={() => 
-                          handleToggleGateway(gateway.name, gatewayStatuses[gateway.name] !== false)
-                        }
-                      />
-                    </div>
-                    {!gatewayStatuses[gateway.name] && (
-                      <span className="text-xs text-red-600 font-medium">
-                        Gateway desabilitado no checkout
-                      </span>
-                    )}
-                  </div>
-                </div>
-              </CardHeader>
+                </CardHeader>
               <CardContent className="space-y-6">
                 {/* Webhook URL */}
                 {gateway.webhookUrl && (
@@ -608,7 +590,8 @@ export default function GatewaysManagementPage() {
                 </div>
               </CardContent>
             </Card>
-          ))}
+            );
+          })}
         </div>
 
         {/* Documentation Links */}
