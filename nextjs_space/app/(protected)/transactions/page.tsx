@@ -158,7 +158,6 @@ export default function TransactionsPage() {
       const year = transactionDate.getFullYear();
       
       const response = await fetch(
-    </div>
         `/api/planning/available?type=${formData.type}&accountType=${formData.accountType}&month=${month}&year=${year}`
       );
       if (response.ok) {
@@ -319,15 +318,14 @@ export default function TransactionsPage() {
 
   if (loading || status === "loading") {
     return (
-    <div className="p-8">
       <div className="min-h-screen flex items-center justify-center">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
-    </div>
       </div>
     );
   }
 
   return (
+    <div className="p-8">
       <div className="max-w-7xl mx-auto p-6 space-y-6">
         <div className="flex items-center justify-between">
           <h1 className="text-3xl font-bold">Transações</h1>
@@ -749,8 +747,6 @@ export default function TransactionsPage() {
           </CardContent>
         </Card>
       </div>
-    </div>
-    </div>
     </div>
   );
 }

@@ -261,15 +261,16 @@ export default function PricingPage() {
 
   if (status === "loading") {
     return (
-    <div className="p-8">
+      <div className="p-8">
         <div className="flex items-center justify-center h-64">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
-    </div>
         </div>
+      </div>
     );
   }
 
   return (
+    <div className="p-8">
       <div className="space-y-6">
         <div className="flex items-center gap-3">
           <div className="p-3 bg-gradient-to-br from-green-500 to-emerald-600 rounded-lg">
@@ -856,8 +857,6 @@ export default function PricingPage() {
           </CardContent>
         </Card>
       </div>
-    </div>
-    </div>
     </div>
   );
 }

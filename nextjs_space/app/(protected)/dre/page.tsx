@@ -102,7 +102,6 @@ export default function DrePage() {
 
       // Buscar transações do período
       const response = await fetch(
-    </div>
         `/api/transactions?startDate=${selectedPeriod.startDate}&endDate=${selectedPeriod.endDate}`
       );
       
@@ -218,10 +217,8 @@ export default function DrePage() {
 
   if (status === "loading" || loading) {
     return (
-      <div className="p-8">
-        <div className="flex items-center justify-center min-h-screen">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600" />
-        </div>
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600" />
       </div>
     );
   }
@@ -229,7 +226,7 @@ export default function DrePage() {
   const allCategories = [...planoContas, ...customCategories].sort((a, b) => a.order - b.order);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-8">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-6">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="flex items-center justify-between mb-6">
