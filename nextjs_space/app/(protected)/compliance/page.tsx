@@ -102,13 +102,13 @@ export default function CompliancePage() {
 
   if (status === "loading") {
     return (
-    <div className="p-8">
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
-          <p className="mt-4 text-gray-600">Carregando...</p>
+      <div className="p-8">
+        <div className="min-h-screen flex items-center justify-center">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
+            <p className="mt-4 text-gray-600">Carregando...</p>
+          </div>
         </div>
-    </div>
       </div>
     );
   }
@@ -120,6 +120,7 @@ export default function CompliancePage() {
   const compliancePercentage = Math.round((okCount / totalCount) * 100);
 
   return (
+    <div className="p-8">
       <div className="mb-6">
         <h1 className="text-3xl font-bold text-gray-900">Compliance Fiscal</h1>
         <p className="text-gray-600 mt-2">Monitore suas obrigações fiscais e mantenha-se em conformidade</p>
@@ -282,8 +283,7 @@ export default function CompliancePage() {
             </div>
           </CardContent>
         </Card>
-    </div>
-    </div>
+      </div>
     </div>
   );
 }

@@ -174,17 +174,18 @@ Gerado em ${new Date().toLocaleDateString('pt-BR')} pelo Clivus
 
   if (status === "loading") {
     return (
-    <div className="p-8">
+      <div className="p-8">
         <div className="flex items-center justify-center h-64">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
-    </div>
         </div>
+      </div>
     );
   }
 
   const multiplier = costs.salary > 0 ? costs.monthlyCost / costs.salary : 0;
 
   return (
+    <div className="p-8">
       <div className="space-y-6">
         <div className="flex items-center gap-3">
           <div className="p-3 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-lg">
@@ -461,8 +462,6 @@ Gerado em ${new Date().toLocaleDateString('pt-BR')} pelo Clivus
           </div>
         </div>
       </div>
-    </div>
-    </div>
     </div>
   );
 }

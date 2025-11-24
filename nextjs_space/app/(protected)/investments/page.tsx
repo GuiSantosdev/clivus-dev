@@ -122,13 +122,13 @@ export default function InvestmentsPage() {
 
   if (loading || status === "loading") {
     return (
-    <div className="p-8">
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
-          <p className="mt-4 text-gray-600">Carregando...</p>
+      <div className="p-8">
+        <div className="min-h-screen flex items-center justify-center">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
+            <p className="mt-4 text-gray-600">Carregando...</p>
+          </div>
         </div>
-    </div>
       </div>
     );
   }
@@ -140,6 +140,7 @@ export default function InvestmentsPage() {
   const totalInvestments = cpfTotal + cnpjTotal;
 
   return (
+    <div className="p-8">
       <div className="mb-6 flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold text-gray-900">Controle de Investimentos</h1>
@@ -442,8 +443,7 @@ export default function InvestmentsPage() {
             </CardContent>
           </Card>
         </div>
-    </div>
-    </div>
+      </div>
     </div>
   );
 }

@@ -218,10 +218,10 @@ export default function DrePage() {
 
   if (status === "loading" || loading) {
     return (
-    <div className="p-8">
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600" />
-    </div>
+      <div className="p-8">
+        <div className="flex items-center justify-center min-h-screen">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600" />
+        </div>
       </div>
     );
   }
@@ -229,7 +229,7 @@ export default function DrePage() {
   const allCategories = [...planoContas, ...customCategories].sort((a, b) => a.order - b.order);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-6">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-8">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="flex items-center justify-between mb-6">
@@ -592,9 +592,6 @@ export default function DrePage() {
           </div>
         )}
       </div>
-    </div>
-    </div>
-    </div>
     </div>
   );
 }
