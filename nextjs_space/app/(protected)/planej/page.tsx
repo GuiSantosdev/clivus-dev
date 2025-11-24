@@ -3,7 +3,6 @@
 import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import { ProtectedLayout } from "@/components/protected-layout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -85,6 +84,7 @@ export default function PlanejPage() {
   const fetchPlannedTransactions = async () => {
     try {
       const response = await fetch(
+    </div>
         `/api/planning?month=${selectedMonth}&year=${selectedYear}`
       );
       if (response.ok) {
@@ -163,6 +163,7 @@ export default function PlanejPage() {
         toast.success(
           editingId
             ? "Planejamento atualizado com sucesso!"
+    </div>
             : "Planejamento adicionado com sucesso!"
         );
         setShowForm(false);
@@ -309,25 +310,31 @@ export default function PlanejPage() {
 
   const totalIncomeExpected = incomeTransactions.reduce(
     (acc, t) => acc + t.expectedAmount,
+    </div>
     0
   );
   const totalIncomeActual = incomeTransactions.reduce(
     (acc, t) => acc + (t.actualAmount || 0),
+    </div>
     0
   );
   const totalExpenseExpected = expenseTransactions.reduce(
     (acc, t) => acc + t.expectedAmount,
+    </div>
     0
   );
   const totalExpenseActual = expenseTransactions.reduce(
     (acc, t) => acc + (t.actualAmount || 0),
+    </div>
     0
   );
 
   if (loading || status === "loading") {
     return (
+    <div className="p-8">
       <div className="min-h-screen flex items-center justify-center">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+    </div>
       </div>
     );
   }
@@ -348,7 +355,6 @@ export default function PlanejPage() {
   ];
 
   return (
-    <ProtectedLayout>
       <div className="max-w-7xl mx-auto p-6 space-y-6">
         <div className="flex items-center justify-between">
           <h1 className="text-3xl font-bold">📅 Planejamento Financeiro</h1>
@@ -650,6 +656,7 @@ export default function PlanejPage() {
                           <Trash2 className="w-4 h-4 text-red-600" />
                         </Button>
                       </div>
+    </div>
                     </div>
                   );
                 })}
@@ -753,6 +760,7 @@ export default function PlanejPage() {
                           <Trash2 className="w-4 h-4 text-red-600" />
                         </Button>
                       </div>
+    </div>
                     </div>
                   );
                 })}
@@ -761,6 +769,8 @@ export default function PlanejPage() {
           </CardContent>
         </Card>
       </div>
-    </ProtectedLayout>
+    </div>
+    </div>
+    </div>
   );
 }

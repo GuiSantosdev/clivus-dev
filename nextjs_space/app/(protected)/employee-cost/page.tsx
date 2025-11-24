@@ -8,7 +8,6 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { ProtectedLayout } from "@/components/protected-layout";
 import { Users, DollarSign, TrendingUp, AlertCircle, Calculator, Briefcase } from "lucide-react";
 import toast from "react-hot-toast";
 
@@ -175,18 +174,17 @@ Gerado em ${new Date().toLocaleDateString('pt-BR')} pelo Clivus
 
   if (status === "loading") {
     return (
-      <ProtectedLayout>
+    <div className="p-8">
         <div className="flex items-center justify-center h-64">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+    </div>
         </div>
-      </ProtectedLayout>
     );
   }
 
   const multiplier = costs.salary > 0 ? costs.monthlyCost / costs.salary : 0;
 
   return (
-    <ProtectedLayout>
       <div className="space-y-6">
         <div className="flex items-center gap-3">
           <div className="p-3 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-lg">
@@ -463,6 +461,8 @@ Gerado em ${new Date().toLocaleDateString('pt-BR')} pelo Clivus
           </div>
         </div>
       </div>
-    </ProtectedLayout>
+    </div>
+    </div>
+    </div>
   );
 }

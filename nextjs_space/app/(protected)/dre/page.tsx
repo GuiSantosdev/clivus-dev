@@ -102,6 +102,7 @@ export default function DrePage() {
 
       // Buscar transações do período
       const response = await fetch(
+    </div>
         `/api/transactions?startDate=${selectedPeriod.startDate}&endDate=${selectedPeriod.endDate}`
       );
       
@@ -217,8 +218,10 @@ export default function DrePage() {
 
   if (status === "loading" || loading) {
     return (
+    <div className="p-8">
       <div className="flex items-center justify-center min-h-screen">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600" />
+    </div>
       </div>
     );
   }
@@ -589,6 +592,9 @@ export default function DrePage() {
           </div>
         )}
       </div>
+    </div>
+    </div>
+    </div>
     </div>
   );
 }

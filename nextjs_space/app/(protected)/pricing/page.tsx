@@ -9,7 +9,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { ProtectedLayout } from "@/components/protected-layout";
 import { 
   Calculator, 
   DollarSign, 
@@ -262,16 +261,15 @@ export default function PricingPage() {
 
   if (status === "loading") {
     return (
-      <ProtectedLayout>
+    <div className="p-8">
         <div className="flex items-center justify-center h-64">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+    </div>
         </div>
-      </ProtectedLayout>
     );
   }
 
   return (
-    <ProtectedLayout>
       <div className="space-y-6">
         <div className="flex items-center gap-3">
           <div className="p-3 bg-gradient-to-br from-green-500 to-emerald-600 rounded-lg">
@@ -858,6 +856,8 @@ export default function PricingPage() {
           </CardContent>
         </Card>
       </div>
-    </ProtectedLayout>
+    </div>
+    </div>
+    </div>
   );
 }

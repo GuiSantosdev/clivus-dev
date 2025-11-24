@@ -15,7 +15,6 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import toast from "react-hot-toast";
-import { ProtectedLayout } from "@/components/protected-layout";
 
 interface ReportData {
   cpf: {
@@ -69,17 +68,18 @@ export default function ReportsPage() {
 
   if (loading || status === "loading") {
     return (
+    <div className="p-8">
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
           <p className="mt-4 text-gray-600">Carregando...</p>
         </div>
+    </div>
       </div>
     );
   }
 
   return (
-    <ProtectedLayout>
       <div className="mb-6">
         <h1 className="text-3xl font-bold text-gray-900">Relatórios Financeiros</h1>
         <p className="text-gray-600 mt-2">Visualize e exporte seus relatórios financeiros</p>
@@ -250,6 +250,8 @@ export default function ReportsPage() {
             </CardContent>
           </Card>
         )}
-    </ProtectedLayout>
+    </div>
+    </div>
+    </div>
   );
 }
