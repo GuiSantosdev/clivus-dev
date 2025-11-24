@@ -27,13 +27,7 @@ export async function GET() {
         : "",
       emailFrom: process.env.EMAIL_FROM || "",
       adminEmail: process.env.ADMIN_EMAIL || "",
-      appUrl: process.env.NEXT_PUBLIC_APP_URL || "",
-      asaasApiKey: process.env.ASAAS_API_KEY 
-        ? `${process.env.ASAAS_API_KEY.substring(0, 8)}...` 
-        : "",
-      stripeSecretKey: process.env.STRIPE_SECRET_KEY 
-        ? `${process.env.STRIPE_SECRET_KEY.substring(0, 8)}...` 
-        : ""
+      appUrl: process.env.NEXT_PUBLIC_APP_URL || ""
     };
 
     return NextResponse.json(config);

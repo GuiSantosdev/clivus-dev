@@ -15,8 +15,7 @@ import {
   Send, 
   CheckCircle, 
   AlertCircle,
-  Globe,
-  Key
+  Globe
 } from "lucide-react";
 
 export default function SettingsPage() {
@@ -31,9 +30,7 @@ export default function SettingsPage() {
     smtpPass: "",
     emailFrom: "",
     adminEmail: "",
-    appUrl: "",
-    asaasApiKey: "",
-    stripeSecretKey: ""
+    appUrl: ""
   });
 
   useEffect(() => {
@@ -309,53 +306,6 @@ export default function SettingsPage() {
                 {config.appUrl 
                   ? "✅ Configurada" 
                   : "❌ Não configurada - Configure no arquivo .env"}
-              </p>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Payment Gateways */}
-        <Card className="mb-6">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Key className="h-5 w-5 text-purple-600" />
-              Gateways de Pagamento
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div>
-              <Label>ASAAS_API_KEY</Label>
-              <Input 
-                type="password"
-                value={config.asaasApiKey}
-                readOnly
-                className="bg-gray-100"
-              />
-              <p className="text-sm text-gray-500 mt-1">
-                {config.asaasApiKey 
-                  ? "✅ Configurada" 
-                  : "❌ Não configurada"}
-              </p>
-            </div>
-
-            <div>
-              <Label>STRIPE_SECRET_KEY</Label>
-              <Input 
-                type="password"
-                value={config.stripeSecretKey}
-                readOnly
-                className="bg-gray-100"
-              />
-              <p className="text-sm text-gray-500 mt-1">
-                {config.stripeSecretKey 
-                  ? "✅ Configurada" 
-                  : "❌ Não configurada"}
-              </p>
-            </div>
-
-            <div className="bg-gray-100 border border-gray-300 rounded-lg p-4">
-              <p className="text-sm text-gray-700">
-                💡 Para gerenciar gateways, acesse: <strong>Menu SuperAdmin → Gateways</strong>
               </p>
             </div>
           </CardContent>

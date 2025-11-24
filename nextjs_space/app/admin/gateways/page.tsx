@@ -439,7 +439,7 @@ export default function GatewaysManagementPage() {
                   <p>4. Reinicie o servidor Next.js para aplicar as mudanças</p>
                 </div>
                 <p className="text-xs text-blue-700 mt-2">
-                  💡 Consulte a documentação <strong>ADMIN_SETUP.md</strong> e <strong>ASAAS_SETUP.md</strong> para instruções detalhadas
+                  💡 Consulte a documentação <strong>ADMIN_SETUP.md</strong> para instruções gerais e os guias específicos de cada gateway para instruções detalhadas
                 </p>
               </div>
             </div>
@@ -576,10 +576,32 @@ export default function GatewaysManagementPage() {
                     {loading || saving ? "Salvando..." : "Salvar Configurações"}
                   </Button>
                   
+                  {/* Link para guia específico do gateway */}
                   {gateway.name === "asaas" && (
                     <Link href="/ASAAS_SETUP.md" target="_blank">
                       <Button variant="outline" className="gap-2">
                         📄 Guia Asaas
+                      </Button>
+                    </Link>
+                  )}
+                  {gateway.name === "efi" && (
+                    <Link href="/EFI_SETUP.md" target="_blank">
+                      <Button variant="outline" className="gap-2">
+                        📄 Guia EFI
+                      </Button>
+                    </Link>
+                  )}
+                  {gateway.name === "cora" && (
+                    <Link href="/CORA_SETUP.md" target="_blank">
+                      <Button variant="outline" className="gap-2">
+                        📄 Guia CORA
+                      </Button>
+                    </Link>
+                  )}
+                  {gateway.name === "pagarme" && (
+                    <Link href="/PAGARME_SETUP.md" target="_blank">
+                      <Button variant="outline" className="gap-2">
+                        📄 Guia Pagar.me
                       </Button>
                     </Link>
                   )}
@@ -606,17 +628,22 @@ export default function GatewaysManagementPage() {
                   </Link>
                   <Link href="/ASAAS_SETUP.md" target="_blank">
                     <Button variant="outline" size="sm">
-                      📄 ASAAS_SETUP.md
+                      📄 Guia Asaas
                     </Button>
                   </Link>
-                  <Link href="https://docs.asaas.com" target="_blank">
+                  <Link href="/EFI_SETUP.md" target="_blank">
                     <Button variant="outline" size="sm">
-                      🌐 Docs Asaas
+                      📄 Guia EFI
                     </Button>
                   </Link>
-                  <Link href="https://stripe.com/docs" target="_blank">
+                  <Link href="/CORA_SETUP.md" target="_blank">
                     <Button variant="outline" size="sm">
-                      🌐 Docs Stripe
+                      📄 Guia CORA
+                    </Button>
+                  </Link>
+                  <Link href="/PAGARME_SETUP.md" target="_blank">
+                    <Button variant="outline" size="sm">
+                      📄 Guia Pagar.me
                     </Button>
                   </Link>
                 </div>
