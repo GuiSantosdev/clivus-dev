@@ -220,8 +220,8 @@
     --radius: 1rem;
 
     /* Custom Theme Variables */
-    --bg: #0f172a;
-    --surface: #1e293b;
+    --bg: #1e2a3a;
+    --surface: #283548;
     --text: #f8fafc;
     --text-muted: #94a3b8;
     
@@ -311,6 +311,38 @@
   
   .p-theme {
     padding: var(--density);
+  }
+  
+  .bg-theme {
+    background-color: var(--bg);
+  }
+  
+  .bg-card {
+    background-color: hsl(var(--card));
+  }
+  
+  .text-card-foreground {
+    color: hsl(var(--card-foreground));
+  }
+  
+  .bg-primary-soft {
+    background-color: hsl(var(--primary) / 0.1);
+  }
+  
+  .bg-secondary-soft {
+    background-color: hsl(var(--secondary) / 0.1);
+  }
+  
+  .bg-muted-soft {
+    background-color: hsl(var(--muted) / 0.5);
+  }
+  
+  .text-primary {
+    color: hsl(var(--primary));
+  }
+  
+  .text-secondary {
+    color: hsl(var(--secondary));
   }
 }
 

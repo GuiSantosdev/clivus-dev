@@ -169,7 +169,7 @@ export default function DashboardPage() {
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
-          <p className="mt-4 text-gray-600">Carregando...</p>
+          <p className="mt-4 text-theme-muted">Carregando...</p>
         </div>
       </div>
     );
@@ -182,8 +182,8 @@ export default function DashboardPage() {
     <div className="p-8">
       {/* Page Header */}
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900">Dashboard</h1>
-        <p className="text-gray-600 mt-2">
+        <h1 className="text-3xl font-bold text-theme">Dashboard</h1>
+        <p className="text-theme-muted mt-2">
           Olá, {session?.user?.name}! Bem-vindo ao Clivus
         </p>
       </div>
@@ -197,8 +197,8 @@ export default function DashboardPage() {
                 <div className="flex items-center space-x-3">
                   <XCircle className="h-6 w-6 text-yellow-600" />
                   <div>
-                    <h3 className="font-semibold text-gray-900">Acesso Restrito</h3>
-                    <p className="text-sm text-gray-600">
+                    <h3 className="font-semibold text-theme">Acesso Restrito</h3>
+                    <p className="text-sm text-theme-muted">
                       Complete o pagamento para acessar todas as funcionalidades do Clivus
                     </p>
                   </div>
@@ -218,8 +218,8 @@ export default function DashboardPage() {
               <div className="flex items-center space-x-3">
                 <CheckCircle className="h-6 w-6 text-green-600" />
                 <div>
-                  <h3 className="font-semibold text-gray-900">Acesso Liberado</h3>
-                  <p className="text-sm text-gray-600">
+                  <h3 className="font-semibold text-theme">Acesso Liberado</h3>
+                  <p className="text-sm text-theme-muted">
                     Você tem acesso completo a todas as funcionalidades
                   </p>
                 </div>
@@ -232,23 +232,23 @@ export default function DashboardPage() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
           {/* CPF Card */}
           <Card>
-            <CardHeader className="bg-blue-50">
-              <CardTitle className="flex items-center space-x-2">
-                <User className="h-5 w-5 text-blue-600" />
+            <CardHeader className="bg-primary-soft">
+              <CardTitle className="flex items-center space-x-2 text-theme">
+                <User className="h-5 w-5 text-primary" />
                 <span>Finanças Pessoais (CPF)</span>
               </CardTitle>
             </CardHeader>
             <CardContent className="p-6">
               <div className="space-y-4">
                 <div>
-                  <p className="text-sm text-gray-600">Saldo</p>
-                  <p className="text-3xl font-bold text-gray-900">
+                  <p className="text-sm text-theme-muted">Saldo</p>
+                  <p className="text-3xl font-bold text-theme">
                     R$ {stats?.cpf?.balance?.toFixed(2) ?? "0,00"}
                   </p>
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <p className="text-sm text-gray-600 flex items-center">
+                    <p className="text-sm text-theme-muted flex items-center">
                       <TrendingUp className="h-4 w-4 text-green-600 mr-1" />
                       Receitas
                     </p>
@@ -257,7 +257,7 @@ export default function DashboardPage() {
                     </p>
                   </div>
                   <div>
-                    <p className="text-sm text-gray-600 flex items-center">
+                    <p className="text-sm text-theme-muted flex items-center">
                       <TrendingDown className="h-4 w-4 text-red-600 mr-1" />
                       Despesas
                     </p>
@@ -272,23 +272,23 @@ export default function DashboardPage() {
 
           {/* CNPJ Card */}
           <Card>
-            <CardHeader className="bg-green-50">
-              <CardTitle className="flex items-center space-x-2">
-                <Building2 className="h-5 w-5 text-green-600" />
+            <CardHeader className="bg-secondary-soft">
+              <CardTitle className="flex items-center space-x-2 text-theme">
+                <Building2 className="h-5 w-5 text-secondary" />
                 <span>Finanças Empresariais (CNPJ)</span>
               </CardTitle>
             </CardHeader>
             <CardContent className="p-6">
               <div className="space-y-4">
                 <div>
-                  <p className="text-sm text-gray-600">Saldo</p>
-                  <p className="text-3xl font-bold text-gray-900">
+                  <p className="text-sm text-theme-muted">Saldo</p>
+                  <p className="text-3xl font-bold text-theme">
                     R$ {stats?.cnpj?.balance?.toFixed(2) ?? "0,00"}
                   </p>
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <p className="text-sm text-gray-600 flex items-center">
+                    <p className="text-sm text-theme-muted flex items-center">
                       <TrendingUp className="h-4 w-4 text-green-600 mr-1" />
                       Receitas
                     </p>
@@ -297,7 +297,7 @@ export default function DashboardPage() {
                     </p>
                   </div>
                   <div>
-                    <p className="text-sm text-gray-600 flex items-center">
+                    <p className="text-sm text-theme-muted flex items-center">
                       <TrendingDown className="h-4 w-4 text-red-600 mr-1" />
                       Despesas
                     </p>
@@ -331,7 +331,7 @@ export default function DashboardPage() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {/* CPF Section */}
                 <div className="space-y-4">
-                  <h3 className="font-semibold text-gray-900 flex items-center">
+                  <h3 className="font-semibold text-theme flex items-center">
                     <User className="h-4 w-4 mr-2 text-blue-600" />
                     CPF (Pessoal)
                   </h3>
@@ -339,7 +339,7 @@ export default function DashboardPage() {
                   {/* CPF - Receitas */}
                   <div className="bg-green-50 p-4 rounded-lg border border-green-200">
                     <div className="flex items-center justify-between mb-2">
-                      <span className="text-sm font-medium text-gray-700">💰 Receitas</span>
+                      <span className="text-sm font-medium text-theme">💰 Receitas</span>
                       <span className={`text-sm font-semibold ${
                         planningStats.cpf.income.percentage >= 95 ? 'text-green-600' :
                         planningStats.cpf.income.percentage >= 80 ? 'text-yellow-600' : 'text-red-600'
@@ -349,16 +349,16 @@ export default function DashboardPage() {
                     </div>
                     <div className="space-y-1 text-sm">
                       <div className="flex justify-between">
-                        <span className="text-gray-600">Previsto:</span>
+                        <span className="text-theme-muted">Previsto:</span>
                         <span className="font-medium">R$ {planningStats.cpf.income.expected.toFixed(2)}</span>
                       </div>
                       <div className="flex justify-between">
-                        <span className="text-gray-600">Realizado:</span>
+                        <span className="text-theme-muted">Realizado:</span>
                         <span className="font-medium">R$ {planningStats.cpf.income.actual.toFixed(2)}</span>
                       </div>
                       {planningStats.cpf.income.difference !== 0 && (
                         <div className="flex justify-between pt-1 border-t border-green-300">
-                          <span className="text-gray-600">Diferença:</span>
+                          <span className="text-theme-muted">Diferença:</span>
                           <span className={planningStats.cpf.income.difference >= 0 ? 'text-green-700 font-semibold' : 'text-red-700 font-semibold'}>
                             {planningStats.cpf.income.difference >= 0 ? '+' : ''}R$ {planningStats.cpf.income.difference.toFixed(2)}
                           </span>
@@ -370,7 +370,7 @@ export default function DashboardPage() {
                   {/* CPF - Despesas */}
                   <div className="bg-red-50 p-4 rounded-lg border border-red-200">
                     <div className="flex items-center justify-between mb-2">
-                      <span className="text-sm font-medium text-gray-700">💸 Despesas</span>
+                      <span className="text-sm font-medium text-theme">💸 Despesas</span>
                       <span className={`text-sm font-semibold ${
                         // Para despesas: menos é melhor (verde)
                         planningStats.cpf.expense.percentage <= 80 ? 'text-green-600' :
@@ -381,16 +381,16 @@ export default function DashboardPage() {
                     </div>
                     <div className="space-y-1 text-sm">
                       <div className="flex justify-between">
-                        <span className="text-gray-600">Previsto:</span>
+                        <span className="text-theme-muted">Previsto:</span>
                         <span className="font-medium">R$ {planningStats.cpf.expense.expected.toFixed(2)}</span>
                       </div>
                       <div className="flex justify-between">
-                        <span className="text-gray-600">Realizado:</span>
+                        <span className="text-theme-muted">Realizado:</span>
                         <span className="font-medium">R$ {planningStats.cpf.expense.actual.toFixed(2)}</span>
                       </div>
                       {planningStats.cpf.expense.difference !== 0 && (
                         <div className="flex justify-between pt-1 border-t border-red-300">
-                          <span className="text-gray-600">Diferença:</span>
+                          <span className="text-theme-muted">Diferença:</span>
                           <span className={planningStats.cpf.expense.difference <= 0 ? 'text-green-700 font-semibold' : 'text-red-700 font-semibold'}>
                             {planningStats.cpf.expense.difference >= 0 ? '+' : ''}R$ {planningStats.cpf.expense.difference.toFixed(2)}
                           </span>
@@ -402,7 +402,7 @@ export default function DashboardPage() {
 
                 {/* CNPJ Section */}
                 <div className="space-y-4">
-                  <h3 className="font-semibold text-gray-900 flex items-center">
+                  <h3 className="font-semibold text-theme flex items-center">
                     <Building2 className="h-4 w-4 mr-2 text-green-600" />
                     CNPJ (Empresa)
                   </h3>
@@ -410,7 +410,7 @@ export default function DashboardPage() {
                   {/* CNPJ - Receitas */}
                   <div className="bg-green-50 p-4 rounded-lg border border-green-200">
                     <div className="flex items-center justify-between mb-2">
-                      <span className="text-sm font-medium text-gray-700">💰 Receitas</span>
+                      <span className="text-sm font-medium text-theme">💰 Receitas</span>
                       <span className={`text-sm font-semibold ${
                         planningStats.cnpj.income.percentage >= 95 ? 'text-green-600' :
                         planningStats.cnpj.income.percentage >= 80 ? 'text-yellow-600' : 'text-red-600'
@@ -420,16 +420,16 @@ export default function DashboardPage() {
                     </div>
                     <div className="space-y-1 text-sm">
                       <div className="flex justify-between">
-                        <span className="text-gray-600">Previsto:</span>
+                        <span className="text-theme-muted">Previsto:</span>
                         <span className="font-medium">R$ {planningStats.cnpj.income.expected.toFixed(2)}</span>
                       </div>
                       <div className="flex justify-between">
-                        <span className="text-gray-600">Realizado:</span>
+                        <span className="text-theme-muted">Realizado:</span>
                         <span className="font-medium">R$ {planningStats.cnpj.income.actual.toFixed(2)}</span>
                       </div>
                       {planningStats.cnpj.income.difference !== 0 && (
                         <div className="flex justify-between pt-1 border-t border-green-300">
-                          <span className="text-gray-600">Diferença:</span>
+                          <span className="text-theme-muted">Diferença:</span>
                           <span className={planningStats.cnpj.income.difference >= 0 ? 'text-green-700 font-semibold' : 'text-red-700 font-semibold'}>
                             {planningStats.cnpj.income.difference >= 0 ? '+' : ''}R$ {planningStats.cnpj.income.difference.toFixed(2)}
                           </span>
@@ -441,7 +441,7 @@ export default function DashboardPage() {
                   {/* CNPJ - Despesas */}
                   <div className="bg-red-50 p-4 rounded-lg border border-red-200">
                     <div className="flex items-center justify-between mb-2">
-                      <span className="text-sm font-medium text-gray-700">💸 Despesas</span>
+                      <span className="text-sm font-medium text-theme">💸 Despesas</span>
                       <span className={`text-sm font-semibold ${
                         // Para despesas: menos é melhor (verde)
                         planningStats.cnpj.expense.percentage <= 80 ? 'text-green-600' :
@@ -452,16 +452,16 @@ export default function DashboardPage() {
                     </div>
                     <div className="space-y-1 text-sm">
                       <div className="flex justify-between">
-                        <span className="text-gray-600">Previsto:</span>
+                        <span className="text-theme-muted">Previsto:</span>
                         <span className="font-medium">R$ {planningStats.cnpj.expense.expected.toFixed(2)}</span>
                       </div>
                       <div className="flex justify-between">
-                        <span className="text-gray-600">Realizado:</span>
+                        <span className="text-theme-muted">Realizado:</span>
                         <span className="font-medium">R$ {planningStats.cnpj.expense.actual.toFixed(2)}</span>
                       </div>
                       {planningStats.cnpj.expense.difference !== 0 && (
                         <div className="flex justify-between pt-1 border-t border-red-300">
-                          <span className="text-gray-600">Diferença:</span>
+                          <span className="text-theme-muted">Diferença:</span>
                           <span className={planningStats.cnpj.expense.difference <= 0 ? 'text-green-700 font-semibold' : 'text-red-700 font-semibold'}>
                             {planningStats.cnpj.expense.difference >= 0 ? '+' : ''}R$ {planningStats.cnpj.expense.difference.toFixed(2)}
                           </span>
@@ -473,7 +473,7 @@ export default function DashboardPage() {
               </div>
 
               {/* Legenda */}
-              <div className="mt-4 pt-4 border-t border-gray-200 text-xs text-gray-600 flex items-center gap-4">
+              <div className="mt-4 pt-4 border-t border-gray-200 text-xs text-theme-muted flex items-center gap-4">
                 <span>🟢 95-100% (Receitas) / 0-80% (Despesas): Ótimo</span>
                 <span>🟡 80-94% (Receitas) / 81-100% (Despesas): Atenção</span>
                 <span>🔴 {'<'}80% (Receitas) / {'>'}100% (Despesas): Crítico</span>
@@ -486,7 +486,7 @@ export default function DashboardPage() {
         <AdBanner position="between_content" className="my-8" />
 
         {/* Quick Actions */}
-        <h2 className="text-xl font-bold text-gray-900 mb-4">Funcionalidades</h2>
+        <h2 className="text-xl font-bold text-theme mb-4">Funcionalidades</h2>
         <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4 mb-8">
           <Link href="/prolabore">
             <Card className="hover:shadow-lg transition-shadow cursor-pointer border-blue-200 hover:border-blue-400">
@@ -495,8 +495,8 @@ export default function DashboardPage() {
                   <div className="h-12 w-12 rounded-full bg-blue-100 flex items-center justify-center">
                     <Calculator className="h-6 w-6 text-blue-600" />
                   </div>
-                  <h3 className="font-semibold text-gray-900">Calculadora de Pró-labore</h3>
-                  <p className="text-xs text-gray-600">Calcule automaticamente o pró-labore ideal</p>
+                  <h3 className="font-semibold text-theme">Calculadora de Pró-labore</h3>
+                  <p className="text-xs text-theme-muted">Calcule automaticamente o pró-labore ideal</p>
                 </div>
               </CardContent>
             </Card>
@@ -509,8 +509,8 @@ export default function DashboardPage() {
                   <div className="h-12 w-12 rounded-full bg-green-100 flex items-center justify-center">
                     <FileText className="h-6 w-6 text-green-600" />
                   </div>
-                  <h3 className="font-semibold text-gray-900">Gerador de Relatórios</h3>
-                  <p className="text-xs text-gray-600">DRE, fluxo de caixa e balanço</p>
+                  <h3 className="font-semibold text-theme">Gerador de Relatórios</h3>
+                  <p className="text-xs text-theme-muted">DRE, fluxo de caixa e balanço</p>
                 </div>
               </CardContent>
             </Card>
@@ -523,8 +523,8 @@ export default function DashboardPage() {
                   <div className="h-12 w-12 rounded-full bg-teal-100 flex items-center justify-center">
                     <FileText className="h-6 w-6 text-teal-600" />
                   </div>
-                  <h3 className="font-semibold text-gray-900">DRE</h3>
-                  <p className="text-xs text-gray-600">Demonstração do Resultado do Exercício</p>
+                  <h3 className="font-semibold text-theme">DRE</h3>
+                  <p className="text-xs text-theme-muted">Demonstração do Resultado do Exercício</p>
                 </div>
               </CardContent>
             </Card>
@@ -537,8 +537,8 @@ export default function DashboardPage() {
                   <div className="h-12 w-12 rounded-full bg-purple-100 flex items-center justify-center">
                     <Wallet className="h-6 w-6 text-purple-600" />
                   </div>
-                  <h3 className="font-semibold text-gray-900">Dashboard Executivo</h3>
-                  <p className="text-xs text-gray-600">Indicadores importantes do negócio</p>
+                  <h3 className="font-semibold text-theme">Dashboard Executivo</h3>
+                  <p className="text-xs text-theme-muted">Indicadores importantes do negócio</p>
                 </div>
               </CardContent>
             </Card>
@@ -551,8 +551,8 @@ export default function DashboardPage() {
                   <div className="h-12 w-12 rounded-full bg-yellow-100 flex items-center justify-center">
                     <ShieldCheck className="h-6 w-6 text-yellow-600" />
                   </div>
-                  <h3 className="font-semibold text-gray-900">Compliance Fiscal</h3>
-                  <p className="text-xs text-gray-600">Conformidade com obrigações fiscais</p>
+                  <h3 className="font-semibold text-theme">Compliance Fiscal</h3>
+                  <p className="text-xs text-theme-muted">Conformidade com obrigações fiscais</p>
                 </div>
               </CardContent>
             </Card>
@@ -565,8 +565,8 @@ export default function DashboardPage() {
                   <div className="h-12 w-12 rounded-full bg-indigo-100 flex items-center justify-center">
                     <PieChart className="h-6 w-6 text-indigo-600" />
                   </div>
-                  <h3 className="font-semibold text-gray-900">Controle de Investimentos</h3>
-                  <p className="text-xs text-gray-600">Investimentos pessoais e empresariais</p>
+                  <h3 className="font-semibold text-theme">Controle de Investimentos</h3>
+                  <p className="text-xs text-theme-muted">Investimentos pessoais e empresariais</p>
                 </div>
               </CardContent>
             </Card>
@@ -579,8 +579,8 @@ export default function DashboardPage() {
                   <div className="h-12 w-12 rounded-full bg-pink-100 flex items-center justify-center">
                     <Users className="h-6 w-6 text-pink-600" />
                   </div>
-                  <h3 className="font-semibold text-gray-900">Multi-usuário</h3>
-                  <p className="text-xs text-gray-600">Acesso ao contador e sócios</p>
+                  <h3 className="font-semibold text-theme">Multi-usuário</h3>
+                  <p className="text-xs text-theme-muted">Acesso ao contador e sócios</p>
                 </div>
               </CardContent>
             </Card>
@@ -592,8 +592,8 @@ export default function DashboardPage() {
                 <div className="h-12 w-12 rounded-full bg-white flex items-center justify-center">
                   <CheckCircle className="h-6 w-6 text-blue-600" />
                 </div>
-                <h3 className="font-semibold text-gray-900">100% Online</h3>
-                <p className="text-xs text-gray-600">Acesse pelo computador ou celular</p>
+                <h3 className="font-semibold text-theme">100% Online</h3>
+                <p className="text-xs text-theme-muted">Acesse pelo computador ou celular</p>
               </div>
             </CardContent>
           </Card>
@@ -604,8 +604,8 @@ export default function DashboardPage() {
                 <div className="h-12 w-12 rounded-full bg-white flex items-center justify-center">
                   <CheckCircle className="h-6 w-6 text-green-600" />
                 </div>
-                <h3 className="font-semibold text-gray-900">Backup Automático</h3>
-                <p className="text-xs text-gray-600">Seus dados sempre seguros na nuvem</p>
+                <h3 className="font-semibold text-theme">Backup Automático</h3>
+                <p className="text-xs text-theme-muted">Seus dados sempre seguros na nuvem</p>
               </div>
             </CardContent>
           </Card>
@@ -636,8 +636,8 @@ export default function DashboardPage() {
                   <div className="flex items-start space-x-3 p-3 bg-white rounded-lg border border-gray-200">
                     <FileText className="h-5 w-5 text-blue-600 mt-0.5" />
                     <div className="flex-1">
-                      <p className="font-medium text-gray-900 text-sm">Transações por Mês</p>
-                      <p className="text-xs text-gray-600">
+                      <p className="font-medium text-theme text-sm">Transações por Mês</p>
+                      <p className="text-xs text-theme-muted">
                         {planLimits.limits.transactions_monthly === -1 
                           ? "Ilimitado" 
                           : `Até ${planLimits.limits.transactions_monthly}`}
@@ -651,8 +651,8 @@ export default function DashboardPage() {
                   <div className="flex items-start space-x-3 p-3 bg-white rounded-lg border border-gray-200">
                     <Users className="h-5 w-5 text-purple-600 mt-0.5" />
                     <div className="flex-1">
-                      <p className="font-medium text-gray-900 text-sm">Membros da Equipe</p>
-                      <p className="text-xs text-gray-600">
+                      <p className="font-medium text-theme text-sm">Membros da Equipe</p>
+                      <p className="text-xs text-theme-muted">
                         {planLimits.limits.team_members === -1 
                           ? "Ilimitado" 
                           : planLimits.limits.team_members === 0 
@@ -668,8 +668,8 @@ export default function DashboardPage() {
                   <div className="flex items-start space-x-3 p-3 bg-white rounded-lg border border-gray-200">
                     <PieChart className="h-5 w-5 text-green-600 mt-0.5" />
                     <div className="flex-1">
-                      <p className="font-medium text-gray-900 text-sm">Relatórios DRE/Mês</p>
-                      <p className="text-xs text-gray-600">
+                      <p className="font-medium text-theme text-sm">Relatórios DRE/Mês</p>
+                      <p className="text-xs text-theme-muted">
                         {planLimits.limits.dre_reports_monthly === -1 
                           ? "Ilimitado" 
                           : planLimits.limits.dre_reports_monthly === 0 
@@ -685,8 +685,8 @@ export default function DashboardPage() {
                   <div className="flex items-start space-x-3 p-3 bg-white rounded-lg border border-gray-200">
                     <Calculator className="h-5 w-5 text-orange-600 mt-0.5" />
                     <div className="flex-1">
-                      <p className="font-medium text-gray-900 text-sm">Calculadora Pró-labore</p>
-                      <p className="text-xs text-gray-600">
+                      <p className="font-medium text-theme text-sm">Calculadora Pró-labore</p>
+                      <p className="text-xs text-theme-muted">
                         {planLimits.limits.prolabore_calculator === 0 
                           ? "Não disponível" 
                           : "Disponível"}
@@ -700,8 +700,8 @@ export default function DashboardPage() {
                   <div className="flex items-start space-x-3 p-3 bg-white rounded-lg border border-gray-200">
                     <ShieldCheck className="h-5 w-5 text-red-600 mt-0.5" />
                     <div className="flex-1">
-                      <p className="font-medium text-gray-900 text-sm">Alertas de Compliance</p>
-                      <p className="text-xs text-gray-600">
+                      <p className="font-medium text-theme text-sm">Alertas de Compliance</p>
+                      <p className="text-xs text-theme-muted">
                         {planLimits.limits.compliance_alerts === 0 
                           ? "Não disponível" 
                           : "Disponível"}
@@ -715,8 +715,8 @@ export default function DashboardPage() {
                   <div className="flex items-start space-x-3 p-3 bg-white rounded-lg border border-gray-200">
                     <TrendingUp className="h-5 w-5 text-teal-600 mt-0.5" />
                     <div className="flex-1">
-                      <p className="font-medium text-gray-900 text-sm">Controle de Investimentos</p>
-                      <p className="text-xs text-gray-600">
+                      <p className="font-medium text-theme text-sm">Controle de Investimentos</p>
+                      <p className="text-xs text-theme-muted">
                         {planLimits.limits.investment_tracking === 0 
                           ? "Não disponível" 
                           : "Disponível"}
@@ -730,8 +730,8 @@ export default function DashboardPage() {
                   <div className="flex items-start space-x-3 p-3 bg-white rounded-lg border border-gray-200">
                     <FileText className="h-5 w-5 text-pink-600 mt-0.5" />
                     <div className="flex-1">
-                      <p className="font-medium text-gray-900 text-sm">Exportação PDF</p>
-                      <p className="text-xs text-gray-600">
+                      <p className="font-medium text-theme text-sm">Exportação PDF</p>
+                      <p className="text-xs text-theme-muted">
                         {planLimits.limits.export_pdf === 0 
                           ? "Não disponível" 
                           : "Disponível"}
@@ -745,8 +745,8 @@ export default function DashboardPage() {
                   <div className="flex items-start space-x-3 p-3 bg-white rounded-lg border border-gray-200">
                     <PieChart className="h-5 w-5 text-indigo-600 mt-0.5" />
                     <div className="flex-1">
-                      <p className="font-medium text-gray-900 text-sm">Categorias Personalizadas DRE</p>
-                      <p className="text-xs text-gray-600">
+                      <p className="font-medium text-theme text-sm">Categorias Personalizadas DRE</p>
+                      <p className="text-xs text-theme-muted">
                         {planLimits.limits.custom_categories === -1 
                           ? "Ilimitado" 
                           : planLimits.limits.custom_categories === 0 
@@ -762,8 +762,8 @@ export default function DashboardPage() {
                   <div className="flex items-start space-x-3 p-3 bg-white rounded-lg border border-gray-200">
                     <CheckCircle className="h-5 w-5 text-yellow-600 mt-0.5" />
                     <div className="flex-1">
-                      <p className="font-medium text-gray-900 text-sm">Suporte Prioritário</p>
-                      <p className="text-xs text-gray-600">
+                      <p className="font-medium text-theme text-sm">Suporte Prioritário</p>
+                      <p className="text-xs text-theme-muted">
                         {planLimits.limits.priority_support === 0 
                           ? "Não disponível" 
                           : "Disponível"}
@@ -796,10 +796,10 @@ export default function DashboardPage() {
                         <TrendingDown className="h-5 w-5 text-red-600" />
                       )}
                       <div>
-                        <p className="font-medium text-gray-900">
+                        <p className="font-medium text-theme">
                           {transaction?.description}
                         </p>
-                        <p className="text-sm text-gray-600">
+                        <p className="text-sm text-theme-muted">
                           {transaction?.category} • {transaction?.accountType}
                         </p>
                       </div>
@@ -815,7 +815,7 @@ export default function DashboardPage() {
                         {transaction?.type === "income" ? "+" : "-"} R${" "}
                         {transaction?.amount?.toFixed(2)}
                       </p>
-                      <p className="text-sm text-gray-600">
+                      <p className="text-sm text-theme-muted">
                         {new Date(transaction?.date).toLocaleDateString("pt-BR")}
                       </p>
                     </div>
@@ -825,7 +825,7 @@ export default function DashboardPage() {
             ) : (
               <div className="text-center py-8">
                 <Wallet className="h-12 w-12 text-gray-400 mx-auto mb-3" />
-                <p className="text-gray-600">Nenhuma transação registrada ainda</p>
+                <p className="text-theme-muted">Nenhuma transação registrada ainda</p>
                 <Link href="/transactions">
                   <Button className="mt-4" size="sm">
                     Adicionar Transação
