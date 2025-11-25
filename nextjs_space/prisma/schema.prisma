@@ -68,6 +68,9 @@ model User {
   planningEnabled       Boolean             @default(false) // Habilita/desabilita planejamento financeiro
   leadStatus            String              @default("registered") // registered, checkout_started, payment_pending, active, inactive
   lastCheckoutAttempt   DateTime?           // Última tentativa de checkout para remarketing
+  themePreset           String?             // Tema pessoal do usuário (padrao, simples, moderado, moderno)
+  officeId              String?             // ID do escritório (para futura implementação)
+  allowThemeOverride    Boolean             @default(false) // Permite que membros do escritório alterem tema (para donos de escritório)
   createdAt             DateTime            @default(now())
   updatedAt             DateTime            @updatedAt
   accounts              Account[]
@@ -308,4 +311,16 @@ model PaymentMethod {
   @@unique([userId, name])
   @@index([userId])
   @@map("payment_methods")
+}
+
+// Configurações Globais do Sistema (Gerenciadas pelo SuperAdmin)
+model GlobalSettings {
+  id                     Int      @id @default(1)
+  superadminThemePreset  String   @default("padrao") // Tema padrão do sistema (padrao, simples, moderado, moderno)
+  allowOfficeOverride    Boolean  @default(false)    // Permite que donos de escritório definam tema (futura implementação)
+  allowUserOverride      Boolean  @default(true)     // Permite que usuários definam tema pessoal
+  createdAt              DateTime @default(now())
+  updatedAt              DateTime @updatedAt
+  
+  @@map("global_settings")
 }

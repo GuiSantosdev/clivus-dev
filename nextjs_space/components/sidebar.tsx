@@ -26,6 +26,7 @@ import {
   PieChart,
   ChevronLeft,
   ChevronRight,
+  Palette,
 } from "lucide-react";
 import { ThemeSelector } from "./theme-selector";
 
@@ -169,6 +170,12 @@ const superAdminMenuItems = [
         href: "/admin/ads",
         icon: BarChart3,
         description: "Gerenciar ads",
+      },
+      {
+        name: "Temas",
+        href: "/admin/theme-config",
+        icon: Palette,
+        description: "Personalização visual",
       },
       {
         name: "Configurações",
