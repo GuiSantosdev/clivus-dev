@@ -247,8 +247,8 @@ export function Sidebar() {
           transition-all duration-300 z-40 flex flex-col
           ${isMobileMenuOpen ? "translate-x-0" : "-translate-x-full"}
           lg:translate-x-0
-          ${isCollapsed ? "lg:w-20" : "lg:w-64"}
-          w-64
+          ${isCollapsed ? "lg:w-[92px]" : "lg:w-[268px]"}
+          w-[268px]
         `}
       >
         {/* Logo + Collapse Button */}

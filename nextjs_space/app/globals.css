@@ -4,50 +4,288 @@
 
 @layer base {
   /* ========================================
-     SISTEMA UNIVERSAL DE TEMAS
-     6 temas: blue-light, blue-dark, green-light, green-dark, purple-light, purple-dark
+     SISTEMA OFICIAL DE TEMAS - 5 TEMAS ÚNICOS
+     simples | moderado | moderno | padrao-light | padrao-dark
      ======================================== */
 
-  /* TEMA BLUE-LIGHT (padrão) */
+  /* =======================================
+     TEMA PADRÃO LIGHT (Root - Default)
+     ======================================= */
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 47.4% 11.2%;
-    --primary: 222.2 47.4% 11.2%;
-    --primary-foreground: 210 40% 98%;
-    --border: 214.3 31.8% 91.4%;
-    --card: 0 0% 100%;
-    --card-foreground: 222.2 47.4% 11.2%;
+    --background: #FFFFFF;
+    --background-alt: #FAFAFA;
+    --surface: #FAFAFA;
+    --surface-alt: #F2F2F2;
+    --card: #FFFFFF;
+    --card-alt: #FAFAFA;
+
+    --text: #1F1F1F;
+    --text-muted: #606060;
+    --text-inverted: #FFFFFF;
+
+    --primary: #1F1F1F;
+    --primary-hover: #000000;
+    --primary-contrast: #FFFFFF;
+
+    --secondary: #F2F2F2;
+    --secondary-hover: #E3E3E3;
+
+    --border: #E3E3E3;
+    --input: #DADADA;
+
+    --shadow-xs: 0 1px 2px rgba(0,0,0,0.03);
+    --shadow-sm: 0 2px 4px rgba(0,0,0,0.05);
+    --shadow-md: 0 6px 12px rgba(0,0,0,0.06);
+    --shadow-lg: 0 8px 24px rgba(0,0,0,0.06);
+    --shadow-xl: 0 12px 32px rgba(0,0,0,0.08);
+
+    --radius-lg: 12px;
+    --radius-md: 8px;
+    --radius-sm: 6px;
+
+    --sidebar: #FFFFFF;
+    --sidebar-hover: #F2F2F2;
+    --sidebar-active: #1F1F1F;
+    --sidebar-text: #1F1F1F;
+    --sidebar-icon: #606060;
+
+    --glass: rgba(255,255,255,0);
+    --glass-border: rgba(255,255,255,0);
+    --glass-blur: 0;
+
+    --glow: none;
   }
 
-  /* TEMA BLUE-DARK */
-  .dark {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
-    --primary: 210 40% 98%;
-    --primary-foreground: 222.2 47.4% 11.2%;
-    --border: 217.2 32.6% 17.5%;
-    --card: 222.2 84% 4.9%;
-    --card-foreground: 210 40% 98%;
+  /* =======================================
+     TEMA: SIMPLES
+     ======================================= */
+  .theme-simples {
+    --background: #E9F0EC;
+    --background-alt: #DDE9E3;
+    --surface: #FFFFFF;
+    --surface-alt: #DDE9E3;
+    --card: #FFFFFF;
+    --card-alt: #DDE9E3;
+
+    --text: #1A3030;
+    --text-muted: #728A86;
+    --text-inverted: #FFFFFF;
+
+    --primary: #2BAA77;
+    --primary-hover: #239366;
+    --primary-contrast: #FFFFFF;
+
+    --secondary: #DDE9E3;
+    --secondary-hover: #C0D0D0;
+
+    --border: #C0D0D0;
+    --input: #C0D0D0;
+
+    --shadow-xs: 0 1px 2px rgba(0,0,0,0.03);
+    --shadow-sm: 0 2px 4px rgba(0,0,0,0.05);
+    --shadow-md: 0 6px 12px rgba(0,0,0,0.06);
+    --shadow-lg: 0 8px 24px rgba(0,0,0,0.06);
+    --shadow-xl: 0 12px 32px rgba(0,0,0,0.08);
+
+    --radius-lg: 22px;
+    --radius-md: 16px;
+    --radius-sm: 12px;
+
+    --sidebar: #2D5C55;
+    --sidebar-hover: #396F69;
+    --sidebar-active: #E9F0EC;
+    --sidebar-text: #E9F0EC;
+    --sidebar-icon: #E9F0EC;
+
+    --glass: rgba(255,255,255,0);
+    --glass-border: rgba(255,255,255,0);
+    --glass-blur: 0;
+
+    --glow: none;
   }
 
-  /* TEMA GREEN-LIGHT */
-  .theme-green-light {
-    --primary: 142 71% 35%;
+  /* =======================================
+     TEMA: MODERADO
+     ======================================= */
+  .theme-moderado {
+    --background: #F3F5F9;
+    --background-alt: #E6E9F0;
+    --surface: #FFFFFF;
+    --surface-alt: #1F2E46;
+    --card: #FFFFFF;
+    --card-alt: #E6E9F0;
+
+    --text: #1A273B;
+    --text-muted: #697489;
+    --text-inverted: #FFFFFF;
+
+    --primary: #1F2E46;
+    --primary-hover: #1A273B;
+    --primary-contrast: #FFFFFF;
+
+    --secondary: #E6E9F0;
+    --secondary-hover: #D5DAE1;
+
+    --border: #D5DAE1;
+    --input: #D5DAE1;
+
+    --shadow-xs: 0 1px 2px rgba(0,0,0,0.04);
+    --shadow-sm: 0 2px 4px rgba(0,0,0,0.06);
+    --shadow-md: 0 6px 12px rgba(0,0,0,0.10);
+    --shadow-lg: 0 14px 32px rgba(0,0,0,0.15);
+    --shadow-xl: 0 18px 40px rgba(0,0,0,0.18);
+
+    --radius-lg: 22px;
+    --radius-md: 16px;
+    --radius-sm: 14px;
+
+    --sidebar: #FFFFFF;
+    --sidebar-hover: #F3F5F9;
+    --sidebar-active: #1F2E46;
+    --sidebar-text: #1A273B;
+    --sidebar-icon: #1A273B;
+
+    --glass: rgba(255,255,255,0);
+    --glass-border: rgba(255,255,255,0);
+    --glass-blur: 0;
+
+    --glow: none;
   }
 
-  /* TEMA GREEN-DARK */
-  .theme-green-dark {
-    --primary: 142 71% 45%;
+  /* =======================================
+     TEMA: MODERNO (Dark com Gradiente Neon)
+     ======================================= */
+  .theme-moderno {
+    --background: #0F1E38;
+    --background-alt: #1A2847;
+    --surface: rgba(255,255,255,0.10);
+    --surface-alt: rgba(255,255,255,0.06);
+    --card: rgba(255,255,255,0.10);
+    --card-alt: rgba(255,255,255,0.06);
+
+    --text: #FFFFFF;
+    --text-muted: rgba(255,255,255,0.65);
+    --text-inverted: #0F1E38;
+
+    --primary: linear-gradient(90deg,#3D7DEB 0%,#A46DFF 53%,#FF7AD9 100%);
+    --primary-hover: brightness(1.12);
+    --primary-contrast: #FFFFFF;
+
+    --secondary: rgba(255,255,255,0.10);
+    --secondary-hover: rgba(255,255,255,0.18);
+
+    --border: rgba(255,255,255,0.18);
+    --input: rgba(255,255,255,0.18);
+
+    --shadow-xs: 0 1px 2px rgba(0,0,0,0.05);
+    --shadow-sm: 0 2px 4px rgba(0,0,0,0.10);
+    --shadow-md: 0 8px 24px rgba(0,0,0,0.32);
+    --shadow-lg: 0 12px 48px rgba(0,0,0,0.40);
+    --shadow-xl: 0 16px 64px rgba(0,0,0,0.50);
+
+    --radius-lg: 22px;
+    --radius-md: 16px;
+    --radius-sm: 14px;
+
+    --sidebar: #0F1E38;
+    --sidebar-hover: rgba(255,255,255,0.10);
+    --sidebar-active: rgba(255,255,255,0.12);
+    --sidebar-text: rgba(255,255,255,0.80);
+    --sidebar-icon: rgba(255,255,255,0.85);
+
+    --glass: rgba(255,255,255,0.10);
+    --glass-border: rgba(255,255,255,0.18);
+    --glass-blur: 18px;
+
+    --glow: 
+      0px 0px 16px rgba(164,109,255,0.45),
+      0px 0px 32px rgba(61,125,235,0.25),
+      0px 0px 48px rgba(255,122,217,0.20);
   }
 
-  /* TEMA PURPLE-LIGHT */
-  .theme-purple-light {
-    --primary: 262 83% 58%;
+  /* =======================================
+     TEMA PADRÃO DARK
+     ======================================= */
+  .theme-padrao-dark {
+    --background: #0C0C0C;
+    --background-alt: #1A1A1A;
+    --surface: #1A1A1A;
+    --surface-alt: #232323;
+    --card: #1A1A1A;
+    --card-alt: #232323;
+
+    --text: #FFFFFF;
+    --text-muted: rgba(255,255,255,0.5);
+    --text-inverted: #0C0C0C;
+
+    --primary: #FFFFFF;
+    --primary-hover: rgba(255,255,255,0.8);
+    --primary-contrast: #0C0C0C;
+
+    --secondary: #232323;
+    --secondary-hover: #2A2A2A;
+
+    --border: #333333;
+    --input: #3C3C3C;
+
+    --shadow-xs: 0 1px 2px rgba(0,0,0,0.1);
+    --shadow-sm: 0 2px 4px rgba(0,0,0,0.15);
+    --shadow-md: 0 6px 12px rgba(0,0,0,0.20);
+    --shadow-lg: 0 8px 24px rgba(0,0,0,0.25);
+    --shadow-xl: 0 12px 32px rgba(0,0,0,0.30);
+
+    --radius-lg: 12px;
+    --radius-md: 8px;
+    --radius-sm: 6px;
+
+    --sidebar: #1A1A1A;
+    --sidebar-hover: #232323;
+    --sidebar-active: #FFFFFF;
+    --sidebar-text: #FFFFFF;
+    --sidebar-icon: rgba(255,255,255,0.7);
+
+    --glass: rgba(255,255,255,0);
+    --glass-border: rgba(255,255,255,0);
+    --glass-blur: 0;
+
+    --glow: none;
   }
 
-  /* TEMA PURPLE-DARK */
-  .theme-purple-dark {
-    --primary: 262 83% 68%;
+  /* TEMA LEGACY: padrao-light (alias para root) */
+  .theme-padrao-light {
+    --background: var(--background);
+    --background-alt: var(--background-alt);
+    --surface: var(--surface);
+    --surface-alt: var(--surface-alt);
+    --card: var(--card);
+    --card-alt: var(--card-alt);
+    --text: var(--text);
+    --text-muted: var(--text-muted);
+    --text-inverted: var(--text-inverted);
+    --primary: var(--primary);
+    --primary-hover: var(--primary-hover);
+    --primary-contrast: var(--primary-contrast);
+    --secondary: var(--secondary);
+    --secondary-hover: var(--secondary-hover);
+    --border: var(--border);
+    --input: var(--input);
+    --shadow-xs: var(--shadow-xs);
+    --shadow-sm: var(--shadow-sm);
+    --shadow-md: var(--shadow-md);
+    --shadow-lg: var(--shadow-lg);
+    --shadow-xl: var(--shadow-xl);
+    --radius-lg: var(--radius-lg);
+    --radius-md: var(--radius-md);
+    --radius-sm: var(--radius-sm);
+    --sidebar: var(--sidebar);
+    --sidebar-hover: var(--sidebar-hover);
+    --sidebar-active: var(--sidebar-active);
+    --sidebar-text: var(--sidebar-text);
+    --sidebar-icon: var(--sidebar-icon);
+    --glass: var(--glass);
+    --glass-border: var(--glass-border);
+    --glass-blur: var(--glass-blur);
+    --glow: var(--glow);
   }
 }
 
@@ -56,97 +294,150 @@
     @apply border-border;
   }
   body {
-    @apply bg-background text-foreground;
+    background-color: var(--background);
+    color: var(--text);
     transition: background-color 0.3s ease, color 0.3s ease;
   }
 }
 
 /* ========================================
-   UTILITY CLASSES PARA TEMAS
+   UTILITY CLASSES PARA TOKENS DO TEMA
    ======================================== */
 @layer utilities {
+  /* Backgrounds */
+  .bg-theme {
+    background-color: var(--background);
+  }
+
+  .bg-theme-alt {
+    background-color: var(--background-alt);
+  }
+
   .bg-theme-surface {
     background-color: var(--surface);
   }
-  
+
+  .bg-surface-alt {
+    background-color: var(--surface-alt);
+  }
+
+  .bg-card {
+    background-color: var(--card);
+  }
+
+  .bg-card-alt {
+    background-color: var(--card-alt);
+  }
+
+  /* Text Colors */
   .text-theme {
     color: var(--text);
   }
-  
+
   .text-theme-muted {
     color: var(--text-muted);
   }
-  
+
+  .text-theme-inverted {
+    color: var(--text-inverted);
+  }
+
+  /* Primary/Secondary Colors */
+  .text-primary {
+    color: var(--primary);
+  }
+
+  .bg-primary {
+    background: var(--primary);
+  }
+
+  .bg-primary-soft {
+    background-color: var(--secondary);
+  }
+
+  .bg-secondary {
+    background-color: var(--secondary);
+  }
+
+  .bg-secondary-soft {
+    background-color: var(--secondary);
+    opacity: 0.5;
+  }
+
+  .bg-muted-soft {
+    background-color: var(--surface-alt);
+  }
+
+  /* Borders */
   .border-theme {
     border-color: var(--border);
   }
-  
+
+  /* Shadows */
+  .shadow-theme-xs {
+    box-shadow: var(--shadow-xs);
+  }
+
   .shadow-theme-sm {
     box-shadow: var(--shadow-sm);
   }
-  
+
   .shadow-theme-md {
     box-shadow: var(--shadow-md);
   }
-  
+
   .shadow-theme-lg {
     box-shadow: var(--shadow-lg);
   }
-  
+
+  .shadow-theme-xl {
+    box-shadow: var(--shadow-xl);
+  }
+
+  /* Radius */
   .rounded-theme-sm {
     border-radius: var(--radius-sm);
   }
-  
+
   .rounded-theme-md {
     border-radius: var(--radius-md);
   }
-  
+
   .rounded-theme-lg {
     border-radius: var(--radius-lg);
   }
-  
-  .blur-theme {
-    backdrop-filter: blur(var(--blur));
+
+  /* Glass Effect (Moderno) */
+  .glass-effect {
+    background: var(--glass);
+    border: 1px solid var(--glass-border);
+    backdrop-filter: blur(var(--glass-blur));
   }
-  
-  .gap-theme {
-    gap: var(--density);
+
+  /* Glow Effect (Moderno) */
+  .glow-effect {
+    box-shadow: var(--glow);
   }
-  
-  .p-theme {
-    padding: var(--density);
+
+  /* Sidebar específico */
+  .bg-sidebar {
+    background-color: var(--sidebar);
   }
-  
-  .bg-theme {
-    background-color: var(--bg);
+
+  .bg-sidebar-hover {
+    background-color: var(--sidebar-hover);
   }
-  
-  .bg-card {
-    background-color: hsl(var(--card));
+
+  .bg-sidebar-active {
+    background-color: var(--sidebar-active);
   }
-  
-  .text-card-foreground {
-    color: hsl(var(--card-foreground));
+
+  .text-sidebar {
+    color: var(--sidebar-text);
   }
-  
-  .bg-primary-soft {
-    background-color: hsl(var(--primary) / 0.1);
-  }
-  
-  .bg-secondary-soft {
-    background-color: hsl(var(--secondary) / 0.1);
-  }
-  
-  .bg-muted-soft {
-    background-color: hsl(var(--muted) / 0.5);
-  }
-  
-  .text-primary {
-    color: hsl(var(--primary));
-  }
-  
-  .text-secondary {
-    color: hsl(var(--secondary));
+
+  .text-sidebar-icon {
+    color: var(--sidebar-icon);
   }
 }
 
@@ -339,13 +630,13 @@ img {
   }
 }
 
-/* Sidebar layout adjustments */
+/* Sidebar layout adjustments - Padrão Oficial (268px/92px) */
 @media (min-width: 1024px) {
-  body:has(aside.lg\:w-64) main {
-    margin-left: 16rem;
+  body:has(aside.lg\:w-\[268px\]) main {
+    margin-left: 268px;
   }
   
-  body:has(aside.lg\:w-20) main {
-    margin-left: 5rem;
+  body:has(aside.lg\:w-\[92px\]) main {
+    margin-left: 92px;
   }
 }

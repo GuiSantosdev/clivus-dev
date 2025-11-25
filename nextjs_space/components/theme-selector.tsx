@@ -21,14 +21,14 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { toast } from "react-hot-toast";
 
-type ThemePreset = "blue-light" | "blue-dark" | "green-light" | "green-dark" | "purple-light" | "purple-dark";
+type ThemePreset = "simples" | "moderado" | "moderno" | "padrao-light" | "padrao-dark";
 
 interface ThemeOption {
   value: ThemePreset;
   label: string;
   description: string;
   icon: React.ReactNode;
-  category: "blue" | "green" | "purple";
+  category: "clean" | "professional" | "modern";
   isDark: boolean;
 }
 
@@ -44,58 +44,50 @@ interface ThemeHierarchy {
 
 const THEME_OPTIONS: ThemeOption[] = [
   {
-    value: "blue-light",
-    label: "Azul Claro",
-    description: "Tema azul padrão (light)",
+    value: "padrao-light",
+    label: "Padrão Light",
+    description: "Minimalista branco",
     icon: <Sun className="h-4 w-4" />,
-    category: "blue",
+    category: "clean",
     isDark: false,
   },
   {
-    value: "blue-dark",
-    label: "Azul Escuro",
-    description: "Tema azul escuro (dark)",
+    value: "padrao-dark",
+    label: "Padrão Dark",
+    description: "Minimalista preto",
     icon: <Moon className="h-4 w-4" />,
-    category: "blue",
+    category: "clean",
     isDark: true,
   },
   {
-    value: "green-light",
-    label: "Verde Claro",
-    description: "Tema verde (light)",
+    value: "simples",
+    label: "Simples",
+    description: "Verde/branco clean",
     icon: <Sun className="h-4 w-4" />,
-    category: "green",
+    category: "clean",
     isDark: false,
   },
   {
-    value: "green-dark",
-    label: "Verde Escuro",
-    description: "Tema verde escuro (dark)",
-    icon: <Moon className="h-4 w-4" />,
-    category: "green",
-    isDark: true,
-  },
-  {
-    value: "purple-light",
-    label: "Roxo Claro",
-    description: "Tema roxo (light)",
+    value: "moderado",
+    label: "Moderado",
+    description: "Azul escuro profissional",
     icon: <Sun className="h-4 w-4" />,
-    category: "purple",
+    category: "professional",
     isDark: false,
   },
   {
-    value: "purple-dark",
-    label: "Roxo Escuro",
-    description: "Tema roxo escuro (dark)",
+    value: "moderno",
+    label: "Moderno",
+    description: "Dark com gradiente neon",
     icon: <Moon className="h-4 w-4" />,
-    category: "purple",
+    category: "modern",
     isDark: true,
   },
 ];
 
 export function ThemeSelector() {
   const { theme, setTheme } = useTheme();
-  const [currentTheme, setCurrentTheme] = useState<ThemePreset>("blue-light");
+  const [currentTheme, setCurrentTheme] = useState<ThemePreset>("padrao-light");
   const [hierarchy, setHierarchy] = useState<ThemeHierarchy | null>(null);
   const [loading, setLoading] = useState(true);
   const [showPreview, setShowPreview] = useState(false);
@@ -115,13 +107,13 @@ export function ThemeSelector() {
         setTheme(data.effectiveTheme);
       } else {
         // Fallback para localStorage
-        const savedTheme = (localStorage.getItem("theme") as ThemePreset) || "blue-light";
+        const savedTheme = (localStorage.getItem("theme") as ThemePreset) || "padrao-light";
         setCurrentTheme(savedTheme);
         setTheme(savedTheme);
       }
     } catch (error) {
       console.error("Erro ao carregar tema:", error);
-      const savedTheme = (localStorage.getItem("theme") as ThemePreset) || "blue-light";
+      const savedTheme = (localStorage.getItem("theme") as ThemePreset) || "padrao-light";
       setCurrentTheme(savedTheme);
       setTheme(savedTheme);
     } finally {

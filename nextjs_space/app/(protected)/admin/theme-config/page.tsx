@@ -27,7 +27,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 
-type ThemePreset = "blue-light" | "blue-dark" | "green-light" | "green-dark" | "purple-light" | "purple-dark";
+type ThemePreset = "simples" | "moderado" | "moderno" | "padrao-light" | "padrao-dark";
 
 interface GlobalSettings {
   id: number;
@@ -40,39 +40,33 @@ interface GlobalSettings {
 
 const THEME_OPTIONS = [
   {
-    value: "blue-light",
-    label: "Azul Claro",
-    description: "Tema azul padrão (light)",
+    value: "padrao-light",
+    label: "Padrão Light",
+    description: "Minimalista branco",
     icon: Sun,
   },
   {
-    value: "blue-dark",
-    label: "Azul Escuro",
-    description: "Tema azul escuro (dark)",
+    value: "padrao-dark",
+    label: "Padrão Dark",
+    description: "Minimalista preto",
     icon: Moon,
   },
   {
-    value: "green-light",
-    label: "Verde Claro",
-    description: "Tema verde (light)",
+    value: "simples",
+    label: "Simples",
+    description: "Verde/branco clean",
     icon: Sun,
   },
   {
-    value: "green-dark",
-    label: "Verde Escuro",
-    description: "Tema verde escuro (dark)",
-    icon: Moon,
-  },
-  {
-    value: "purple-light",
-    label: "Roxo Claro",
-    description: "Tema roxo (light)",
+    value: "moderado",
+    label: "Moderado",
+    description: "Azul escuro profissional",
     icon: Sun,
   },
   {
-    value: "purple-dark",
-    label: "Roxo Escuro",
-    description: "Tema roxo escuro (dark)",
+    value: "moderno",
+    label: "Moderno",
+    description: "Dark com gradiente neon",
     icon: Moon,
   },
 ];
@@ -86,7 +80,7 @@ export default function ThemeConfigPage() {
   const [settings, setSettings] = useState<GlobalSettings | null>(null);
 
   const [superadminThemePreset, setSuperadminThemePreset] =
-    useState<ThemePreset>("blue-light");
+    useState<ThemePreset>("padrao-light");
   const [allowOfficeOverride, setAllowOfficeOverride] = useState(false);
   const [allowUserOverride, setAllowUserOverride] = useState(true);
 
@@ -345,7 +339,7 @@ export default function ThemeConfigPage() {
                 </div>
                 <div>
                   <strong className="text-theme">Fallback</strong>
-                  <p>Se nenhum estiver definido, usará "blue-light" (tema padrão do sistema)</p>
+                  <p>Se nenhum estiver definido, usará "padrao-light" (tema padrão do sistema)</p>
                 </div>
               </div>
             </div>
