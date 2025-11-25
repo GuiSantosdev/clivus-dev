@@ -15,11 +15,15 @@ export function applyTheme(themeId: ThemeId): void {
 
   const html = document.documentElement;
   
-  // Remove todas as classes de tema anteriores
-  html.classList.remove("theme-simples", "theme-moderado", "theme-moderno");
+  // Remove TODAS as classes de tema anteriores (com e sem prefixo)
+  html.classList.remove(
+    "simples", "moderado", "moderno",
+    "theme-simples", "theme-moderado", "theme-moderno"
+  );
   
-  // Aplica a nova classe de tema
-  html.classList.add(`theme-${themeId}`);
+  // Aplica AMBAS as classes de tema (para compatibilidade total)
+  html.classList.add(themeId); // sem prefixo (para next-themes)
+  html.classList.add(`theme-${themeId}`); // com prefixo (para CSS legado)
   
   // Atualiza data-attribute para compatibilidade
   html.setAttribute("data-theme", themeId);
@@ -30,6 +34,8 @@ export function applyTheme(themeId: ThemeId): void {
   } catch (error) {
     console.warn("Erro ao salvar tema no localStorage:", error);
   }
+  
+  console.log(`✅ Tema aplicado: ${themeId}`);
 }
 
 /**
