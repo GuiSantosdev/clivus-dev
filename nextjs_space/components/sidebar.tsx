@@ -28,7 +28,7 @@ import {
   ChevronRight,
   Palette,
 } from "lucide-react";
-import { ThemeSelector } from "./theme/ThemeSelector";
+
 
 const clientMenuItems = [
   {
@@ -335,22 +335,6 @@ export function Sidebar() {
             </div>
           ))}
         </nav>
-
-        {/* Theme Selector */}
-        <div className={`border-t border-gray-200/50 p-4 ${isCollapsed ? "lg:flex lg:justify-center" : ""}`}>
-          {!isCollapsed ? (
-            <div className="lg:block">
-              <p className="text-xs font-semibold text-theme-muted uppercase tracking-wider mb-2">
-                Aparência
-              </p>
-              <ThemeSelector />
-            </div>
-          ) : (
-            <div className="lg:flex lg:justify-center">
-              <ThemeSelector />
-            </div>
-          )}
-        </div>
 
         {/* User Info & Logout */}
         <div className="border-t border-gray-200/50 p-4">
