@@ -2,6 +2,7 @@
 "use client";
 
 import { SessionProvider } from "next-auth/react";
+import { ThemeProvider } from "@/components/theme-provider";
 import { useEffect, useState } from "react";
 
 export function Providers({ children }: { children: React.ReactNode }) {
@@ -15,6 +16,24 @@ export function Providers({ children }: { children: React.ReactNode }) {
     return null;
   }
 
-  return <SessionProvider>{children}</SessionProvider>;
+  return (
+    <SessionProvider>
+      <ThemeProvider
+        attribute="class"
+        defaultTheme="blue-light"
+        themes={[
+          "blue-light", 
+          "blue-dark",
+          "green-light", 
+          "green-dark",
+          "purple-light", 
+          "purple-dark"
+        ]}
+        enableSystem={false}
+      >
+        {children}
+      </ThemeProvider>
+    </SessionProvider>
+  );
 }
 
