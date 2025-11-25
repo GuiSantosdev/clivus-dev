@@ -3,13 +3,6 @@
 import { useState, useEffect } from "react";
 import { useTheme } from "next-themes";
 import { Palette, Check, Lock, Info, Sun, Moon } from "lucide-react";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { toast } from "react-hot-toast";
 import { getAllThemes, getThemeById, ThemeId } from "@/shared/theme/themes";
@@ -170,38 +163,14 @@ export function ThemeSelector() {
         )}
       </div>
 
-      {/* Seletor Principal */}
-      <div className="flex items-center gap-2">
+      {/* Título */}
+      <div className="flex items-center gap-2 pb-2 border-b border-theme">
         <Palette className="h-5 w-5 text-primary" />
-        <Select
-          value={currentTheme}
-          onValueChange={(value) => handleThemeChange(value as ThemeId)}
-          disabled={!canChange}
-        >
-          <SelectTrigger className="flex-1">
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent>
-            {allThemes.map((themeOption) => {
-              const Icon = themeOption.isDark ? Moon : Sun;
-              return (
-                <SelectItem key={themeOption.id} value={themeOption.id}>
-                  <div className="flex items-center gap-2">
-                    <Icon className="h-4 w-4" />
-                    <span>{themeOption.name}</span>
-                    {currentTheme === themeOption.id && (
-                      <Check className="h-3 w-3 ml-auto text-primary" />
-                    )}
-                  </div>
-                </SelectItem>
-              );
-            })}
-          </SelectContent>
-        </Select>
+        <span className="font-semibold text-theme">Escolha seu tema</span>
       </div>
 
-      {/* Preview Cards */}
-      <div className="grid grid-cols-3 gap-2">
+      {/* Botões de Tema */}
+      <div className="grid grid-cols-1 gap-3">
         {allThemes.map((themeOption) => {
           const Icon = themeOption.isDark ? Moon : Sun;
           const isSelected = currentTheme === themeOption.id;
@@ -212,19 +181,34 @@ export function ThemeSelector() {
               onClick={() => handleThemeChange(themeOption.id)}
               disabled={!canChange}
               className={`
-                p-3 rounded-lg border-2 transition-all
+                group relative p-4 rounded-lg border-2 transition-all duration-200
                 ${isSelected 
-                  ? "border-primary bg-primary/10" 
-                  : "border-theme hover:border-primary/50"
+                  ? "border-primary bg-primary/10 shadow-lg ring-2 ring-primary/20" 
+                  : "border-theme hover:border-primary/50 hover:shadow-md"
                 }
-                ${!canChange ? "opacity-50 cursor-not-allowed" : "cursor-pointer"}
+                ${!canChange ? "opacity-50 cursor-not-allowed" : "cursor-pointer hover:scale-[1.02]"}
               `}
             >
-              <div className="flex flex-col items-center gap-1">
-                <Icon className={`h-5 w-5 ${isSelected ? "text-primary" : "text-theme-muted"}`} />
-                <span className={`text-xs font-medium ${isSelected ? "text-primary" : "text-theme"}`}>
-                  {themeOption.name}
-                </span>
+              <div className="flex items-center gap-3">
+                <div className={`
+                  h-12 w-12 rounded-lg flex items-center justify-center transition-colors
+                  ${isSelected ? "bg-primary/20" : "bg-muted-soft group-hover:bg-primary/10"}
+                `}>
+                  <Icon className={`h-6 w-6 ${isSelected ? "text-primary" : "text-theme-muted group-hover:text-primary"}`} />
+                </div>
+                <div className="flex-1 text-left">
+                  <div className={`font-semibold ${isSelected ? "text-primary" : "text-theme"}`}>
+                    {themeOption.name}
+                  </div>
+                  <div className="text-xs text-theme-muted mt-0.5">
+                    {themeOption.description}
+                  </div>
+                </div>
+                {isSelected && (
+                  <div className="h-8 w-8 rounded-full bg-primary flex items-center justify-center">
+                    <Check className="h-5 w-5 text-white" />
+                  </div>
+                )}
               </div>
             </button>
           );

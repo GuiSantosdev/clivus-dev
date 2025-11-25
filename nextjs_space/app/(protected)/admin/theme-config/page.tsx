@@ -24,6 +24,7 @@ import {
   CheckCircle,
   Sun,
   Moon,
+  Info,
 } from "lucide-react";
 import Link from "next/link";
 import { getAllThemes, ThemeId, DEFAULT_THEME } from "@/shared/theme/themes";
@@ -174,34 +175,59 @@ export default function ThemeConfigPage() {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="space-y-2">
-              <Label htmlFor="theme-select" className="text-theme">
+            <div className="space-y-4">
+              <Label className="text-theme">
                 Selecione o Tema Global
               </Label>
-              <Select
-                value={superadminThemePreset}
-                onValueChange={(value) => setSuperadminThemePreset(value as ThemeId)}
-              >
-                <SelectTrigger id="theme-select">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  {THEME_OPTIONS.map((option) => {
-                    const Icon = option.icon;
-                    return (
-                      <SelectItem key={option.value} value={option.value}>
-                        <div className="flex items-center gap-2">
-                          <Icon className="h-4 w-4" />
-                          <span>{option.label}</span>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                {THEME_OPTIONS.map((option) => {
+                  const Icon = option.icon;
+                  const isSelected = superadminThemePreset === option.value;
+                  
+                  return (
+                    <button
+                      key={option.value}
+                      onClick={() => setSuperadminThemePreset(option.value as ThemeId)}
+                      className={`
+                        group relative p-4 rounded-lg border-2 transition-all duration-200
+                        ${isSelected 
+                          ? "border-primary bg-primary/10 shadow-lg ring-2 ring-primary/20" 
+                          : "border-theme hover:border-primary/50 hover:shadow-md"
+                        }
+                        cursor-pointer hover:scale-[1.02]
+                      `}
+                    >
+                      <div className="flex flex-col items-center gap-2 text-center">
+                        <div className={`
+                          h-14 w-14 rounded-full flex items-center justify-center transition-colors
+                          ${isSelected ? "bg-primary/20" : "bg-muted-soft group-hover:bg-primary/10"}
+                        `}>
+                          <Icon className={`h-7 w-7 ${isSelected ? "text-primary" : "text-theme-muted group-hover:text-primary"}`} />
                         </div>
-                      </SelectItem>
-                    );
-                  })}
-                </SelectContent>
-              </Select>
-              <p className="text-xs text-theme-muted">
-                Tema atual: <strong>{superadminThemePreset}</strong>
-              </p>
+                        <div className="flex-1">
+                          <div className={`font-semibold ${isSelected ? "text-primary" : "text-theme"}`}>
+                            {option.label}
+                          </div>
+                          <div className="text-xs text-theme-muted mt-1">
+                            {option.description}
+                          </div>
+                        </div>
+                        {isSelected && (
+                          <div className="absolute top-2 right-2 h-6 w-6 rounded-full bg-primary flex items-center justify-center">
+                            <CheckCircle className="h-4 w-4 text-white" />
+                          </div>
+                        )}
+                      </div>
+                    </button>
+                  );
+                })}
+              </div>
+              <div className="flex items-center gap-2 p-3 bg-muted-soft rounded-lg border border-theme">
+                <Info className="h-4 w-4 text-primary flex-shrink-0" />
+                <p className="text-xs text-theme-muted">
+                  Tema selecionado: <strong className="text-theme">{superadminThemePreset}</strong>
+                </p>
+              </div>
             </div>
           </CardContent>
         </Card>
