@@ -253,11 +253,11 @@ export default function DashboardPage() {
       {/* Anúncio Topo */}
       <AdBanner position="top" className="mb-6" />
         {!hasAccess ? (
-          <Card className="border-yellow-200 bg-yellow-50 mb-8">
+          <Card className="border-accent border-opacity-30 bg-accent bg-opacity-10 mb-8">
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-3">
-                  <XCircle className="h-6 w-6 text-yellow-600" />
+                  <XCircle className="h-6 w-6 text-accent" />
                   <div>
                     <h3 className="font-semibold text-theme">Acesso Restrito</h3>
                     <p className="text-sm text-theme-muted">
@@ -266,7 +266,7 @@ export default function DashboardPage() {
                   </div>
                 </div>
                 <Link href="/checkout">
-                  <Button className="bg-yellow-600 hover:bg-yellow-700">
+                  <Button className="bg-accent hover:bg-accent hover:brightness-90">
                     Liberar Acesso
                     <ArrowRight className="ml-2 h-4 w-4" />
                   </Button>
@@ -376,7 +376,7 @@ export default function DashboardPage() {
         {/* Planejamento Financeiro (Previsto vs Realizado) */}
         {planningEnabled && planningStats && (
           <Card className="mb-8">
-            <CardHeader className="bg-gradient-to-r from-purple-50 to-blue-50">
+            <CardHeader className="bg-gradient-to-r from-primary/10 to-secondary/10">
               <div className="flex items-center justify-between">
                 <CardTitle className="flex items-center space-x-2">
                   <Calendar className="h-5 w-5 text-purple-600" />
@@ -404,7 +404,7 @@ export default function DashboardPage() {
                       <span className="text-sm font-medium text-theme">💰 Receitas</span>
                       <span className={`text-sm font-semibold ${
                         planningStats.cpf.income.percentage >= 95 ? 'text-green-600' :
-                        planningStats.cpf.income.percentage >= 80 ? 'text-yellow-600' : 'text-red-600'
+                        planningStats.cpf.income.percentage >= 80 ? 'text-accent' : 'text-red-600'
                       }`}>
                         {planningStats.cpf.income.percentage.toFixed(1)}%
                       </span>
@@ -436,7 +436,7 @@ export default function DashboardPage() {
                       <span className={`text-sm font-semibold ${
                         // Para despesas: menos é melhor (verde)
                         planningStats.cpf.expense.percentage <= 80 ? 'text-green-600' :
-                        planningStats.cpf.expense.percentage <= 100 ? 'text-yellow-600' : 'text-red-600'
+                        planningStats.cpf.expense.percentage <= 100 ? 'text-accent' : 'text-red-600'
                       }`}>
                         {planningStats.cpf.expense.percentage.toFixed(1)}%
                       </span>
@@ -475,7 +475,7 @@ export default function DashboardPage() {
                       <span className="text-sm font-medium text-theme">💰 Receitas</span>
                       <span className={`text-sm font-semibold ${
                         planningStats.cnpj.income.percentage >= 95 ? 'text-green-600' :
-                        planningStats.cnpj.income.percentage >= 80 ? 'text-yellow-600' : 'text-red-600'
+                        planningStats.cnpj.income.percentage >= 80 ? 'text-accent' : 'text-red-600'
                       }`}>
                         {planningStats.cnpj.income.percentage.toFixed(1)}%
                       </span>
@@ -507,7 +507,7 @@ export default function DashboardPage() {
                       <span className={`text-sm font-semibold ${
                         // Para despesas: menos é melhor (verde)
                         planningStats.cnpj.expense.percentage <= 80 ? 'text-green-600' :
-                        planningStats.cnpj.expense.percentage <= 100 ? 'text-yellow-600' : 'text-red-600'
+                        planningStats.cnpj.expense.percentage <= 100 ? 'text-accent' : 'text-red-600'
                       }`}>
                         {planningStats.cnpj.expense.percentage.toFixed(1)}%
                       </span>
@@ -551,10 +551,10 @@ export default function DashboardPage() {
         <h2 className="text-xl font-bold text-theme mb-4">Funcionalidades</h2>
         <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4 mb-8">
           <Link href="/prolabore">
-            <Card className="hover:shadow-lg transition-shadow cursor-pointer border-blue-200 hover:border-blue-400">
+            <Card className="hover:shadow-lg transition-shadow cursor-pointer border-primary border-opacity-30 hover:border-primary border-opacity-50">
               <CardContent className="p-6">
                 <div className="flex flex-col items-center text-center space-y-2">
-                  <div className="h-12 w-12 rounded-full bg-blue-100 flex items-center justify-center">
+                  <div className="h-12 w-12 rounded-full bg-primary bg-opacity-10 flex items-center justify-center">
                     <Calculator className="h-6 w-6 text-blue-600" />
                   </div>
                   <h3 className="font-semibold text-theme">Calculadora de Pró-labore</h3>
@@ -607,11 +607,11 @@ export default function DashboardPage() {
           </Link>
 
           <Link href="/compliance">
-            <Card className="hover:shadow-lg transition-shadow cursor-pointer border-yellow-200 hover:border-yellow-400">
+            <Card className="hover:shadow-lg transition-shadow cursor-pointer border-accent border-opacity-30 hover:border-yellow-400">
               <CardContent className="p-6">
                 <div className="flex flex-col items-center text-center space-y-2">
-                  <div className="h-12 w-12 rounded-full bg-yellow-100 flex items-center justify-center">
-                    <ShieldCheck className="h-6 w-6 text-yellow-600" />
+                  <div className="h-12 w-12 rounded-full bg-accent bg-opacity-20 flex items-center justify-center">
+                    <ShieldCheck className="h-6 w-6 text-accent" />
                   </div>
                   <h3 className="font-semibold text-theme">Compliance Fiscal</h3>
                   <p className="text-xs text-theme-muted">Conformidade com obrigações fiscais</p>
@@ -648,7 +648,7 @@ export default function DashboardPage() {
             </Card>
           </Link>
 
-          <Card className="bg-gradient-to-br from-blue-50 to-blue-100 border-blue-300">
+          <Card className="bg-gradient-to-br from-primary/10 to-primary/20 border-primary border-opacity-40">
             <CardContent className="p-6">
               <div className="flex flex-col items-center text-center space-y-2">
                 <div className="h-12 w-12 rounded-full bg-white flex items-center justify-center">
@@ -675,7 +675,7 @@ export default function DashboardPage() {
 
         {/* Plan Limits Section */}
         {planLimits && (
-          <Card className="bg-gradient-to-br from-blue-50 to-indigo-50 border-indigo-200">
+          <Card className="bg-gradient-to-br from-primary/10 to-accent/10 border-indigo-200">
             <CardHeader>
               <CardTitle className="flex items-center justify-between">
                 <span>Seu Plano: {planLimits.planName}</span>
@@ -822,7 +822,7 @@ export default function DashboardPage() {
                 {/* Suporte Prioritário */}
                 {planLimits.limits.priority_support !== undefined && (
                   <div className="flex items-start space-x-3 p-3 bg-white rounded-lg border border-gray-200">
-                    <CheckCircle className="h-5 w-5 text-yellow-600 mt-0.5" />
+                    <CheckCircle className="h-5 w-5 text-accent mt-0.5" />
                     <div className="flex-1">
                       <p className="font-medium text-theme text-sm">Suporte Prioritário</p>
                       <p className="text-xs text-theme-muted">

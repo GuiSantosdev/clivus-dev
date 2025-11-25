@@ -263,7 +263,7 @@ export default function PricingPage() {
     return (
       <div className="p-8">
         <div className="flex items-center justify-center h-64">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
         </div>
       </div>
     );
@@ -391,7 +391,7 @@ export default function PricingPage() {
 
                     <div className="space-y-2">
                       <Label htmlFor="energia" className="flex items-center gap-2">
-                        <Zap className="h-4 w-4 text-yellow-600" />
+                        <Zap className="h-4 w-4 text-accent" />
                         Energia Elétrica
                       </Label>
                       <Input
@@ -588,7 +588,7 @@ export default function PricingPage() {
                 {employees.length > 0 && (
                   <div className="space-y-2">
                     {employees.map((employee) => (
-                      <div key={employee.id} className="flex items-center justify-between p-3 bg-blue-50 rounded-lg">
+                      <div key={employee.id} className="flex items-center justify-between p-3 bg-primary bg-opacity-5 rounded-lg">
                         <div className="flex-1">
                           <p className="text-sm font-medium">Salário: R$ {parseFloat(employee.salary).toFixed(2)}</p>
                           <p className="text-xs text-theme-muted">
@@ -617,7 +617,7 @@ export default function PricingPage() {
                     Adicionar Funcionário
                   </Button>
                 ) : (
-                  <div className="space-y-3 p-4 border border-blue-200 rounded-lg bg-blue-50">
+                  <div className="space-y-3 p-4 border border-primary border-opacity-30 rounded-lg bg-primary bg-opacity-5">
                     <div className="space-y-2">
                       <Label htmlFor="newEmployeeSalary">Salário Bruto (R$)</Label>
                       <Input
@@ -642,7 +642,7 @@ export default function PricingPage() {
                     </div>
 
                     {newEmployeeSalary && (
-                      <div className="bg-card border border-blue-300 rounded p-3">
+                      <div className="bg-card border border-primary border-opacity-40 rounded p-3">
                         <p className="text-sm font-semibold text-blue-800">
                           Custo Real: R$ {calculateEmployeeCost(newEmployeeSalary, newEmployeeWorkDays).toFixed(2)}/mês
                         </p>
@@ -671,7 +671,7 @@ export default function PricingPage() {
                   </div>
                 )}
 
-                <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                <div className="bg-primary bg-opacity-5 border border-primary border-opacity-30 rounded-lg p-4">
                   <div className="flex gap-2">
                     <AlertCircle className="h-5 w-5 text-blue-600 flex-shrink-0 mt-0.5" />
                     <div className="text-sm text-blue-800">
@@ -737,7 +737,7 @@ export default function PricingPage() {
                   </div>
                 </div>
 
-                <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                <div className="bg-primary bg-opacity-5 border border-primary border-opacity-30 rounded-lg p-4">
                   <div className="flex gap-2">
                     <AlertCircle className="h-5 w-5 text-blue-600 flex-shrink-0 mt-0.5" />
                     <div className="text-sm text-blue-800">
@@ -841,15 +841,15 @@ export default function PricingPage() {
                 <p className="text-sm text-theme-muted mb-1">Impostos</p>
                 <p className="text-xl font-bold text-red-600">{taxRate}%</p>
               </div>
-              <div className="text-center p-4 bg-yellow-50 rounded-lg">
+              <div className="text-center p-4 bg-accent bg-opacity-10 rounded-lg">
                 <p className="text-sm text-theme-muted mb-1">Despesas</p>
-                <p className="text-xl font-bold text-yellow-600">{variableExpenses}%</p>
+                <p className="text-xl font-bold text-accent">{variableExpenses}%</p>
               </div>
               <div className="text-center p-4 bg-green-50 rounded-lg">
                 <p className="text-sm text-theme-muted mb-1">Lucro</p>
                 <p className="text-xl font-bold text-green-600">{desiredMargin}%</p>
               </div>
-              <div className="text-center p-4 bg-blue-50 rounded-lg">
+              <div className="text-center p-4 bg-primary bg-opacity-5 rounded-lg">
                 <p className="text-sm text-theme-muted mb-1">Total</p>
                 <p className="text-xl font-bold text-blue-600">100%</p>
               </div>

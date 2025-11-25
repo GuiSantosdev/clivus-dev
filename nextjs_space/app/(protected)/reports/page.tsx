@@ -70,7 +70,7 @@ export default function ReportsPage() {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto"></div>
           <p className="mt-4 text-theme-muted">Carregando...</p>
         </div>
       </div>
@@ -87,7 +87,7 @@ export default function ReportsPage() {
         {/* Summary Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
           <Card>
-            <CardHeader className="bg-blue-50">
+            <CardHeader className="bg-primary bg-opacity-5">
               <CardTitle className="flex items-center space-x-2">
                 <PieChart className="h-5 w-5 text-blue-600" />
                 <span>CPF - Finanças Pessoais</span>

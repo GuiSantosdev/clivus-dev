@@ -157,7 +157,7 @@ export default function ReconciliationPage() {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto"></div>
           <p className="mt-4 text-theme-muted">Carregando...</p>
         </div>
       </div>
@@ -170,13 +170,13 @@ export default function ReconciliationPage() {
         <Card className="max-w-2xl mx-auto">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <Crown className="h-6 w-6 text-yellow-600" />
+              <Crown className="h-6 w-6 text-accent" />
               Funcionalidade Premium
             </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-center py-8">
-              <AlertCircle className="h-16 w-16 text-yellow-600 mx-auto mb-4" />
+              <AlertCircle className="h-16 w-16 text-accent mx-auto mb-4" />
               <h3 className="text-xl font-semibold mb-2">
                 Conciliação Bancária Automática
               </h3>
@@ -406,7 +406,7 @@ export default function ReconciliationPage() {
                           {Math.abs(transaction.amount).toFixed(2)}
                         </p>
                         {transaction.matched && (
-                          <span className="px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded-full">
+                          <span className="px-2 py-1 bg-primary bg-opacity-10 text-blue-800 text-xs rounded-full">
                             Já existe
                           </span>
                         )}

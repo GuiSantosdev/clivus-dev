@@ -104,7 +104,7 @@ export default function CompliancePage() {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto"></div>
           <p className="mt-4 text-theme-muted">Carregando...</p>
         </div>
       </div>
@@ -144,7 +144,7 @@ export default function CompliancePage() {
                     compliancePercentage >= 80
                       ? "text-green-600"
                       : compliancePercentage >= 50
-                      ? "text-yellow-600"
+                      ? "text-accent"
                       : "text-red-600"
                   }`}
                 />
@@ -178,12 +178,12 @@ export default function CompliancePage() {
             <CardContent>
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-3xl font-bold text-yellow-600">
+                  <p className="text-3xl font-bold text-accent">
                     {warningCount + errorCount}
                   </p>
                   <p className="text-xs text-theme-muted mt-1">alertas ativos</p>
                 </div>
-                <AlertTriangle className="h-12 w-12 text-yellow-600" />
+                <AlertTriangle className="h-12 w-12 text-accent" />
               </div>
             </CardContent>
           </Card>
@@ -205,7 +205,7 @@ export default function CompliancePage() {
                     item.status === "ok"
                       ? "bg-green-50 border-green-200"
                       : item.status === "warning"
-                      ? "bg-yellow-50 border-yellow-200"
+                      ? "bg-accent bg-opacity-10 border-accent border-opacity-30"
                       : "bg-red-50 border-red-200"
                   }`}
                 >
@@ -214,7 +214,7 @@ export default function CompliancePage() {
                       {item.status === "ok" ? (
                         <CheckCircle className="h-5 w-5 text-green-600 mt-0.5" />
                       ) : item.status === "warning" ? (
-                        <AlertTriangle className="h-5 w-5 text-yellow-600 mt-0.5" />
+                        <AlertTriangle className="h-5 w-5 text-accent mt-0.5" />
                       ) : (
                         <XCircle className="h-5 w-5 text-red-600 mt-0.5" />
                       )}

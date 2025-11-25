@@ -218,7 +218,7 @@ export default function DrePage() {
   if (status === "loading" || loading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600" />
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary" />
       </div>
     );
   }
@@ -226,7 +226,7 @@ export default function DrePage() {
   const allCategories = [...planoContas, ...customCategories].sort((a, b) => a.order - b.order);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-6">
+    <div className="min-h-screen bg-gradient-to-br from-primary/10 to-accent/20 p-6">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="flex items-center justify-between mb-6">
@@ -358,7 +358,7 @@ export default function DrePage() {
                     {customCategories.map((cat) => (
                       <div
                         key={cat.id}
-                        className="p-3 bg-blue-50 rounded-lg flex items-center justify-between"
+                        className="p-3 bg-primary bg-opacity-5 rounded-lg flex items-center justify-between"
                       >
                         <div>
                           <span className="font-medium">{cat.name}</span>
@@ -388,7 +388,7 @@ export default function DrePage() {
                 )}
 
                 {/* Formulário de Nova Categoria */}
-                <div className="p-4 bg-card border-2 border-dashed border-blue-300 rounded-lg">
+                <div className="p-4 bg-card border-2 border-dashed border-primary border-opacity-40 rounded-lg">
                   <h4 className="font-medium mb-3">Adicionar Nova Categoria</h4>
                   <div className="grid gap-3">
                     <div>
@@ -485,7 +485,7 @@ export default function DrePage() {
               <Card
                 className={`bg-gradient-to-br ${
                   dreData.lucroLiquido >= 0
-                    ? "from-blue-500 to-indigo-600"
+                    ? "from-primary to-accent"
                     : "from-orange-500 to-red-600"
                 } text-white`}
               >

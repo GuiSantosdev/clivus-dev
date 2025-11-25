@@ -124,7 +124,7 @@ export default function InvestmentsPage() {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto"></div>
           <p className="mt-4 text-theme-muted">Carregando...</p>
         </div>
       </div>
@@ -146,14 +146,14 @@ export default function InvestmentsPage() {
         </div>
         <Button
           onClick={() => setShowForm(!showForm)}
-          className="bg-blue-600 hover:bg-blue-700"
+          className="bg-primary hover:bg-primary hover:brightness-90"
           >
             <Plus className="h-4 w-4 mr-2" />
             Novo Investimento
           </Button>
         </div>
 
-        <Card className="mb-6 border-blue-200 bg-blue-50">
+        <Card className="mb-6 border-primary border-opacity-30 bg-primary bg-opacity-5">
           <CardContent className="p-4">
             <div className="flex items-start space-x-3">
               <AlertCircle className="h-5 w-5 text-blue-600 mt-0.5" />
@@ -318,7 +318,7 @@ export default function InvestmentsPage() {
                 </div>
 
                 <div className="flex space-x-2">
-                  <Button type="submit" className="bg-blue-600 hover:bg-blue-700">
+                  <Button type="submit" className="bg-primary hover:bg-primary hover:brightness-90">
                     Adicionar
                   </Button>
                   <Button

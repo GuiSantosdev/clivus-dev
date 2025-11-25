@@ -319,7 +319,7 @@ export default function TransactionsPage() {
   if (loading || status === "loading") {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
       </div>
     );
   }
@@ -542,7 +542,7 @@ export default function TransactionsPage() {
 
                 {/* Vincular ao Planejamento */}
                 {planningEnabled && availablePlannedTransactions.length > 0 && (
-                  <div className="border p-4 rounded-lg bg-blue-50">
+                  <div className="border p-4 rounded-lg bg-primary bg-opacity-5">
                     <Label>📌 Vincular ao Planejamento (Opcional)</Label>
                     <p className="text-sm text-theme-muted mb-2">
                       Esta transação está relacionada a uma receita/despesa planejada?
@@ -596,7 +596,7 @@ export default function TransactionsPage() {
                   </div>
 
                   {formData.isInstallment && (
-                    <div className="space-y-4 p-4 bg-blue-50 rounded-lg">
+                    <div className="space-y-4 p-4 bg-primary bg-opacity-5 rounded-lg">
                       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                         <div>
                           <Label>Parcela Atual</Label>
@@ -694,7 +694,7 @@ export default function TransactionsPage() {
                         <div className="flex items-center gap-2">
                           <p className="font-semibold">{transaction.description}</p>
                           {transaction.isInstallment && (
-                            <span className="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded">
+                            <span className="text-xs bg-primary bg-opacity-10 text-blue-800 px-2 py-1 rounded">
                               {transaction.installmentNumber}/{transaction.totalInstallments}x
                             </span>
                           )}

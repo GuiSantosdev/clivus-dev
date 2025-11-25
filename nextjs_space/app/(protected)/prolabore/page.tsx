@@ -83,7 +83,7 @@ export default function ProlaborePage() {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto"></div>
           <p className="mt-4 text-theme-muted">Carregando...</p>
         </div>
       </div>
@@ -97,7 +97,7 @@ export default function ProlaborePage() {
         <p className="text-theme-muted mt-2">Calcule o pró-labore ideal conforme a legislação brasileira</p>
       </div>
 
-        <Card className="mb-6 border-blue-200 bg-blue-50">
+        <Card className="mb-6 border-primary border-opacity-30 bg-primary bg-opacity-5">
           <CardContent className="p-4">
             <div className="flex items-start space-x-3">
               <AlertCircle className="h-5 w-5 text-blue-600 mt-0.5" />
@@ -188,7 +188,7 @@ export default function ProlaborePage() {
               <Button
                 onClick={calcularProlabore}
                 disabled={loading}
-                className="w-full bg-blue-600 hover:bg-blue-700"
+                className="w-full bg-primary hover:bg-primary hover:brightness-90"
               >
                 {loading ? "Calculando..." : "Calcular Pró-labore"}
               </Button>
@@ -227,7 +227,7 @@ export default function ProlaborePage() {
                       </span>
                     </div>
 
-                    <div className="flex justify-between items-center p-4 bg-blue-50 rounded-lg border-2 border-blue-200">
+                    <div className="flex justify-between items-center p-4 bg-primary bg-opacity-5 rounded-lg border-2 border-primary border-opacity-30">
                       <span className="font-semibold text-theme">Valor Líquido</span>
                       <span className="text-xl font-bold text-blue-600">
                         R$ {resultado.liquido.toFixed(2)}
@@ -235,8 +235,8 @@ export default function ProlaborePage() {
                     </div>
                   </div>
 
-                  <div className="flex items-start space-x-2 p-3 bg-yellow-50 rounded border border-yellow-200">
-                    <AlertCircle className="h-4 w-4 text-yellow-600 mt-0.5" />
+                  <div className="flex items-start space-x-2 p-3 bg-accent bg-opacity-10 rounded border border-accent border-opacity-30">
+                    <AlertCircle className="h-4 w-4 text-accent mt-0.5" />
                     <p className="text-xs text-theme-muted">
                       Este cálculo é uma estimativa. Consulte seu contador para valores exatos
                       considerando sua situação específica.

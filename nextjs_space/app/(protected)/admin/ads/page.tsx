@@ -214,7 +214,7 @@ export default function AdsManagementPage() {
   if (loading || status === "loading") {
     return (
       <div className="flex items-center justify-center min-h-screen">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
       </div>
     );
   }
@@ -251,7 +251,7 @@ export default function AdsManagementPage() {
               setEditingAd(null);
               resetForm();
             }}
-            className="bg-gradient-to-r from-purple-600 to-indigo-600"
+            className="bg-gradient-to-r from-primary to-accent"
           >
             <Plus className="h-4 w-4 mr-2" />
             Novo Anúncio
@@ -502,7 +502,7 @@ export default function AdsManagementPage() {
                 </div>
 
                 <div className="flex gap-2">
-                  <Button type="submit" className="bg-blue-600">
+                  <Button type="submit" className="bg-primary">
                     {editingAd ? "Atualizar" : "Criar"} Anúncio
                   </Button>
                   <Button
@@ -552,7 +552,7 @@ export default function AdsManagementPage() {
                               px-2 py-1 rounded text-xs font-medium
                               ${
                                 ad.type === "adsense"
-                                  ? "bg-blue-100 text-blue-700"
+                                  ? "bg-primary bg-opacity-10 text-blue-700"
                                   : "bg-purple-100 text-purple-700"
                               }
                             `}

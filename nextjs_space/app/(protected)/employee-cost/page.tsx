@@ -176,7 +176,7 @@ Gerado em ${new Date().toLocaleDateString('pt-BR')} pelo Clivus
     return (
       <div className="p-8">
         <div className="flex items-center justify-center h-64">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
         </div>
       </div>
     );
@@ -188,7 +188,7 @@ Gerado em ${new Date().toLocaleDateString('pt-BR')} pelo Clivus
     <div className="p-8">
       <div className="space-y-6">
         <div className="flex items-center gap-3">
-          <div className="p-3 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-lg">
+          <div className="p-3 bg-gradient-to-br from-primary to-accent rounded-lg">
             <Users className="h-6 w-6 text-white" />
           </div>
           <div>
@@ -251,7 +251,7 @@ Gerado em ${new Date().toLocaleDateString('pt-BR')} pelo Clivus
                   </div>
                 </div>
 
-                <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                <div className="bg-primary bg-opacity-5 border border-primary border-opacity-30 rounded-lg p-4">
                   <div className="flex gap-2">
                     <AlertCircle className="h-5 w-5 text-blue-600 flex-shrink-0 mt-0.5" />
                     <div className="text-sm text-blue-800">
@@ -399,7 +399,7 @@ Gerado em ${new Date().toLocaleDateString('pt-BR')} pelo Clivus
 
           {/* Resumo */}
           <div className="space-y-6">
-            <Card className="border-blue-200 bg-gradient-to-br from-blue-50 to-indigo-50">
+            <Card className="border-primary border-opacity-30 bg-gradient-to-br from-primary/10 to-accent/10">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2 text-blue-800">
                   <Calculator className="h-5 w-5" />
@@ -429,7 +429,7 @@ Gerado em ${new Date().toLocaleDateString('pt-BR')} pelo Clivus
                   </div>
                 </div>
 
-                <div className="bg-card border border-blue-200 rounded-lg p-3">
+                <div className="bg-card border border-primary border-opacity-30 rounded-lg p-3">
                   <p className="text-xs text-theme-muted">
                     <strong>Multiplicador:</strong> Para cada R$ 1,00 de salário, você paga R$ {multiplier.toFixed(2)} 
                     considerando todos os encargos e benefícios.

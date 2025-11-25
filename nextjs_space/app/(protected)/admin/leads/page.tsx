@@ -351,7 +351,7 @@ export default function LeadsManagementPage() {
   const getStatusBadge = (lead: Lead) => {
     if (lead.status === "novo") {
       return (
-        <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+        <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium bg-primary bg-opacity-10 text-blue-800">
           <UserPlus className="h-3 w-3" />
           Novo Lead
         </span>
@@ -360,7 +360,7 @@ export default function LeadsManagementPage() {
 
     if (lead.status === "registered") {
       return (
-        <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
+        <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium bg-accent bg-opacity-20 text-accent">
           <UserPlus className="h-3 w-3" />
           Cadastrado
         </span>
@@ -417,7 +417,7 @@ export default function LeadsManagementPage() {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto"></div>
           <p className="mt-4 text-theme-muted">Carregando leads...</p>
         </div>
       </div>
@@ -479,7 +479,7 @@ export default function LeadsManagementPage() {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-3xl font-bold text-yellow-600">{stats.registeredUsers}</p>
+            <p className="text-3xl font-bold text-accent">{stats.registeredUsers}</p>
           </CardContent>
         </Card>
 
@@ -846,7 +846,7 @@ export default function LeadsManagementPage() {
       </Card>
 
       {/* Info sobre Remarketing */}
-      <Card className="mt-6 bg-blue-50 border-blue-200">
+      <Card className="mt-6 bg-primary bg-opacity-5 border-primary border-opacity-30">
         <CardContent className="pt-6">
           <div className="flex items-start gap-3">
             <TrendingUp className="h-5 w-5 text-blue-600 mt-0.5" />

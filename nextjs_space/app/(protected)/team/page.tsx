@@ -126,7 +126,7 @@ export default function TeamPage() {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto"></div>
           <p className="mt-4 text-theme-muted">Carregando...</p>
         </div>
       </div>
@@ -145,14 +145,14 @@ export default function TeamPage() {
         </div>
         <Button
           onClick={() => setShowForm(!showForm)}
-          className="bg-blue-600 hover:bg-blue-700"
+          className="bg-primary hover:bg-primary hover:brightness-90"
           >
             <Plus className="h-4 w-4 mr-2" />
             Convidar Membro
           </Button>
         </div>
 
-        <Card className="mb-6 border-blue-200 bg-blue-50">
+        <Card className="mb-6 border-primary border-opacity-30 bg-primary bg-opacity-5">
           <CardContent className="p-4">
             <div className="flex items-start space-x-3">
               <AlertCircle className="h-5 w-5 text-blue-600 mt-0.5" />
@@ -212,10 +212,10 @@ export default function TeamPage() {
             <CardContent>
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-3xl font-bold text-yellow-600">{pendingMembers}</p>
+                  <p className="text-3xl font-bold text-accent">{pendingMembers}</p>
                   <p className="text-xs text-theme-muted mt-1">aguardando</p>
                 </div>
-                <Mail className="h-12 w-12 text-yellow-600" />
+                <Mail className="h-12 w-12 text-accent" />
               </div>
             </CardContent>
           </Card>
@@ -273,7 +273,7 @@ export default function TeamPage() {
                 </div>
 
                 <div className="flex space-x-2">
-                  <Button type="submit" className="bg-blue-600 hover:bg-blue-700">
+                  <Button type="submit" className="bg-primary hover:bg-primary hover:brightness-90">
                     Enviar Convite
                   </Button>
                   <Button
@@ -304,12 +304,12 @@ export default function TeamPage() {
                   className={`p-4 rounded-lg border-2 ${
                     member.status === "active"
                       ? "bg-card border-gray-200"
-                      : "bg-yellow-50 border-yellow-200"
+                      : "bg-accent bg-opacity-10 border-accent border-opacity-30"
                   }`}
                 >
                   <div className="flex items-center justify-between">
                     <div className="flex items-center space-x-4 flex-1">
-                      <div className="h-12 w-12 rounded-full bg-blue-100 flex items-center justify-center">
+                      <div className="h-12 w-12 rounded-full bg-primary bg-opacity-10 flex items-center justify-center">
                         <span className="text-blue-600 font-semibold text-lg">
                           {member.name.charAt(0).toUpperCase()}
                         </span>
@@ -318,7 +318,7 @@ export default function TeamPage() {
                         <div className="flex items-center space-x-2">
                           <h3 className="font-semibold text-theme">{member.name}</h3>
                           {member.status === "pending" && (
-                            <span className="px-2 py-0.5 bg-yellow-100 text-yellow-700 text-xs rounded-full">
+                            <span className="px-2 py-0.5 bg-accent bg-opacity-20 text-yellow-700 text-xs rounded-full">
                               Pendente
                             </span>
                           )}
@@ -374,7 +374,7 @@ export default function TeamPage() {
                 </ul>
               </div>
 
-              <div className="p-4 bg-blue-50 rounded-lg">
+              <div className="p-4 bg-primary bg-opacity-5 rounded-lg">
                 <h4 className="font-semibold text-theme mb-2">Editor</h4>
                 <ul className="text-sm text-theme space-y-1">
                   <li>✓ Visualizar todas as informações financeiras</li>

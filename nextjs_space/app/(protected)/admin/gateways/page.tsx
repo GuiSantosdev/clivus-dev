@@ -364,7 +364,7 @@ export default function GatewaysManagementPage() {
   if (loading && !gateways) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
       </div>
     );
   }
@@ -392,7 +392,7 @@ export default function GatewaysManagementPage() {
         </div>
 
         {/* Alert Info */}
-        <Card className="border-blue-200 bg-blue-50">
+        <Card className="border-primary border-opacity-30 bg-primary bg-opacity-5">
           <CardContent className="pt-6">
             <div className="flex gap-3">
               <AlertCircle className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" />
@@ -401,7 +401,7 @@ export default function GatewaysManagementPage() {
                   📝 Como Configurar os Gateways
                 </p>
                 <div className="text-sm text-blue-800 space-y-1">
-                  <p>1. Edite o arquivo <code className="bg-blue-100 px-1 rounded">.env</code> no servidor</p>
+                  <p>1. Edite o arquivo <code className="bg-primary bg-opacity-10 px-1 rounded">.env</code> no servidor</p>
                   <p>2. Adicione as credenciais dos gateways que deseja usar</p>
                   <p>3. Configure os webhooks nos painéis dos gateways</p>
                   <p>4. Reinicie o servidor Next.js para aplicar as mudanças</p>
@@ -442,7 +442,7 @@ export default function GatewaysManagementPage() {
                               Não Configurado
                             </span>
                           ) : (
-                            <span className="inline-flex items-center gap-1 px-2 py-1 bg-yellow-100 text-yellow-800 rounded-full text-xs font-medium">
+                            <span className="inline-flex items-center gap-1 px-2 py-1 bg-accent bg-opacity-20 text-accent rounded-full text-xs font-medium">
                               <AlertCircle className="w-3 h-3" />
                               Desabilitado
                             </span>

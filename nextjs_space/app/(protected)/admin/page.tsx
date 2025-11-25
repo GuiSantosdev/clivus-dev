@@ -86,7 +86,7 @@ export default function AdminPage() {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto"></div>
           <p className="mt-4 text-theme-muted">Carregando dados...</p>
         </div>
       </div>
@@ -101,7 +101,7 @@ export default function AdminPage() {
           <div className="flex items-center gap-3">
             <div>
               <div className="flex items-center gap-2">
-                <Crown className="h-6 w-6 text-yellow-600" />
+                <Crown className="h-6 w-6 text-accent" />
                 <h1 className="text-3xl font-bold text-theme">Dashboard SuperAdmin</h1>
               </div>
               <p className="text-theme-muted">Visão completa do negócio Clivus</p>

@@ -155,7 +155,7 @@ export default function ClientsManagementPage() {
   const getRoleBadge = (role: string) => {
     const colors: Record<string, string> = {
       superadmin: "bg-purple-100 text-purple-800",
-      admin: "bg-blue-100 text-blue-800",
+      admin: "bg-primary bg-opacity-10 text-blue-800",
       user: "bg-muted-soft text-gray-800",
     };
 
@@ -173,7 +173,7 @@ export default function ClientsManagementPage() {
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
       </div>
     );
   }
@@ -205,7 +205,7 @@ export default function ClientsManagementPage() {
         </div>
 
         {/* Info sobre Leads */}
-        <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+        <div className="bg-primary bg-opacity-5 border border-primary border-opacity-30 rounded-lg p-4">
           <p className="text-sm text-blue-800">
             💡 <strong>Dica:</strong> Para ver leads e usuários que ainda não completaram o pagamento, 
             acesse <Link href="/admin/leads" className="underline font-semibold text-blue-900">Leads & Remarketing</Link>

@@ -113,7 +113,7 @@ export default function SettingsPage() {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto"></div>
           <p className="mt-4 text-theme-muted">Carregando configurações...</p>
         </div>
       </div>
@@ -235,14 +235,14 @@ export default function SettingsPage() {
               </p>
             </div>
 
-            <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+            <div className="bg-accent bg-opacity-10 border border-accent border-opacity-30 rounded-lg p-4">
               <div className="flex gap-3">
-                <AlertCircle className="h-5 w-5 text-yellow-600 flex-shrink-0 mt-0.5" />
+                <AlertCircle className="h-5 w-5 text-accent flex-shrink-0 mt-0.5" />
                 <div className="flex-1">
                   <h4 className="font-semibold text-yellow-900 mb-2">
                     ⚠️ Quando os E-mails São Enviados?
                   </h4>
-                  <ul className="text-sm text-yellow-800 space-y-1 list-disc list-inside">
+                  <ul className="text-sm text-accent space-y-1 list-disc list-inside">
                     <li><strong>Após pagamento aprovado</strong> (via webhook Stripe/Asaas)</li>
                     <li><strong>Reenvio manual</strong> pelo SuperAdmin (Vendas → Reenviar Credenciais)</li>
                     <li><strong>NÃO envia</strong> imediatamente após cadastro</li>
@@ -269,7 +269,7 @@ export default function SettingsPage() {
               )}
             </Button>
 
-            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+            <div className="bg-primary bg-opacity-5 border border-primary border-opacity-30 rounded-lg p-4">
               <h4 className="font-semibold text-blue-900 mb-2 flex items-center gap-2">
                 <CheckCircle className="h-4 w-4" />
                 Como Configurar o SMTP da Hostinger

@@ -104,7 +104,7 @@ export default function AdminSalesPage() {
   const getStatusBadge = (status: string) => {
     const styles = {
       completed: "bg-green-100 text-green-800",
-      pending: "bg-yellow-100 text-yellow-800",
+      pending: "bg-accent bg-opacity-20 text-accent",
       failed: "bg-red-100 text-red-800",
       expired: "bg-muted-soft text-gray-800",
     };
@@ -209,7 +209,7 @@ export default function AdminSalesPage() {
               <Package className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-yellow-600">
+              <div className="text-2xl font-bold text-accent">
                 {stats?.pendingSales ?? 0}
               </div>
               <p className="text-xs text-muted-foreground">Aguardando confirmação</p>
@@ -246,7 +246,7 @@ export default function AdminSalesPage() {
                 onClick={() => setFilterStatus("pending")}
                 variant={filterStatus === "pending" ? "default" : "outline"}
                 size="sm"
-                className={filterStatus === "pending" ? "bg-yellow-600 hover:bg-yellow-700" : ""}
+                className={filterStatus === "pending" ? "bg-accent hover:bg-accent hover:brightness-90" : ""}
               >
                 Pendentes
               </Button>
@@ -307,7 +307,7 @@ export default function AdminSalesPage() {
                           {getStatusBadge(payment?.status)}
                         </td>
                         <td className="p-3 text-center">
-                          <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                          <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-primary bg-opacity-10 text-blue-800">
                             <CreditCard className="h-3 w-3 mr-1" />
                             {payment?.gateway || "N/A"}
                           </span>

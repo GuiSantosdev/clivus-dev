@@ -252,8 +252,8 @@ export default function PlanejPage() {
         };
       } else if (percentage <= 100) {
         return {
-          icon: <AlertCircle className="w-5 h-5 text-yellow-600" />,
-          color: "text-yellow-600",
+          icon: <AlertCircle className="w-5 h-5 text-accent" />,
+          color: "text-accent",
           label: `${percentage.toFixed(1)}% ⚠`,
         };
       } else {
@@ -273,8 +273,8 @@ export default function PlanejPage() {
         };
       } else if (percentage >= 80) {
         return {
-          icon: <AlertCircle className="w-5 h-5 text-yellow-600" />,
-          color: "text-yellow-600",
+          icon: <AlertCircle className="w-5 h-5 text-accent" />,
+          color: "text-accent",
           label: `${percentage.toFixed(1)}% ⚠`,
         };
       } else {
@@ -327,7 +327,7 @@ export default function PlanejPage() {
   if (loading || status === "loading") {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
       </div>
     );
   }
