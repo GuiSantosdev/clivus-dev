@@ -21,7 +21,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { toast } from "react-hot-toast";
 
-type ThemePreset = "simples" | "moderado" | "moderno" | "padrao-light" | "padrao-dark";
+type ThemePreset = "simples" | "moderado" | "moderno";
 
 interface ThemeOption {
   value: ThemePreset;
@@ -44,25 +44,9 @@ interface ThemeHierarchy {
 
 const THEME_OPTIONS: ThemeOption[] = [
   {
-    value: "padrao-light",
-    label: "Padrão Light",
-    description: "Minimalista branco",
-    icon: <Sun className="h-4 w-4" />,
-    category: "clean",
-    isDark: false,
-  },
-  {
-    value: "padrao-dark",
-    label: "Padrão Dark",
-    description: "Minimalista preto",
-    icon: <Moon className="h-4 w-4" />,
-    category: "clean",
-    isDark: true,
-  },
-  {
     value: "simples",
     label: "Simples",
-    description: "Verde/branco clean",
+    description: "Claro verde",
     icon: <Sun className="h-4 w-4" />,
     category: "clean",
     isDark: false,
@@ -70,7 +54,7 @@ const THEME_OPTIONS: ThemeOption[] = [
   {
     value: "moderado",
     label: "Moderado",
-    description: "Azul escuro profissional",
+    description: "Claro dourado",
     icon: <Sun className="h-4 w-4" />,
     category: "professional",
     isDark: false,
@@ -78,7 +62,7 @@ const THEME_OPTIONS: ThemeOption[] = [
   {
     value: "moderno",
     label: "Moderno",
-    description: "Dark com gradiente neon",
+    description: "Escuro neon roxo/azul",
     icon: <Moon className="h-4 w-4" />,
     category: "modern",
     isDark: true,
@@ -87,7 +71,7 @@ const THEME_OPTIONS: ThemeOption[] = [
 
 export function ThemeSelector() {
   const { theme, setTheme } = useTheme();
-  const [currentTheme, setCurrentTheme] = useState<ThemePreset>("padrao-light");
+  const [currentTheme, setCurrentTheme] = useState<ThemePreset>("simples");
   const [hierarchy, setHierarchy] = useState<ThemeHierarchy | null>(null);
   const [loading, setLoading] = useState(true);
   const [showPreview, setShowPreview] = useState(false);
@@ -107,13 +91,13 @@ export function ThemeSelector() {
         setTheme(data.effectiveTheme);
       } else {
         // Fallback para localStorage
-        const savedTheme = (localStorage.getItem("theme") as ThemePreset) || "padrao-light";
+        const savedTheme = (localStorage.getItem("theme") as ThemePreset) || "simples";
         setCurrentTheme(savedTheme);
         setTheme(savedTheme);
       }
     } catch (error) {
       console.error("Erro ao carregar tema:", error);
-      const savedTheme = (localStorage.getItem("theme") as ThemePreset) || "padrao-light";
+      const savedTheme = (localStorage.getItem("theme") as ThemePreset) || "simples";
       setCurrentTheme(savedTheme);
       setTheme(savedTheme);
     } finally {

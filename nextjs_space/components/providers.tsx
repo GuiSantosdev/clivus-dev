@@ -20,14 +20,8 @@ export function Providers({ children }: { children: React.ReactNode }) {
     <SessionProvider>
       <ThemeProvider
         attribute="class"
-        defaultTheme="padrao-light"
-        themes={[
-          "simples", 
-          "moderado",
-          "moderno", 
-          "padrao-light",
-          "padrao-dark"
-        ]}
+        defaultTheme="simples"
+        themes={["simples", "moderado", "moderno"]}
         enableSystem={false}
       >
         {children}

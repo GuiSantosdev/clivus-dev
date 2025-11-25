@@ -27,7 +27,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 
-type ThemePreset = "simples" | "moderado" | "moderno" | "padrao-light" | "padrao-dark";
+type ThemePreset = "simples" | "moderado" | "moderno";
 
 interface GlobalSettings {
   id: number;
@@ -40,33 +40,21 @@ interface GlobalSettings {
 
 const THEME_OPTIONS = [
   {
-    value: "padrao-light",
-    label: "Padrão Light",
-    description: "Minimalista branco",
-    icon: Sun,
-  },
-  {
-    value: "padrao-dark",
-    label: "Padrão Dark",
-    description: "Minimalista preto",
-    icon: Moon,
-  },
-  {
     value: "simples",
     label: "Simples",
-    description: "Verde/branco clean",
+    description: "Claro verde",
     icon: Sun,
   },
   {
     value: "moderado",
     label: "Moderado",
-    description: "Azul escuro profissional",
+    description: "Claro dourado",
     icon: Sun,
   },
   {
     value: "moderno",
     label: "Moderno",
-    description: "Dark com gradiente neon",
+    description: "Escuro neon roxo/azul",
     icon: Moon,
   },
 ];
@@ -80,7 +68,7 @@ export default function ThemeConfigPage() {
   const [settings, setSettings] = useState<GlobalSettings | null>(null);
 
   const [superadminThemePreset, setSuperadminThemePreset] =
-    useState<ThemePreset>("padrao-light");
+    useState<ThemePreset>("simples");
   const [allowOfficeOverride, setAllowOfficeOverride] = useState(false);
   const [allowUserOverride, setAllowUserOverride] = useState(true);
 
@@ -339,7 +327,7 @@ export default function ThemeConfigPage() {
                 </div>
                 <div>
                   <strong className="text-theme">Fallback</strong>
-                  <p>Se nenhum estiver definido, usará "padrao-light" (tema padrão do sistema)</p>
+                  <p>Se nenhum estiver definido, usará "simples" (tema padrão do sistema)</p>
                 </div>
               </div>
             </div>

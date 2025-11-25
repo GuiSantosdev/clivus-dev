@@ -27,7 +27,7 @@ export async function GET(request: NextRequest) {
       settings = await prisma.globalSettings.create({
         data: {
           id: 1,
-          superadminThemePreset: "padrao-light",
+          superadminThemePreset: "simples",
           allowOfficeOverride: false,
           allowUserOverride: true,
         },
@@ -59,8 +59,8 @@ export async function PUT(request: NextRequest) {
     const body = await request.json();
     const { superadminThemePreset, allowOfficeOverride, allowUserOverride } = body;
 
-    // Validar tema (sistema oficial - 5 temas únicos)
-    const validThemes = ["simples", "moderado", "moderno", "padrao-light", "padrao-dark"];
+    // Validar tema (sistema oficial - 3 temas únicos)
+    const validThemes = ["simples", "moderado", "moderno"];
     if (superadminThemePreset && !validThemes.includes(superadminThemePreset)) {
       return NextResponse.json(
         { error: "Tema inválido" },
@@ -72,14 +72,14 @@ export async function PUT(request: NextRequest) {
     const settings = await prisma.globalSettings.upsert({
       where: { id: 1 },
       update: {
-        superadminThemePreset: superadminThemePreset || "padrao-light",
+        superadminThemePreset: superadminThemePreset || "simples",
         allowOfficeOverride: allowOfficeOverride ?? false,
         allowUserOverride: allowUserOverride ?? true,
         updatedAt: new Date(),
       },
       create: {
         id: 1,
-        superadminThemePreset: superadminThemePreset || "padrao-light",
+        superadminThemePreset: superadminThemePreset || "simples",
         allowOfficeOverride: allowOfficeOverride ?? false,
         allowUserOverride: allowUserOverride ?? true,
       },
