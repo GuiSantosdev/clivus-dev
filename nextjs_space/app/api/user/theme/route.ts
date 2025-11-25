@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/db";
+import { VALID_THEME_IDS, DEFAULT_THEME, isValidThemeId } from "@/shared/theme/themes";
 
 export const dynamic = "force-dynamic";
 
@@ -27,7 +28,7 @@ export async function GET(request: NextRequest) {
       globalSettings = await prisma.globalSettings.create({
         data: {
           id: 1,
-          superadminThemePreset: "simples",
+          superadminThemePreset: DEFAULT_THEME,
           allowOfficeOverride: false,
           allowUserOverride: true,
         },
@@ -52,7 +53,7 @@ export async function GET(request: NextRequest) {
       user?.themePreset ||
       officeTheme ||
       globalSettings.superadminThemePreset ||
-      "simples";
+      DEFAULT_THEME;
 
     return NextResponse.json(
       {
@@ -103,11 +104,10 @@ export async function PUT(request: NextRequest) {
       );
     }
 
-    // Validar tema (sistema oficial - 3 temas únicos)
-    const validThemes = ["simples", "moderado", "moderno", null];
-    if (themePreset !== null && !validThemes.includes(themePreset)) {
+    // Validar tema usando sistema oficial (null é permitido para reset)
+    if (themePreset !== null && !isValidThemeId(themePreset)) {
       return NextResponse.json(
-        { error: "Tema inválido" },
+        { error: `Tema inválido. Temas válidos: ${VALID_THEME_IDS.join(", ")}` },
         { status: 400 }
       );
     }

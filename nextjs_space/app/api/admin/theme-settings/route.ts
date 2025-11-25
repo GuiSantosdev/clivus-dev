@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/db";
+import { VALID_THEME_IDS, DEFAULT_THEME, isValidThemeId } from "@/shared/theme/themes";
 
 export const dynamic = "force-dynamic";
 
@@ -27,7 +28,7 @@ export async function GET(request: NextRequest) {
       settings = await prisma.globalSettings.create({
         data: {
           id: 1,
-          superadminThemePreset: "simples",
+          superadminThemePreset: DEFAULT_THEME,
           allowOfficeOverride: false,
           allowUserOverride: true,
         },
@@ -59,11 +60,10 @@ export async function PUT(request: NextRequest) {
     const body = await request.json();
     const { superadminThemePreset, allowOfficeOverride, allowUserOverride } = body;
 
-    // Validar tema (sistema oficial - 3 temas únicos)
-    const validThemes = ["simples", "moderado", "moderno"];
-    if (superadminThemePreset && !validThemes.includes(superadminThemePreset)) {
+    // Validar tema usando sistema oficial
+    if (superadminThemePreset && !isValidThemeId(superadminThemePreset)) {
       return NextResponse.json(
-        { error: "Tema inválido" },
+        { error: `Tema inválido. Temas válidos: ${VALID_THEME_IDS.join(", ")}` },
         { status: 400 }
       );
     }
@@ -72,14 +72,14 @@ export async function PUT(request: NextRequest) {
     const settings = await prisma.globalSettings.upsert({
       where: { id: 1 },
       update: {
-        superadminThemePreset: superadminThemePreset || "simples",
+        superadminThemePreset: superadminThemePreset || DEFAULT_THEME,
         allowOfficeOverride: allowOfficeOverride ?? false,
         allowUserOverride: allowUserOverride ?? true,
         updatedAt: new Date(),
       },
       create: {
         id: 1,
-        superadminThemePreset: superadminThemePreset || "simples",
+        superadminThemePreset: superadminThemePreset || DEFAULT_THEME,
         allowOfficeOverride: allowOfficeOverride ?? false,
         allowUserOverride: allowUserOverride ?? true,
       },

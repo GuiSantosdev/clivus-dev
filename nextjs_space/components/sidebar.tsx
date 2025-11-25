@@ -28,7 +28,7 @@ import {
   ChevronRight,
   Palette,
 } from "lucide-react";
-import { ThemeSelector } from "./theme-selector";
+import { ThemeSelector } from "./theme/ThemeSelector";
 
 const clientMenuItems = [
   {

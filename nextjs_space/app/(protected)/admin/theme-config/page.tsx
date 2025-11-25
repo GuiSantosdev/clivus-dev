@@ -26,38 +26,24 @@ import {
   Moon,
 } from "lucide-react";
 import Link from "next/link";
-
-type ThemePreset = "simples" | "moderado" | "moderno";
+import { getAllThemes, ThemeId, DEFAULT_THEME } from "@/shared/theme/themes";
 
 interface GlobalSettings {
   id: number;
-  superadminThemePreset: ThemePreset;
+  superadminThemePreset: ThemeId;
   allowOfficeOverride: boolean;
   allowUserOverride: boolean;
   createdAt: string;
   updatedAt: string;
 }
 
-const THEME_OPTIONS = [
-  {
-    value: "simples",
-    label: "Simples",
-    description: "Claro verde",
-    icon: Sun,
-  },
-  {
-    value: "moderado",
-    label: "Moderado",
-    description: "Claro dourado",
-    icon: Sun,
-  },
-  {
-    value: "moderno",
-    label: "Moderno",
-    description: "Escuro neon roxo/azul",
-    icon: Moon,
-  },
-];
+// Obter temas do registro oficial
+const THEME_OPTIONS = getAllThemes().map(theme => ({
+  value: theme.id,
+  label: theme.name,
+  description: theme.description,
+  icon: theme.isDark ? Moon : Sun,
+}));
 
 export default function ThemeConfigPage() {
   const { data: session, status } = useSession();
@@ -68,7 +54,7 @@ export default function ThemeConfigPage() {
   const [settings, setSettings] = useState<GlobalSettings | null>(null);
 
   const [superadminThemePreset, setSuperadminThemePreset] =
-    useState<ThemePreset>("simples");
+    useState<ThemeId>(DEFAULT_THEME);
   const [allowOfficeOverride, setAllowOfficeOverride] = useState(false);
   const [allowUserOverride, setAllowUserOverride] = useState(true);
 
@@ -194,7 +180,7 @@ export default function ThemeConfigPage() {
               </Label>
               <Select
                 value={superadminThemePreset}
-                onValueChange={(value) => setSuperadminThemePreset(value as ThemePreset)}
+                onValueChange={(value) => setSuperadminThemePreset(value as ThemeId)}
               >
                 <SelectTrigger id="theme-select">
                   <SelectValue />
@@ -327,7 +313,7 @@ export default function ThemeConfigPage() {
                 </div>
                 <div>
                   <strong className="text-theme">Fallback</strong>
-                  <p>Se nenhum estiver definido, usará "simples" (tema padrão do sistema)</p>
+                  <p>Se nenhum estiver definido, usará "{DEFAULT_THEME}" (tema padrão do sistema)</p>
                 </div>
               </div>
             </div>
