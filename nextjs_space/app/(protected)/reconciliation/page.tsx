@@ -158,7 +158,7 @@ export default function ReconciliationPage() {
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
-          <p className="mt-4 text-gray-600">Carregando...</p>
+          <p className="mt-4 text-theme-muted">Carregando...</p>
         </div>
       </div>
     );
@@ -180,10 +180,10 @@ export default function ReconciliationPage() {
               <h3 className="text-xl font-semibold mb-2">
                 Conciliação Bancária Automática
               </h3>
-              <p className="text-gray-600 mb-6">
+              <p className="text-theme-muted mb-6">
                 Esta funcionalidade está disponível apenas no <strong>Plano Avançado</strong>.
               </p>
-              <p className="text-sm text-gray-500 mb-6">
+              <p className="text-sm text-theme-muted mb-6">
                 Com a conciliação automática você pode:
               </p>
               <ul className="text-left max-w-md mx-auto space-y-2 mb-6">
@@ -221,8 +221,8 @@ export default function ReconciliationPage() {
   return (
     <div className="p-8">
       <div className="mb-6">
-        <h1 className="text-3xl font-bold text-gray-900">Conciliação Bancária Automática</h1>
-        <p className="text-gray-600 mt-2">
+        <h1 className="text-3xl font-bold text-theme">Conciliação Bancária Automática</h1>
+        <p className="text-theme-muted mt-2">
           Importe extratos bancários em CSV ou OFX e categorize automaticamente suas transações
         </p>
         <div className="mt-2 inline-flex items-center gap-2 px-3 py-1 bg-green-50 border border-green-200 rounded-full">
@@ -272,10 +272,10 @@ export default function ReconciliationPage() {
                 <FileSpreadsheet className="h-6 w-6 text-gray-400" />
               </div>
               <div className="mt-2 space-y-1">
-                <p className="text-xs text-gray-500">
+                <p className="text-xs text-theme-muted">
                   <strong>CSV:</strong> Data, Descrição, Valor (separado por vírgula)
                 </p>
-                <p className="text-xs text-gray-500">
+                <p className="text-xs text-theme-muted">
                   <strong>OFX:</strong> Formato padrão de bancos (Bradesco, Itaú, Santander, etc.)
                 </p>
                 <p className="text-xs text-green-600 font-medium">
@@ -385,10 +385,10 @@ export default function ReconciliationPage() {
                           <TrendingDown className="h-5 w-5 text-red-600" />
                         )}
                         <div>
-                          <p className="font-medium text-gray-900">
+                          <p className="font-medium text-theme">
                             {transaction.description}
                           </p>
-                          <p className="text-sm text-gray-600">
+                          <p className="text-sm text-theme-muted">
                             {transaction.category || "Sem categoria"} •{" "}
                             {new Date(transaction.date).toLocaleDateString("pt-BR")}
                           </p>

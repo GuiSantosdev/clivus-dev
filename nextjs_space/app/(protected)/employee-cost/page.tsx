@@ -192,8 +192,8 @@ Gerado em ${new Date().toLocaleDateString('pt-BR')} pelo Clivus
             <Users className="h-6 w-6 text-white" />
           </div>
           <div>
-            <h1 className="text-3xl font-bold text-gray-900">Custo Real de Funcionário</h1>
-            <p className="text-gray-600">Calcule o custo total de um funcionário CLT com todos os encargos</p>
+            <h1 className="text-3xl font-bold text-theme">Custo Real de Funcionário</h1>
+            <p className="text-theme-muted">Calcule o custo total de um funcionário CLT com todos os encargos</p>
           </div>
         </div>
 
@@ -225,7 +225,7 @@ Gerado em ${new Date().toLocaleDateString('pt-BR')} pelo Clivus
                   <div className="space-y-2">
                     <Label htmlFor="variablePay">
                       Média de Verbas Variáveis (R$)
-                      <span className="text-xs text-gray-500 ml-1">
+                      <span className="text-xs text-theme-muted ml-1">
                         (horas extras, comissões, etc.)
                       </span>
                     </Label>
@@ -282,7 +282,7 @@ Gerado em ${new Date().toLocaleDateString('pt-BR')} pelo Clivus
                       onChange={(e) => setTransportation(e.target.value)}
                       placeholder="0.00"
                     />
-                    <p className="text-xs text-gray-500">Valor por dia</p>
+                    <p className="text-xs text-theme-muted">Valor por dia</p>
                   </div>
 
                   <div className="space-y-2">
@@ -295,7 +295,7 @@ Gerado em ${new Date().toLocaleDateString('pt-BR')} pelo Clivus
                       onChange={(e) => setMeal(e.target.value)}
                       placeholder="0.00"
                     />
-                    <p className="text-xs text-gray-500">Valor por dia</p>
+                    <p className="text-xs text-theme-muted">Valor por dia</p>
                   </div>
 
                   <div className="space-y-2">
@@ -320,7 +320,7 @@ Gerado em ${new Date().toLocaleDateString('pt-BR')} pelo Clivus
                       onChange={(e) => setOtherBenefits(e.target.value)}
                       placeholder="0.00"
                     />
-                    <p className="text-xs text-gray-500">Seguro de vida, gympass, etc.</p>
+                    <p className="text-xs text-theme-muted">Seguro de vida, gympass, etc.</p>
                   </div>
                 </div>
               </CardContent>
@@ -333,62 +333,62 @@ Gerado em ${new Date().toLocaleDateString('pt-BR')} pelo Clivus
               </CardHeader>
               <CardContent className="space-y-3">
                 <div className="space-y-2">
-                  <h4 className="font-semibold text-sm text-gray-700">Encargos Trabalhistas</h4>
+                  <h4 className="font-semibold text-sm text-theme">Encargos Trabalhistas</h4>
                   <div className="space-y-1 text-sm">
                     <div className="flex justify-between">
-                      <span className="text-gray-600">INSS Patronal (20%)</span>
+                      <span className="text-theme-muted">INSS Patronal (20%)</span>
                       <span className="font-medium">R$ {costs.inss.toFixed(2)}</span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-gray-600">FGTS (8%)</span>
+                      <span className="text-theme-muted">FGTS (8%)</span>
                       <span className="font-medium">R$ {costs.fgts.toFixed(2)}</span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-gray-600">RAT (3%)</span>
+                      <span className="text-theme-muted">RAT (3%)</span>
                       <span className="font-medium">R$ {costs.rat.toFixed(2)}</span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-gray-600">Salário Educação (2,5%)</span>
+                      <span className="text-theme-muted">Salário Educação (2,5%)</span>
                       <span className="font-medium">R$ {costs.educationSalary.toFixed(2)}</span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-gray-600">Sistema S (3,58%)</span>
+                      <span className="text-theme-muted">Sistema S (3,58%)</span>
                       <span className="font-medium">R$ {costs.systemS.toFixed(2)}</span>
                     </div>
                   </div>
                 </div>
 
                 <div className="border-t pt-2 space-y-2">
-                  <h4 className="font-semibold text-sm text-gray-700">Provisões</h4>
+                  <h4 className="font-semibold text-sm text-theme">Provisões</h4>
                   <div className="space-y-1 text-sm">
                     <div className="flex justify-between">
-                      <span className="text-gray-600">Férias + 1/3 (rateio mensal)</span>
+                      <span className="text-theme-muted">Férias + 1/3 (rateio mensal)</span>
                       <span className="font-medium">R$ {costs.vacation.toFixed(2)}</span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-gray-600">13º Salário (rateio mensal)</span>
+                      <span className="text-theme-muted">13º Salário (rateio mensal)</span>
                       <span className="font-medium">R$ {costs.thirteenthSalary.toFixed(2)}</span>
                     </div>
                   </div>
                 </div>
 
                 <div className="border-t pt-2 space-y-2">
-                  <h4 className="font-semibold text-sm text-gray-700">Benefícios</h4>
+                  <h4 className="font-semibold text-sm text-theme">Benefícios</h4>
                   <div className="space-y-1 text-sm">
                     <div className="flex justify-between">
-                      <span className="text-gray-600">Vale Transporte</span>
+                      <span className="text-theme-muted">Vale Transporte</span>
                       <span className="font-medium">R$ {costs.transportation.toFixed(2)}</span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-gray-600">Vale Refeição</span>
+                      <span className="text-theme-muted">Vale Refeição</span>
                       <span className="font-medium">R$ {costs.meal.toFixed(2)}</span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-gray-600">Plano de Saúde</span>
+                      <span className="text-theme-muted">Plano de Saúde</span>
                       <span className="font-medium">R$ {costs.health.toFixed(2)}</span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-gray-600">Outros Benefícios</span>
+                      <span className="text-theme-muted">Outros Benefícios</span>
                       <span className="font-medium">R$ {costs.otherBenefits.toFixed(2)}</span>
                     </div>
                   </div>
@@ -408,7 +408,7 @@ Gerado em ${new Date().toLocaleDateString('pt-BR')} pelo Clivus
               </CardHeader>
               <CardContent className="space-y-4">
                 <div>
-                  <p className="text-sm text-gray-600 mb-1">Custo Mensal Médio</p>
+                  <p className="text-sm text-theme-muted mb-1">Custo Mensal Médio</p>
                   <div className="text-4xl font-bold text-blue-600">
                     R$ {costs.monthlyCost.toFixed(2)}
                   </div>
@@ -416,21 +416,21 @@ Gerado em ${new Date().toLocaleDateString('pt-BR')} pelo Clivus
 
                 <div className="border-t pt-4 space-y-3 text-sm">
                   <div className="flex justify-between">
-                    <span className="text-gray-600">Salário base:</span>
+                    <span className="text-theme-muted">Salário base:</span>
                     <span className="font-semibold">R$ {costs.salary.toFixed(2)}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-gray-600">Custo anual:</span>
+                    <span className="text-theme-muted">Custo anual:</span>
                     <span className="font-semibold">R$ {costs.totalCost.toFixed(2)}</span>
                   </div>
                   <div className="flex justify-between items-center">
-                    <span className="text-gray-600">Multiplicador:</span>
+                    <span className="text-theme-muted">Multiplicador:</span>
                     <span className="text-lg font-bold text-indigo-600">{multiplier.toFixed(2)}x</span>
                   </div>
                 </div>
 
-                <div className="bg-white border border-blue-200 rounded-lg p-3">
-                  <p className="text-xs text-gray-600">
+                <div className="bg-card border border-blue-200 rounded-lg p-3">
+                  <p className="text-xs text-theme-muted">
                     <strong>Multiplicador:</strong> Para cada R$ 1,00 de salário, você paga R$ {multiplier.toFixed(2)} 
                     considerando todos os encargos e benefícios.
                   </p>

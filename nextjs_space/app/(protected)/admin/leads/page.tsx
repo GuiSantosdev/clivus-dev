@@ -418,7 +418,7 @@ export default function LeadsManagementPage() {
       <div className="flex items-center justify-center min-h-screen">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
-          <p className="mt-4 text-gray-600">Carregando leads...</p>
+          <p className="mt-4 text-theme-muted">Carregando leads...</p>
         </div>
       </div>
     );
@@ -435,10 +435,10 @@ export default function LeadsManagementPage() {
             </Button>
           </Link>
           <div>
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">
+            <h1 className="text-3xl font-bold text-theme mb-2">
               Gestão de Leads & Remarketing
             </h1>
-            <p className="text-gray-600">
+            <p className="text-theme-muted">
               Gerencie leads da landing page e usuários que ainda não completaram o pagamento
             </p>
           </div>
@@ -449,19 +449,19 @@ export default function LeadsManagementPage() {
       <div className="grid grid-cols-1 md:grid-cols-5 gap-4 mb-8">
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-gray-600 flex items-center gap-2">
+            <CardTitle className="text-sm font-medium text-theme-muted flex items-center gap-2">
               <Users className="h-4 w-4" />
               Total de Leads
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-3xl font-bold text-gray-900">{stats.totalLeads}</p>
+            <p className="text-3xl font-bold text-theme">{stats.totalLeads}</p>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-gray-600 flex items-center gap-2">
+            <CardTitle className="text-sm font-medium text-theme-muted flex items-center gap-2">
               <Mail className="h-4 w-4" />
               Landing Page
             </CardTitle>
@@ -473,7 +473,7 @@ export default function LeadsManagementPage() {
 
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-gray-600 flex items-center gap-2">
+            <CardTitle className="text-sm font-medium text-theme-muted flex items-center gap-2">
               <UserPlus className="h-4 w-4" />
               Cadastrados
             </CardTitle>
@@ -485,7 +485,7 @@ export default function LeadsManagementPage() {
 
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-gray-600 flex items-center gap-2">
+            <CardTitle className="text-sm font-medium text-theme-muted flex items-center gap-2">
               <ShoppingCart className="h-4 w-4" />
               Checkout Iniciado
             </CardTitle>
@@ -497,7 +497,7 @@ export default function LeadsManagementPage() {
 
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-gray-600 flex items-center gap-2">
+            <CardTitle className="text-sm font-medium text-theme-muted flex items-center gap-2">
               <Clock className="h-4 w-4" />
               Pag. Pendente
             </CardTitle>
@@ -576,12 +576,12 @@ export default function LeadsManagementPage() {
               <div className="pt-4 border-t space-y-4">
                 {/* Filtros por Data */}
                 <div>
-                  <Label className="text-sm font-medium text-gray-700 mb-2 block">
+                  <Label className="text-sm font-medium text-theme mb-2 block">
                     Período de Cadastro
                   </Label>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                      <Label htmlFor="startDate" className="text-xs text-gray-500">
+                      <Label htmlFor="startDate" className="text-xs text-theme-muted">
                         Data Início
                       </Label>
                       <Input
@@ -593,7 +593,7 @@ export default function LeadsManagementPage() {
                       />
                     </div>
                     <div>
-                      <Label htmlFor="endDate" className="text-xs text-gray-500">
+                      <Label htmlFor="endDate" className="text-xs text-theme-muted">
                         Data Fim
                       </Label>
                       <Input
@@ -609,7 +609,7 @@ export default function LeadsManagementPage() {
 
                 {/* Filtros por Origem */}
                 <div>
-                  <Label className="text-sm font-medium text-gray-700 mb-2 block">
+                  <Label className="text-sm font-medium text-theme mb-2 block">
                     Origem
                   </Label>
                   <div className="flex flex-wrap gap-4">
@@ -644,7 +644,7 @@ export default function LeadsManagementPage() {
 
                 {/* Filtros por Status */}
                 <div>
-                  <Label className="text-sm font-medium text-gray-700 mb-2 block">
+                  <Label className="text-sm font-medium text-theme mb-2 block">
                     Status
                   </Label>
                   <div className="flex flex-wrap gap-4">
@@ -754,32 +754,32 @@ export default function LeadsManagementPage() {
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead>
-                <tr className="border-b border-gray-200">
-                  <th className="text-left py-3 px-4 font-medium text-gray-600 w-12">
+                <tr className="border-b border-theme">
+                  <th className="text-left py-3 px-4 font-medium text-theme-muted w-12">
                     <Checkbox
                       checked={selectedLeads.length === filteredLeads.length && filteredLeads.length > 0}
                       onCheckedChange={handleToggleSelectAll}
                       aria-label="Selecionar todos"
                     />
                   </th>
-                  <th className="text-left py-3 px-4 font-medium text-gray-600">Lead</th>
-                  <th className="text-left py-3 px-4 font-medium text-gray-600">Origem</th>
-                  <th className="text-left py-3 px-4 font-medium text-gray-600">Status</th>
-                  <th className="text-left py-3 px-4 font-medium text-gray-600">Cadastro</th>
-                  <th className="text-left py-3 px-4 font-medium text-gray-600">Último Checkout</th>
-                  <th className="text-right py-3 px-4 font-medium text-gray-600">Ações</th>
+                  <th className="text-left py-3 px-4 font-medium text-theme-muted">Lead</th>
+                  <th className="text-left py-3 px-4 font-medium text-theme-muted">Origem</th>
+                  <th className="text-left py-3 px-4 font-medium text-theme-muted">Status</th>
+                  <th className="text-left py-3 px-4 font-medium text-theme-muted">Cadastro</th>
+                  <th className="text-left py-3 px-4 font-medium text-theme-muted">Último Checkout</th>
+                  <th className="text-right py-3 px-4 font-medium text-theme-muted">Ações</th>
                 </tr>
               </thead>
               <tbody>
                 {filteredLeads.length === 0 ? (
                   <tr>
-                    <td colSpan={7} className="text-center py-8 text-gray-500">
+                    <td colSpan={7} className="text-center py-8 text-theme-muted">
                       Nenhum lead encontrado
                     </td>
                   </tr>
                 ) : (
                   filteredLeads.map((lead) => (
-                    <tr key={lead.id} className="border-b border-gray-100 hover:bg-gray-50">
+                    <tr key={lead.id} className="border-b border-gray-100 hover:bg-muted-soft">
                       <td className="py-4 px-4">
                         <Checkbox
                           checked={selectedLeads.includes(lead.id)}
@@ -789,8 +789,8 @@ export default function LeadsManagementPage() {
                       </td>
                       <td className="py-4 px-4">
                         <div>
-                          <p className="font-medium text-gray-900">{lead.name}</p>
-                          <p className="text-sm text-gray-500">{lead.email}</p>
+                          <p className="font-medium text-theme">{lead.name}</p>
+                          <p className="text-sm text-theme-muted">{lead.email}</p>
                           {lead.cnpj && (
                             <p className="text-xs text-gray-400">CNPJ: {lead.cnpj}</p>
                           )}
@@ -808,14 +808,14 @@ export default function LeadsManagementPage() {
                         )}
                       </td>
                       <td className="py-4 px-4">
-                        <div className="flex items-center gap-1 text-sm text-gray-600">
+                        <div className="flex items-center gap-1 text-sm text-theme-muted">
                           <Calendar className="h-3 w-3" />
                           {new Date(lead.createdAt).toLocaleDateString("pt-BR")}
                         </div>
                       </td>
                       <td className="py-4 px-4">
                         {lead.lastCheckoutAttempt ? (
-                          <div className="flex items-center gap-1 text-sm text-gray-600">
+                          <div className="flex items-center gap-1 text-sm text-theme-muted">
                             <Clock className="h-3 w-3" />
                             {new Date(lead.lastCheckoutAttempt).toLocaleDateString("pt-BR")}
                           </div>

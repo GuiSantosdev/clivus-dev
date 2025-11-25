@@ -71,7 +71,7 @@ export default function ReportsPage() {
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
-          <p className="mt-4 text-gray-600">Carregando...</p>
+          <p className="mt-4 text-theme-muted">Carregando...</p>
         </div>
       </div>
     );
@@ -80,8 +80,8 @@ export default function ReportsPage() {
   return (
     <div className="p-8">
       <div className="mb-6">
-        <h1 className="text-3xl font-bold text-gray-900">Relatórios Financeiros</h1>
-        <p className="text-gray-600 mt-2">Visualize e exporte seus relatórios financeiros</p>
+        <h1 className="text-3xl font-bold text-theme">Relatórios Financeiros</h1>
+        <p className="text-theme-muted mt-2">Visualize e exporte seus relatórios financeiros</p>
       </div>
 
         {/* Summary Cards */}
@@ -96,14 +96,14 @@ export default function ReportsPage() {
             <CardContent className="p-6">
               <div className="space-y-4">
                 <div>
-                  <p className="text-sm text-gray-600">Saldo Atual</p>
-                  <p className="text-3xl font-bold text-gray-900">
+                  <p className="text-sm text-theme-muted">Saldo Atual</p>
+                  <p className="text-3xl font-bold text-theme">
                     R$ {reportData?.cpf?.balance?.toFixed(2) ?? "0,00"}
                   </p>
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <p className="text-sm text-gray-600 flex items-center">
+                    <p className="text-sm text-theme-muted flex items-center">
                       <TrendingUp className="h-4 w-4 text-green-600 mr-1" />
                       Receitas
                     </p>
@@ -112,7 +112,7 @@ export default function ReportsPage() {
                     </p>
                   </div>
                   <div>
-                    <p className="text-sm text-gray-600 flex items-center">
+                    <p className="text-sm text-theme-muted flex items-center">
                       <TrendingDown className="h-4 w-4 text-red-600 mr-1" />
                       Despesas
                     </p>
@@ -124,7 +124,7 @@ export default function ReportsPage() {
 
                 {reportData?.cpf?.categories && reportData.cpf.categories.length > 0 && (
                   <div className="mt-4">
-                    <p className="text-sm font-medium text-gray-700 mb-2">
+                    <p className="text-sm font-medium text-theme mb-2">
                       Principais Categorias
                     </p>
                     <div className="space-y-2">
@@ -133,7 +133,7 @@ export default function ReportsPage() {
                           key={index}
                           className="flex justify-between items-center text-sm"
                         >
-                          <span className="text-gray-600">{cat?.category}</span>
+                          <span className="text-theme-muted">{cat?.category}</span>
                           <span className="font-medium">
                             R$ {cat?.total?.toFixed(2)}
                           </span>
@@ -156,14 +156,14 @@ export default function ReportsPage() {
             <CardContent className="p-6">
               <div className="space-y-4">
                 <div>
-                  <p className="text-sm text-gray-600">Saldo Atual</p>
-                  <p className="text-3xl font-bold text-gray-900">
+                  <p className="text-sm text-theme-muted">Saldo Atual</p>
+                  <p className="text-3xl font-bold text-theme">
                     R$ {reportData?.cnpj?.balance?.toFixed(2) ?? "0,00"}
                   </p>
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <p className="text-sm text-gray-600 flex items-center">
+                    <p className="text-sm text-theme-muted flex items-center">
                       <TrendingUp className="h-4 w-4 text-green-600 mr-1" />
                       Receitas
                     </p>
@@ -172,7 +172,7 @@ export default function ReportsPage() {
                     </p>
                   </div>
                   <div>
-                    <p className="text-sm text-gray-600 flex items-center">
+                    <p className="text-sm text-theme-muted flex items-center">
                       <TrendingDown className="h-4 w-4 text-red-600 mr-1" />
                       Despesas
                     </p>
@@ -184,7 +184,7 @@ export default function ReportsPage() {
 
                 {reportData?.cnpj?.categories && reportData.cnpj.categories.length > 0 && (
                   <div className="mt-4">
-                    <p className="text-sm font-medium text-gray-700 mb-2">
+                    <p className="text-sm font-medium text-theme mb-2">
                       Principais Categorias
                     </p>
                     <div className="space-y-2">
@@ -193,7 +193,7 @@ export default function ReportsPage() {
                           key={index}
                           className="flex justify-between items-center text-sm"
                         >
-                          <span className="text-gray-600">{cat?.category}</span>
+                          <span className="text-theme-muted">{cat?.category}</span>
                           <span className="font-medium">
                             R$ {cat?.total?.toFixed(2)}
                           </span>
@@ -218,17 +218,17 @@ export default function ReportsPage() {
                 <table className="w-full">
                   <thead>
                     <tr className="border-b">
-                      <th className="text-left p-3 font-medium text-gray-700">Mês</th>
-                      <th className="text-right p-3 font-medium text-gray-700">CPF Receitas</th>
-                      <th className="text-right p-3 font-medium text-gray-700">CPF Despesas</th>
-                      <th className="text-right p-3 font-medium text-gray-700">CNPJ Receitas</th>
-                      <th className="text-right p-3 font-medium text-gray-700">CNPJ Despesas</th>
+                      <th className="text-left p-3 font-medium text-theme">Mês</th>
+                      <th className="text-right p-3 font-medium text-theme">CPF Receitas</th>
+                      <th className="text-right p-3 font-medium text-theme">CPF Despesas</th>
+                      <th className="text-right p-3 font-medium text-theme">CNPJ Receitas</th>
+                      <th className="text-right p-3 font-medium text-theme">CNPJ Despesas</th>
                     </tr>
                   </thead>
                   <tbody>
                     {reportData.monthly.map((month, index) => (
                       <tr key={index} className="border-b hover:bg-gray-50">
-                        <td className="p-3 text-gray-900">{month?.month}</td>
+                        <td className="p-3 text-theme">{month?.month}</td>
                         <td className="p-3 text-right text-green-600 font-medium">
                           R$ {month?.cpfIncome?.toFixed(2)}
                         </td>

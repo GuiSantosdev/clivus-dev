@@ -225,7 +225,7 @@ export default function AdsManagementPage() {
   const ctr = totalImpressions > 0 ? (totalClicks / totalImpressions) * 100 : 0;
 
   return (
-    <div className="min-h-screen bg-gray-50 p-8">
+    <div className="min-h-screen bg-muted-soft p-8">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="flex items-center justify-between mb-8">
@@ -237,10 +237,10 @@ export default function AdsManagementPage() {
               </Button>
             </Link>
             <div>
-              <h1 className="text-3xl font-bold text-gray-900">
+              <h1 className="text-3xl font-bold text-theme">
                 Gerenciamento de Anúncios
               </h1>
-              <p className="text-gray-600 mt-1">
+              <p className="text-theme-muted mt-1">
                 Configure e monitore seus anúncios (AdSense + Banners Próprios)
               </p>
             </div>
@@ -262,13 +262,13 @@ export default function AdsManagementPage() {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
           <Card>
             <CardHeader className="pb-3">
-              <CardTitle className="text-sm font-medium text-gray-600">
+              <CardTitle className="text-sm font-medium text-theme-muted">
                 Total de Anúncios
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-gray-900">{ads.length}</div>
-              <div className="text-xs text-gray-500 mt-1">
+              <div className="text-2xl font-bold text-theme">{ads.length}</div>
+              <div className="text-xs text-theme-muted mt-1">
                 {ads.filter((a) => a.isActive).length} ativos
               </div>
             </CardContent>
@@ -276,7 +276,7 @@ export default function AdsManagementPage() {
 
           <Card>
             <CardHeader className="pb-3">
-              <CardTitle className="text-sm font-medium text-gray-600 flex items-center gap-2">
+              <CardTitle className="text-sm font-medium text-theme-muted flex items-center gap-2">
                 <Eye className="h-4 w-4" />
                 Impressões
               </CardTitle>
@@ -290,7 +290,7 @@ export default function AdsManagementPage() {
 
           <Card>
             <CardHeader className="pb-3">
-              <CardTitle className="text-sm font-medium text-gray-600 flex items-center gap-2">
+              <CardTitle className="text-sm font-medium text-theme-muted flex items-center gap-2">
                 <MousePointer className="h-4 w-4" />
                 Cliques
               </CardTitle>
@@ -304,7 +304,7 @@ export default function AdsManagementPage() {
 
           <Card>
             <CardHeader className="pb-3">
-              <CardTitle className="text-sm font-medium text-gray-600 flex items-center gap-2">
+              <CardTitle className="text-sm font-medium text-theme-muted flex items-center gap-2">
                 <TrendingUp className="h-4 w-4" />
                 CTR
               </CardTitle>
@@ -529,7 +529,7 @@ export default function AdsManagementPage() {
           </CardHeader>
           <CardContent>
             {ads.length === 0 ? (
-              <div className="text-center py-12 text-gray-500">
+              <div className="text-center py-12 text-theme-muted">
                 <Target className="h-12 w-12 mx-auto mb-4 opacity-50" />
                 <p>Nenhum anúncio cadastrado ainda.</p>
                 <p className="text-sm mt-2">
@@ -565,7 +565,7 @@ export default function AdsManagementPage() {
                               ${
                                 ad.isActive
                                   ? "bg-green-100 text-green-700"
-                                  : "bg-gray-100 text-gray-600"
+                                  : "bg-muted-soft text-theme-muted"
                               }
                             `}
                           >
@@ -573,7 +573,7 @@ export default function AdsManagementPage() {
                           </span>
                         </div>
 
-                        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-3 text-sm text-gray-600">
+                        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-3 text-sm text-theme-muted">
                           <div>
                             <span className="font-medium">Posição:</span>{" "}
                             {ad.position}
@@ -594,7 +594,7 @@ export default function AdsManagementPage() {
 
                         {ad.type === "banner" && ad.bannerUrl && (
                           <div className="mt-3">
-                            <span className="text-sm text-gray-600">
+                            <span className="text-sm text-theme-muted">
                               Banner: {ad.bannerUrl}
                             </span>
                           </div>

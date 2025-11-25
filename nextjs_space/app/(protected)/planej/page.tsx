@@ -236,7 +236,7 @@ export default function PlanejPage() {
     if (actual === 0) {
       return {
         icon: <XCircle className="w-5 h-5 text-gray-400" />,
-        color: "text-gray-600",
+        color: "text-theme-muted",
         label: "Pendente",
       };
     }
@@ -565,11 +565,11 @@ export default function PlanejPage() {
                 💰 RECEITAS PLANEJADAS
               </CardTitle>
               <div className="text-right">
-                <div className="text-sm text-gray-600">Previsto</div>
+                <div className="text-sm text-theme-muted">Previsto</div>
                 <div className="text-2xl font-bold text-green-600">
                   R$ {totalIncomeExpected.toFixed(2)}
                 </div>
-                <div className="text-sm text-gray-600 mt-1">Realizado</div>
+                <div className="text-sm text-theme-muted mt-1">Realizado</div>
                 <div className="text-xl font-semibold text-green-700">
                   R$ {totalIncomeActual.toFixed(2)} (
                   {totalIncomeExpected > 0
@@ -582,7 +582,7 @@ export default function PlanejPage() {
           </CardHeader>
           <CardContent className="p-6">
             {incomeTransactions.length === 0 ? (
-              <p className="text-center text-gray-500 py-8">
+              <p className="text-center text-theme-muted py-8">
                 Nenhuma receita planejada para este mês
               </p>
             ) : (
@@ -602,7 +602,7 @@ export default function PlanejPage() {
                             <span className="text-xs bg-green-100 text-green-800 px-2 py-1 rounded">
                               {planned.category}
                             </span>
-                            <span className="text-xs text-gray-600">
+                            <span className="text-xs text-theme-muted">
                               {planned.accountType}
                             </span>
                           </div>
@@ -667,11 +667,11 @@ export default function PlanejPage() {
                 💸 DESPESAS PLANEJADAS
               </CardTitle>
               <div className="text-right">
-                <div className="text-sm text-gray-600">Previsto</div>
+                <div className="text-sm text-theme-muted">Previsto</div>
                 <div className="text-2xl font-bold text-red-600">
                   R$ {totalExpenseExpected.toFixed(2)}
                 </div>
-                <div className="text-sm text-gray-600 mt-1">Realizado</div>
+                <div className="text-sm text-theme-muted mt-1">Realizado</div>
                 <div className="text-xl font-semibold text-red-700">
                   R$ {totalExpenseActual.toFixed(2)} (
                   {totalExpenseExpected > 0
@@ -684,7 +684,7 @@ export default function PlanejPage() {
           </CardHeader>
           <CardContent className="p-6">
             {expenseTransactions.length === 0 ? (
-              <p className="text-center text-gray-500 py-8">
+              <p className="text-center text-theme-muted py-8">
                 Nenhuma despesa planejada para este mês
               </p>
             ) : (
@@ -704,7 +704,7 @@ export default function PlanejPage() {
                             <span className="text-xs bg-red-100 text-red-800 px-2 py-1 rounded">
                               {planned.category}
                             </span>
-                            <span className="text-xs text-gray-600">
+                            <span className="text-xs text-theme-muted">
                               {planned.accountType}
                             </span>
                           </div>

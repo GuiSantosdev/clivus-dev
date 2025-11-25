@@ -127,7 +127,7 @@ export default function TeamPage() {
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
-          <p className="mt-4 text-gray-600">Carregando...</p>
+          <p className="mt-4 text-theme-muted">Carregando...</p>
         </div>
       </div>
     );
@@ -140,8 +140,8 @@ export default function TeamPage() {
     <div className="p-8">
       <div className="mb-6 flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Gerenciar Equipe</h1>
-          <p className="text-gray-600 mt-2">Controle de acesso multi-usuário</p>
+          <h1 className="text-3xl font-bold text-theme">Gerenciar Equipe</h1>
+          <p className="text-theme-muted mt-2">Controle de acesso multi-usuário</p>
         </div>
         <Button
           onClick={() => setShowForm(!showForm)}
@@ -156,7 +156,7 @@ export default function TeamPage() {
           <CardContent className="p-4">
             <div className="flex items-start space-x-3">
               <AlertCircle className="h-5 w-5 text-blue-600 mt-0.5" />
-              <div className="text-sm text-gray-700">
+              <div className="text-sm text-theme">
                 <p className="font-semibold mb-1">Multi-usuário - Colaboração Segura</p>
                 <p>
                   Convide membros da sua equipe e defina permissões específicas.
@@ -171,15 +171,15 @@ export default function TeamPage() {
         <div className="grid md:grid-cols-3 gap-6 mb-8">
           <Card>
             <CardHeader className="pb-3">
-              <CardTitle className="text-sm font-medium text-gray-600">
+              <CardTitle className="text-sm font-medium text-theme-muted">
                 Total de Membros
               </CardTitle>
             </CardHeader>
             <CardContent>
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-3xl font-bold text-gray-900">{teamMembers.length}</p>
-                  <p className="text-xs text-gray-500 mt-1">na equipe</p>
+                  <p className="text-3xl font-bold text-theme">{teamMembers.length}</p>
+                  <p className="text-xs text-theme-muted mt-1">na equipe</p>
                 </div>
                 <Users className="h-12 w-12 text-blue-600" />
               </div>
@@ -188,7 +188,7 @@ export default function TeamPage() {
 
           <Card>
             <CardHeader className="pb-3">
-              <CardTitle className="text-sm font-medium text-gray-600">
+              <CardTitle className="text-sm font-medium text-theme-muted">
                 Membros Ativos
               </CardTitle>
             </CardHeader>
@@ -196,7 +196,7 @@ export default function TeamPage() {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-3xl font-bold text-green-600">{activeMembers}</p>
-                  <p className="text-xs text-gray-500 mt-1">com acesso</p>
+                  <p className="text-xs text-theme-muted mt-1">com acesso</p>
                 </div>
                 <UserCheck className="h-12 w-12 text-green-600" />
               </div>
@@ -205,7 +205,7 @@ export default function TeamPage() {
 
           <Card>
             <CardHeader className="pb-3">
-              <CardTitle className="text-sm font-medium text-gray-600">
+              <CardTitle className="text-sm font-medium text-theme-muted">
                 Convites Pendentes
               </CardTitle>
             </CardHeader>
@@ -213,7 +213,7 @@ export default function TeamPage() {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-3xl font-bold text-yellow-600">{pendingMembers}</p>
-                  <p className="text-xs text-gray-500 mt-1">aguardando</p>
+                  <p className="text-xs text-theme-muted mt-1">aguardando</p>
                 </div>
                 <Mail className="h-12 w-12 text-yellow-600" />
               </div>
@@ -265,7 +265,7 @@ export default function TeamPage() {
                       <SelectItem value="viewer">Visualizador (Apenas Leitura)</SelectItem>
                     </SelectContent>
                   </Select>
-                  <p className="text-xs text-gray-500 mt-1">
+                  <p className="text-xs text-theme-muted mt-1">
                     {formData.role === "admin" && "Pode gerenciar equipe, transações e configurações"}
                     {formData.role === "editor" && "Pode adicionar e editar transações"}
                     {formData.role === "viewer" && "Pode apenas visualizar informações"}
@@ -303,7 +303,7 @@ export default function TeamPage() {
                   key={member.id}
                   className={`p-4 rounded-lg border-2 ${
                     member.status === "active"
-                      ? "bg-white border-gray-200"
+                      ? "bg-card border-gray-200"
                       : "bg-yellow-50 border-yellow-200"
                   }`}
                 >
@@ -316,7 +316,7 @@ export default function TeamPage() {
                       </div>
                       <div className="flex-1">
                         <div className="flex items-center space-x-2">
-                          <h3 className="font-semibold text-gray-900">{member.name}</h3>
+                          <h3 className="font-semibold text-theme">{member.name}</h3>
                           {member.status === "pending" && (
                             <span className="px-2 py-0.5 bg-yellow-100 text-yellow-700 text-xs rounded-full">
                               Pendente
@@ -328,12 +328,12 @@ export default function TeamPage() {
                             </span>
                           )}
                         </div>
-                        <p className="text-sm text-gray-600">{member.email}</p>
+                        <p className="text-sm text-theme-muted">{member.email}</p>
                         <div className="flex flex-wrap gap-1 mt-2">
                           {member.permissions.map((perm, index) => (
                             <span
                               key={index}
-                              className="px-2 py-0.5 bg-gray-100 text-gray-600 text-xs rounded"
+                              className="px-2 py-0.5 bg-gray-100 text-theme-muted text-xs rounded"
                             >
                               {perm}
                             </span>
@@ -365,8 +365,8 @@ export default function TeamPage() {
           <CardContent>
             <div className="space-y-4">
               <div className="p-4 bg-purple-50 rounded-lg">
-                <h4 className="font-semibold text-gray-900 mb-2">Administrador</h4>
-                <ul className="text-sm text-gray-700 space-y-1">
+                <h4 className="font-semibold text-theme mb-2">Administrador</h4>
+                <ul className="text-sm text-theme space-y-1">
                   <li>✓ Visualizar todas as informações financeiras</li>
                   <li>✓ Adicionar, editar e excluir transações</li>
                   <li>✓ Gerenciar membros da equipe</li>
@@ -375,8 +375,8 @@ export default function TeamPage() {
               </div>
 
               <div className="p-4 bg-blue-50 rounded-lg">
-                <h4 className="font-semibold text-gray-900 mb-2">Editor</h4>
-                <ul className="text-sm text-gray-700 space-y-1">
+                <h4 className="font-semibold text-theme mb-2">Editor</h4>
+                <ul className="text-sm text-theme space-y-1">
                   <li>✓ Visualizar todas as informações financeiras</li>
                   <li>✓ Adicionar e editar transações</li>
                   <li>✗ Excluir transações</li>
@@ -385,8 +385,8 @@ export default function TeamPage() {
               </div>
 
               <div className="p-4 bg-gray-50 rounded-lg">
-                <h4 className="font-semibold text-gray-900 mb-2">Visualizador</h4>
-                <ul className="text-sm text-gray-700 space-y-1">
+                <h4 className="font-semibold text-theme mb-2">Visualizador</h4>
+                <ul className="text-sm text-theme space-y-1">
                   <li>✓ Visualizar informações financeiras</li>
                   <li>✓ Gerar relatórios</li>
                   <li>✗ Adicionar ou modificar dados</li>

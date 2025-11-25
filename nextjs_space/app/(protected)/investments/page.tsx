@@ -125,7 +125,7 @@ export default function InvestmentsPage() {
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
-          <p className="mt-4 text-gray-600">Carregando...</p>
+          <p className="mt-4 text-theme-muted">Carregando...</p>
         </div>
       </div>
     );
@@ -141,8 +141,8 @@ export default function InvestmentsPage() {
     <div className="p-8">
       <div className="mb-6 flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Controle de Investimentos</h1>
-          <p className="text-gray-600 mt-2">Separe e acompanhe investimentos CPF e CNPJ</p>
+          <h1 className="text-3xl font-bold text-theme">Controle de Investimentos</h1>
+          <p className="text-theme-muted mt-2">Separe e acompanhe investimentos CPF e CNPJ</p>
         </div>
         <Button
           onClick={() => setShowForm(!showForm)}
@@ -157,7 +157,7 @@ export default function InvestmentsPage() {
           <CardContent className="p-4">
             <div className="flex items-start space-x-3">
               <AlertCircle className="h-5 w-5 text-blue-600 mt-0.5" />
-              <div className="text-sm text-gray-700">
+              <div className="text-sm text-theme">
                 <p className="font-semibold mb-1">Por que separar investimentos PF e PJ?</p>
                 <p>
                   Investimentos pessoais (CPF) e empresariais (CNPJ) têm tributações diferentes.
@@ -171,17 +171,17 @@ export default function InvestmentsPage() {
         <div className="grid md:grid-cols-3 gap-6 mb-8">
           <Card>
             <CardHeader className="pb-3">
-              <CardTitle className="text-sm font-medium text-gray-600">
+              <CardTitle className="text-sm font-medium text-theme-muted">
                 Total Investido
               </CardTitle>
             </CardHeader>
             <CardContent>
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-3xl font-bold text-gray-900">
+                  <p className="text-3xl font-bold text-theme">
                     R$ {totalInvestments.toFixed(2)}
                   </p>
-                  <p className="text-xs text-gray-500 mt-1">CPF + CNPJ</p>
+                  <p className="text-xs text-theme-muted mt-1">CPF + CNPJ</p>
                 </div>
                 <DollarSign className="h-12 w-12 text-blue-600" />
               </div>
@@ -190,7 +190,7 @@ export default function InvestmentsPage() {
 
           <Card>
             <CardHeader className="pb-3">
-              <CardTitle className="text-sm font-medium text-gray-600">
+              <CardTitle className="text-sm font-medium text-theme-muted">
                 Investimentos CPF
               </CardTitle>
             </CardHeader>
@@ -200,7 +200,7 @@ export default function InvestmentsPage() {
                   <p className="text-3xl font-bold text-green-600">
                     R$ {cpfTotal.toFixed(2)}
                   </p>
-                  <p className="text-xs text-gray-500 mt-1">{cpfInvestments.length} ativos</p>
+                  <p className="text-xs text-theme-muted mt-1">{cpfInvestments.length} ativos</p>
                 </div>
                 <PieChart className="h-12 w-12 text-green-600" />
               </div>
@@ -209,7 +209,7 @@ export default function InvestmentsPage() {
 
           <Card>
             <CardHeader className="pb-3">
-              <CardTitle className="text-sm font-medium text-gray-600">
+              <CardTitle className="text-sm font-medium text-theme-muted">
                 Investimentos CNPJ
               </CardTitle>
             </CardHeader>
@@ -219,7 +219,7 @@ export default function InvestmentsPage() {
                   <p className="text-3xl font-bold text-purple-600">
                     R$ {cnpjTotal.toFixed(2)}
                   </p>
-                  <p className="text-xs text-gray-500 mt-1">{cnpjInvestments.length} ativos</p>
+                  <p className="text-xs text-theme-muted mt-1">{cnpjInvestments.length} ativos</p>
                 </div>
                 <TrendingUp className="h-12 w-12 text-purple-600" />
               </div>
@@ -352,11 +352,11 @@ export default function InvestmentsPage() {
                     >
                       <div className="flex items-center justify-between">
                         <div className="flex-1">
-                          <p className="font-medium text-gray-900">{investment.name}</p>
-                          <p className="text-sm text-gray-600">
+                          <p className="font-medium text-theme">{investment.name}</p>
+                          <p className="text-sm text-theme-muted">
                             {investment.type.toUpperCase()} • {investment.returns}% a.a.
                           </p>
-                          <p className="text-sm text-gray-500">
+                          <p className="text-sm text-theme-muted">
                             {new Date(investment.date).toLocaleDateString("pt-BR")}
                           </p>
                         </div>
@@ -382,7 +382,7 @@ export default function InvestmentsPage() {
               ) : (
                 <div className="text-center py-8">
                   <PieChart className="h-12 w-12 text-gray-300 mx-auto mb-3" />
-                  <p className="text-gray-500">Nenhum investimento pessoal registrado</p>
+                  <p className="text-theme-muted">Nenhum investimento pessoal registrado</p>
                 </div>
               )}
             </CardContent>
@@ -405,11 +405,11 @@ export default function InvestmentsPage() {
                     >
                       <div className="flex items-center justify-between">
                         <div className="flex-1">
-                          <p className="font-medium text-gray-900">{investment.name}</p>
-                          <p className="text-sm text-gray-600">
+                          <p className="font-medium text-theme">{investment.name}</p>
+                          <p className="text-sm text-theme-muted">
                             {investment.type.toUpperCase()} • {investment.returns}% a.a.
                           </p>
-                          <p className="text-sm text-gray-500">
+                          <p className="text-sm text-theme-muted">
                             {new Date(investment.date).toLocaleDateString("pt-BR")}
                           </p>
                         </div>
@@ -435,7 +435,7 @@ export default function InvestmentsPage() {
               ) : (
                 <div className="text-center py-8">
                   <TrendingUp className="h-12 w-12 text-gray-300 mx-auto mb-3" />
-                  <p className="text-gray-500">Nenhum investimento empresarial registrado</p>
+                  <p className="text-theme-muted">Nenhum investimento empresarial registrado</p>
                 </div>
               )}
             </CardContent>

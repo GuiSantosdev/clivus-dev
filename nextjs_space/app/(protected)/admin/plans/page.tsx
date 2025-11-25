@@ -323,7 +323,7 @@ export default function AdminPlansPage() {
     return (
       <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 p-8">
         <div className="max-w-7xl mx-auto">
-          <p className="text-gray-600">Carregando...</p>
+          <p className="text-theme-muted">Carregando...</p>
         </div>
       </div>
     );
@@ -345,11 +345,11 @@ export default function AdminPlansPage() {
                 Voltar
               </Button>
               <div>
-                <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-3">
+                <h1 className="text-3xl font-bold text-theme flex items-center gap-3">
                   <Settings className="w-8 h-8 text-blue-600" />
                   Gerenciar Funcionalidades
                 </h1>
-                <p className="text-gray-600 mt-1">
+                <p className="text-theme-muted mt-1">
                   Plano: <span className="font-semibold">{selectedPlanForFeatures.name}</span> 
                   {" "}(R$ {selectedPlanForFeatures.price.toFixed(2)})
                 </p>
@@ -363,7 +363,7 @@ export default function AdminPlansPage() {
 
           {loadingFeatures ? (
             <Card className="p-8 text-center">
-              <p className="text-gray-600">Carregando funcionalidades...</p>
+              <p className="text-theme-muted">Carregando funcionalidades...</p>
             </Card>
           ) : (
             <div className="space-y-4">
@@ -376,10 +376,10 @@ export default function AdminPlansPage() {
                   <Card key={feature.key} className="p-6">
                     <div className="flex items-start justify-between gap-4">
                       <div className="flex-1">
-                        <h3 className="text-lg font-semibold text-gray-900 mb-1">
+                        <h3 className="text-lg font-semibold text-theme mb-1">
                           {feature.name}
                         </h3>
-                        <p className="text-sm text-gray-600">{feature.description}</p>
+                        <p className="text-sm text-theme-muted">{feature.description}</p>
                       </div>
 
                       <div className="flex items-center gap-4">
@@ -405,7 +405,7 @@ export default function AdminPlansPage() {
                               <Infinity className="w-5 h-5 text-green-600" />
                             )}
                           </div>
-                          <p className="text-xs text-gray-500">
+                          <p className="text-xs text-theme-muted">
                             -1 = Ilimitado | 0 = Desabilitado
                           </p>
                         </div>
@@ -464,7 +464,7 @@ export default function AdminPlansPage() {
         <div className="max-w-4xl mx-auto">
           <Card className="p-8">
             <div className="flex items-center justify-between mb-6">
-              <h2 className="text-2xl font-bold text-gray-900">
+              <h2 className="text-2xl font-bold text-theme">
                 {editingPlan ? "Editar Plano" : "Criar Novo Plano"}
               </h2>
               <Button
@@ -544,9 +544,9 @@ export default function AdminPlansPage() {
                     setFormData({ ...formData, features: e.target.value })
                   }
                   placeholder="Separação completa entre CPF e CNPJ&#10;Controle de receitas e despesas&#10;Relatórios financeiros mensais"
-                  className="w-full min-h-[200px] px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full min-h-[200px] px-3 py-2 border border-theme rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
-                <p className="text-sm text-gray-500 mt-1">
+                <p className="text-sm text-theme-muted mt-1">
                   Estas funcionalidades aparecerão na landing page como texto descritivo.
                 </p>
               </div>
@@ -604,7 +604,7 @@ export default function AdminPlansPage() {
                 Voltar ao Admin
               </Button>
             </Link>
-            <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-3">
+            <h1 className="text-3xl font-bold text-theme flex items-center gap-3">
               <Package className="w-8 h-8 text-blue-600" />
               Gerenciar Planos
             </h1>
@@ -621,10 +621,10 @@ export default function AdminPlansPage() {
         {plans.length === 0 ? (
           <Card className="p-12 text-center">
             <Package className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-            <h3 className="text-xl font-semibold text-gray-900 mb-2">
+            <h3 className="text-xl font-semibold text-theme mb-2">
               Nenhum plano cadastrado
             </h3>
-            <p className="text-gray-600 mb-4">
+            <p className="text-theme-muted mb-4">
               Comece criando seu primeiro plano de assinatura.
             </p>
             <Button onClick={handleCreatePlan} className="bg-blue-600 hover:bg-blue-700">
@@ -639,7 +639,7 @@ export default function AdminPlansPage() {
                 <div className="flex items-start justify-between">
                   <div className="flex-1">
                     <div className="flex items-center gap-3 mb-2">
-                      <h3 className="text-xl font-bold text-gray-900">
+                      <h3 className="text-xl font-bold text-theme">
                         {plan.name}
                       </h3>
                       {plan.isActive ? (
@@ -647,16 +647,16 @@ export default function AdminPlansPage() {
                           Ativo
                         </span>
                       ) : (
-                        <span className="px-3 py-1 bg-gray-100 text-gray-800 text-xs font-semibold rounded-full">
+                        <span className="px-3 py-1 bg-muted-soft text-gray-800 text-xs font-semibold rounded-full">
                           Inativo
                         </span>
                       )}
                     </div>
 
-                    <div className="flex items-center gap-6 mb-4 text-sm text-gray-600">
+                    <div className="flex items-center gap-6 mb-4 text-sm text-theme-muted">
                       <div className="flex items-center gap-2">
                         <DollarSign className="w-4 h-4" />
-                        <span className="font-semibold text-lg text-gray-900">
+                        <span className="font-semibold text-lg text-theme">
                           R$ {plan.price.toFixed(2)}
                         </span>
                       </div>
@@ -670,15 +670,15 @@ export default function AdminPlansPage() {
                       </div>
                     </div>
 
-                    <div className="bg-gray-50 rounded-lg p-4">
-                      <h4 className="text-sm font-semibold text-gray-700 mb-2">
+                    <div className="bg-muted-soft rounded-lg p-4">
+                      <h4 className="text-sm font-semibold text-theme mb-2">
                         Funcionalidades (Landing Page):
                       </h4>
                       <ul className="space-y-1">
                         {plan.features.map((feature, index) => (
                           <li
                             key={index}
-                            className="text-sm text-gray-600 flex items-start gap-2"
+                            className="text-sm text-theme-muted flex items-start gap-2"
                           >
                             <CheckCircle className="w-4 h-4 text-green-600 mt-0.5 flex-shrink-0" />
                             {feature}

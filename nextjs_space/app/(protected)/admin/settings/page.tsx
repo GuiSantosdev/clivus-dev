@@ -114,24 +114,24 @@ export default function SettingsPage() {
       <div className="flex items-center justify-center min-h-screen">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
-          <p className="mt-4 text-gray-600">Carregando configurações...</p>
+          <p className="mt-4 text-theme-muted">Carregando configurações...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6">
+    <div className="min-h-screen bg-muted-soft p-6">
       <div className="max-w-5xl mx-auto">
         {/* Header */}
         <div className="mb-8">
           <div className="flex items-center gap-3 mb-2">
             <Settings className="h-8 w-8 text-blue-600" />
-            <h1 className="text-3xl font-bold text-gray-900">
+            <h1 className="text-3xl font-bold text-theme">
               Configurações do Sistema
             </h1>
           </div>
-          <p className="text-gray-600">
+          <p className="text-theme-muted">
             Gerencie as configurações e teste as integrações do Clivus
           </p>
         </div>
@@ -151,9 +151,9 @@ export default function SettingsPage() {
                 type="text"
                 value={config.smtpHost}
                 readOnly
-                className="bg-gray-100"
+                className="bg-muted-soft"
               />
-              <p className="text-sm text-gray-500 mt-1">
+              <p className="text-sm text-theme-muted mt-1">
                 {config.smtpHost 
                   ? "✅ Configurado" 
                   : "❌ Não configurado"}
@@ -166,9 +166,9 @@ export default function SettingsPage() {
                 type="text"
                 value={config.smtpPort}
                 readOnly
-                className="bg-gray-100"
+                className="bg-muted-soft"
               />
-              <p className="text-sm text-gray-500 mt-1">
+              <p className="text-sm text-theme-muted mt-1">
                 {config.smtpPort 
                   ? "✅ Configurado" 
                   : "❌ Não configurado"}
@@ -181,9 +181,9 @@ export default function SettingsPage() {
                 type="text"
                 value={config.smtpUser}
                 readOnly
-                className="bg-gray-100"
+                className="bg-muted-soft"
               />
-              <p className="text-sm text-gray-500 mt-1">
+              <p className="text-sm text-theme-muted mt-1">
                 {config.smtpUser 
                   ? "✅ Configurado" 
                   : "❌ Não configurado - Configure no arquivo .env"}
@@ -196,9 +196,9 @@ export default function SettingsPage() {
                 type="password"
                 value={config.smtpPass}
                 readOnly
-                className="bg-gray-100"
+                className="bg-muted-soft"
               />
-              <p className="text-sm text-gray-500 mt-1">
+              <p className="text-sm text-theme-muted mt-1">
                 {config.smtpPass 
                   ? "✅ Configurada" 
                   : "❌ Não configurada - Configure no arquivo .env"}
@@ -211,9 +211,9 @@ export default function SettingsPage() {
                 type="email"
                 value={config.emailFrom}
                 readOnly
-                className="bg-gray-100"
+                className="bg-muted-soft"
               />
-              <p className="text-sm text-gray-500 mt-1">
+              <p className="text-sm text-theme-muted mt-1">
                 {config.emailFrom 
                   ? "✅ Configurado" 
                   : "❌ Não configurado - Configure no arquivo .env"}
@@ -226,9 +226,9 @@ export default function SettingsPage() {
                 type="email"
                 value={config.adminEmail}
                 readOnly
-                className="bg-gray-100"
+                className="bg-muted-soft"
               />
-              <p className="text-sm text-gray-500 mt-1">
+              <p className="text-sm text-theme-muted mt-1">
                 {config.adminEmail 
                   ? "✅ Configurado" 
                   : "❌ Não configurado - Configure no arquivo .env"}
@@ -300,9 +300,9 @@ export default function SettingsPage() {
                 type="url"
                 value={config.appUrl}
                 readOnly
-                className="bg-gray-100"
+                className="bg-muted-soft"
               />
-              <p className="text-sm text-gray-500 mt-1">
+              <p className="text-sm text-theme-muted mt-1">
                 {config.appUrl 
                   ? "✅ Configurada" 
                   : "❌ Não configurada - Configure no arquivo .env"}
@@ -320,7 +320,7 @@ export default function SettingsPage() {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-sm text-gray-600 mb-4">
+            <p className="text-sm text-theme-muted mb-4">
               Teste a API que detecta a cidade dos visitantes para as notificações de social proof.
             </p>
             <Button 

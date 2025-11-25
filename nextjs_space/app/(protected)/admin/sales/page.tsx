@@ -106,7 +106,7 @@ export default function AdminSalesPage() {
       completed: "bg-green-100 text-green-800",
       pending: "bg-yellow-100 text-yellow-800",
       failed: "bg-red-100 text-red-800",
-      expired: "bg-gray-100 text-gray-800",
+      expired: "bg-muted-soft text-gray-800",
     };
 
     const labels = {
@@ -119,7 +119,7 @@ export default function AdminSalesPage() {
     return (
       <span
         className={`px-2 py-1 rounded-full text-xs font-medium ${
-          styles[status as keyof typeof styles] || "bg-gray-100 text-gray-800"
+          styles[status as keyof typeof styles] || "bg-muted-soft text-gray-800"
         }`}
       >
         {labels[status as keyof typeof labels] || status}
@@ -133,18 +133,18 @@ export default function AdminSalesPage() {
 
   if (loading || status === "loading") {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen bg-muted-soft flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600 mx-auto"></div>
-          <p className="mt-4 text-gray-600">Carregando...</p>
+          <p className="mt-4 text-theme-muted">Carregando...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="bg-white border-b">
+    <div className="min-h-screen bg-muted-soft">
+      <div className="bg-card border-b">
         <div className="container mx-auto px-4 py-6">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-4">
@@ -155,8 +155,8 @@ export default function AdminSalesPage() {
                 </Button>
               </Link>
               <div>
-                <h1 className="text-3xl font-bold text-gray-900">Gestão de Vendas</h1>
-                <p className="text-gray-600 mt-1">Controle completo de pagamentos e clientes</p>
+                <h1 className="text-3xl font-bold text-theme">Gestão de Vendas</h1>
+                <p className="text-theme-muted mt-1">Controle completo de pagamentos e clientes</p>
               </div>
             </div>
           </div>
@@ -272,30 +272,30 @@ export default function AdminSalesPage() {
               <table className="w-full">
                 <thead>
                   <tr className="border-b">
-                    <th className="text-left p-3 font-medium text-gray-700">Cliente</th>
-                    <th className="text-left p-3 font-medium text-gray-700">Plano</th>
-                    <th className="text-center p-3 font-medium text-gray-700">Valor</th>
-                    <th className="text-center p-3 font-medium text-gray-700">Status</th>
-                    <th className="text-center p-3 font-medium text-gray-700">Gateway</th>
-                    <th className="text-left p-3 font-medium text-gray-700">Data</th>
-                    <th className="text-center p-3 font-medium text-gray-700">Ações</th>
+                    <th className="text-left p-3 font-medium text-theme">Cliente</th>
+                    <th className="text-left p-3 font-medium text-theme">Plano</th>
+                    <th className="text-center p-3 font-medium text-theme">Valor</th>
+                    <th className="text-center p-3 font-medium text-theme">Status</th>
+                    <th className="text-center p-3 font-medium text-theme">Gateway</th>
+                    <th className="text-left p-3 font-medium text-theme">Data</th>
+                    <th className="text-center p-3 font-medium text-theme">Ações</th>
                   </tr>
                 </thead>
                 <tbody>
                   {filteredPayments && filteredPayments.length > 0 ? (
                     filteredPayments.map((payment) => (
-                      <tr key={payment?.id} className="border-b hover:bg-gray-50">
+                      <tr key={payment?.id} className="border-b hover:bg-muted-soft">
                         <td className="p-3">
                           <div>
-                            <div className="font-medium text-gray-900">
+                            <div className="font-medium text-theme">
                               {payment?.user?.name || "—"}
                             </div>
-                            <div className="text-sm text-gray-600">
+                            <div className="text-sm text-theme-muted">
                               {payment?.user?.email}
                             </div>
                           </div>
                         </td>
-                        <td className="p-3 text-gray-900">
+                        <td className="p-3 text-theme">
                           {payment?.planDetails?.name || "—"}
                         </td>
                         <td className="p-3 text-center">
@@ -312,7 +312,7 @@ export default function AdminSalesPage() {
                             {payment?.gateway || "N/A"}
                           </span>
                         </td>
-                        <td className="p-3 text-gray-600">
+                        <td className="p-3 text-theme-muted">
                           {new Date(payment?.createdAt).toLocaleString("pt-BR")}
                         </td>
                         <td className="p-3 text-center">
@@ -331,7 +331,7 @@ export default function AdminSalesPage() {
                     ))
                   ) : (
                     <tr>
-                      <td colSpan={7} className="p-8 text-center text-gray-600">
+                      <td colSpan={7} className="p-8 text-center text-theme-muted">
                         Nenhuma venda encontrada
                       </td>
                     </tr>

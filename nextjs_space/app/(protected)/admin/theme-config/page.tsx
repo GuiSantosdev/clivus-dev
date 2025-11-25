@@ -152,7 +152,7 @@ export default function ThemeConfigPage() {
       <div className="flex items-center justify-center min-h-screen">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-          <p className="text-gray-600">Carregando configurações...</p>
+          <p className="text-theme-muted">Carregando configurações...</p>
         </div>
       </div>
     );
@@ -176,7 +176,7 @@ export default function ThemeConfigPage() {
           <h1 className="text-3xl font-bold mb-2">
             Configuração de Temas do Sistema
           </h1>
-          <p className="text-gray-600">
+          <p className="text-theme-muted">
             Defina o tema padrão e permissões de personalização para todos os
             usuários.
           </p>

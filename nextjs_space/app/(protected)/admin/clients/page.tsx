@@ -156,7 +156,7 @@ export default function ClientsManagementPage() {
     const colors: Record<string, string> = {
       superadmin: "bg-purple-100 text-purple-800",
       admin: "bg-blue-100 text-blue-800",
-      user: "bg-gray-100 text-gray-800",
+      user: "bg-muted-soft text-gray-800",
     };
 
     return (
@@ -183,7 +183,7 @@ export default function ClientsManagementPage() {
   const inactiveUsers = users.filter((u) => !u.hasAccess).length;
 
   return (
-    <div className="min-h-screen bg-gray-50 p-8">
+    <div className="min-h-screen bg-muted-soft p-8">
       <div className="max-w-7xl mx-auto space-y-8">
         {/* Header */}
         <div className="flex items-center justify-between">
@@ -194,10 +194,10 @@ export default function ClientsManagementPage() {
               </Button>
             </Link>
             <div>
-              <h1 className="text-3xl font-bold text-gray-900">
+              <h1 className="text-3xl font-bold text-theme">
                 Gestão de Clientes Pagantes
               </h1>
-              <p className="text-gray-600">
+              <p className="text-theme-muted">
                 Clientes com acesso ativo ao sistema (hasAccess: true)
               </p>
             </div>
@@ -216,19 +216,19 @@ export default function ClientsManagementPage() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <Card>
             <CardHeader className="flex flex-row items-center justify-between pb-2">
-              <CardTitle className="text-sm font-medium text-gray-600">
+              <CardTitle className="text-sm font-medium text-theme-muted">
                 Total de Clientes
               </CardTitle>
               <Users className="w-5 h-5 text-blue-600" />
             </CardHeader>
             <CardContent>
-              <div className="text-3xl font-bold text-gray-900">{totalUsers}</div>
+              <div className="text-3xl font-bold text-theme">{totalUsers}</div>
             </CardContent>
           </Card>
 
           <Card>
             <CardHeader className="flex flex-row items-center justify-between pb-2">
-              <CardTitle className="text-sm font-medium text-gray-600">
+              <CardTitle className="text-sm font-medium text-theme-muted">
                 Clientes Ativos
               </CardTitle>
               <CheckCircle className="w-5 h-5 text-green-600" />
@@ -240,7 +240,7 @@ export default function ClientsManagementPage() {
 
           <Card>
             <CardHeader className="flex flex-row items-center justify-between pb-2">
-              <CardTitle className="text-sm font-medium text-gray-600">
+              <CardTitle className="text-sm font-medium text-theme-muted">
                 Clientes Inativos
               </CardTitle>
               <XCircle className="w-5 h-5 text-red-600" />
@@ -309,23 +309,23 @@ export default function ClientsManagementPage() {
             <div className="overflow-x-auto">
               <table className="w-full">
                 <thead>
-                  <tr className="border-b border-gray-200">
-                    <th className="text-left py-3 px-4 font-semibold text-sm text-gray-700">
+                  <tr className="border-b border-theme">
+                    <th className="text-left py-3 px-4 font-semibold text-sm text-theme">
                       Cliente
                     </th>
-                    <th className="text-left py-3 px-4 font-semibold text-sm text-gray-700">
+                    <th className="text-left py-3 px-4 font-semibold text-sm text-theme">
                       Status
                     </th>
-                    <th className="text-left py-3 px-4 font-semibold text-sm text-gray-700">
+                    <th className="text-left py-3 px-4 font-semibold text-sm text-theme">
                       Função
                     </th>
-                    <th className="text-left py-3 px-4 font-semibold text-sm text-gray-700">
+                    <th className="text-left py-3 px-4 font-semibold text-sm text-theme">
                       Plano
                     </th>
-                    <th className="text-left py-3 px-4 font-semibold text-sm text-gray-700">
+                    <th className="text-left py-3 px-4 font-semibold text-sm text-theme">
                       Cadastro
                     </th>
-                    <th className="text-center py-3 px-4 font-semibold text-sm text-gray-700">
+                    <th className="text-center py-3 px-4 font-semibold text-sm text-theme">
                       Ações
                     </th>
                   </tr>
@@ -333,7 +333,7 @@ export default function ClientsManagementPage() {
                 <tbody>
                   {filteredUsers.length === 0 ? (
                     <tr>
-                      <td colSpan={6} className="text-center py-8 text-gray-500">
+                      <td colSpan={6} className="text-center py-8 text-theme-muted">
                         Nenhum cliente encontrado
                       </td>
                     </tr>
@@ -343,14 +343,14 @@ export default function ClientsManagementPage() {
                       return (
                         <tr
                           key={user.id}
-                          className="border-b border-gray-100 hover:bg-gray-50"
+                          className="border-b border-gray-100 hover:bg-muted-soft"
                         >
                           <td className="py-3 px-4">
                             <div className="flex flex-col">
-                              <span className="font-medium text-gray-900">
+                              <span className="font-medium text-theme">
                                 {user.name || "Sem nome"}
                               </span>
-                              <span className="text-sm text-gray-600 flex items-center gap-1">
+                              <span className="text-sm text-theme-muted flex items-center gap-1">
                                 <Mail className="w-3 h-3" />
                                 {user.email}
                               </span>
@@ -364,18 +364,18 @@ export default function ClientsManagementPage() {
                             {lastPayment ? (
                               <div className="flex items-center gap-2">
                                 <Package className="w-4 h-4 text-blue-600" />
-                                <span className="text-sm text-gray-700">
+                                <span className="text-sm text-theme">
                                   {lastPayment.planDetails?.name || "N/A"}
                                 </span>
                               </div>
                             ) : (
-                              <span className="text-sm text-gray-500">
+                              <span className="text-sm text-theme-muted">
                                 Sem plano
                               </span>
                             )}
                           </td>
                           <td className="py-3 px-4">
-                            <div className="flex items-center gap-2 text-sm text-gray-600">
+                            <div className="flex items-center gap-2 text-sm text-theme-muted">
                               <Calendar className="w-4 h-4" />
                               {new Date(user.createdAt).toLocaleDateString(
                                 "pt-BR"

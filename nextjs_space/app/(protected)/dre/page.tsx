@@ -231,11 +231,11 @@ export default function DrePage() {
         {/* Header */}
         <div className="flex items-center justify-between mb-6">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-2">
+            <h1 className="text-3xl font-bold text-theme flex items-center gap-2">
               <FileText className="h-8 w-8 text-blue-600" />
               DRE - Demonstração do Resultado do Exercício
             </h1>
-            <p className="text-gray-600 mt-1">
+            <p className="text-theme-muted mt-1">
               Visualize o desempenho financeiro do seu CNPJ de forma clara e profissional
             </p>
           </div>
@@ -330,7 +330,7 @@ export default function DrePage() {
                     >
                       <div>
                         <span className="font-medium">{cat.name}</span>
-                        <span className="text-sm text-gray-500 ml-2">({cat.group})</span>
+                        <span className="text-sm text-theme-muted ml-2">({cat.group})</span>
                       </div>
                       <span
                         className={`px-3 py-1 rounded-full text-xs ${
@@ -362,7 +362,7 @@ export default function DrePage() {
                       >
                         <div>
                           <span className="font-medium">{cat.name}</span>
-                          <span className="text-sm text-gray-500 ml-2">({cat.group})</span>
+                          <span className="text-sm text-theme-muted ml-2">({cat.group})</span>
                         </div>
                         <div className="flex items-center gap-2">
                           <span
@@ -388,7 +388,7 @@ export default function DrePage() {
                 )}
 
                 {/* Formulário de Nova Categoria */}
-                <div className="p-4 bg-white border-2 border-dashed border-blue-300 rounded-lg">
+                <div className="p-4 bg-card border-2 border-dashed border-blue-300 rounded-lg">
                   <h4 className="font-medium mb-3">Adicionar Nova Categoria</h4>
                   <div className="grid gap-3">
                     <div>
@@ -524,7 +524,7 @@ export default function DrePage() {
                           key={category}
                           className="flex items-center justify-between p-3 bg-green-50 rounded-lg"
                         >
-                          <span className="font-medium text-gray-700">{category}</span>
+                          <span className="font-medium text-theme">{category}</span>
                           <span className="text-green-600 font-bold">
                             R$ {value.toFixed(2)}
                           </span>
@@ -540,7 +540,7 @@ export default function DrePage() {
                       </div>
                     </div>
                   ) : (
-                    <p className="text-gray-500 text-center py-8">
+                    <p className="text-theme-muted text-center py-8">
                       Nenhuma receita registrada no período
                     </p>
                   )}
@@ -563,7 +563,7 @@ export default function DrePage() {
                           key={category}
                           className="flex items-center justify-between p-3 bg-red-50 rounded-lg"
                         >
-                          <span className="font-medium text-gray-700">{category}</span>
+                          <span className="font-medium text-theme">{category}</span>
                           <span className="text-red-600 font-bold">
                             R$ {value.toFixed(2)}
                           </span>
@@ -579,7 +579,7 @@ export default function DrePage() {
                       </div>
                     </div>
                   ) : (
-                    <p className="text-gray-500 text-center py-8">
+                    <p className="text-theme-muted text-center py-8">
                       Nenhuma despesa registrada no período
                     </p>
                   )}

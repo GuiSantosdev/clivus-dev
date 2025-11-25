@@ -277,8 +277,8 @@ export default function PricingPage() {
             <Calculator className="h-6 w-6 text-white" />
           </div>
           <div>
-            <h1 className="text-3xl font-bold text-gray-900">Precificação Inteligente</h1>
-            <p className="text-gray-600">Calcule o preço ideal considerando TODOS os seus custos</p>
+            <h1 className="text-3xl font-bold text-theme">Precificação Inteligente</h1>
+            <p className="text-theme-muted">Calcule o preço ideal considerando TODOS os seus custos</p>
           </div>
         </div>
 
@@ -327,7 +327,7 @@ export default function PricingPage() {
                       onChange={(e) => setCost(e.target.value)}
                       placeholder="0.00"
                     />
-                    <p className="text-xs text-gray-500">
+                    <p className="text-xs text-theme-muted">
                       {productType === "product" ? "Custo de aquisição ou produção" : "Custo de execução do serviço"}
                     </p>
                   </div>
@@ -341,7 +341,7 @@ export default function PricingPage() {
                       onChange={(e) => setExpectedSales(e.target.value)}
                       placeholder="0"
                     />
-                    <p className="text-xs text-gray-500">Para rateio dos custos fixos</p>
+                    <p className="text-xs text-theme-muted">Para rateio dos custos fixos</p>
                   </div>
 
                   <div className="space-y-2 md:col-span-2">
@@ -354,7 +354,7 @@ export default function PricingPage() {
                       onChange={(e) => setVariableExpenses(e.target.value)}
                       placeholder="5"
                     />
-                    <p className="text-xs text-gray-500">Comissões, embalagens, frete, taxas de cartão, etc.</p>
+                    <p className="text-xs text-theme-muted">Comissões, embalagens, frete, taxas de cartão, etc.</p>
                   </div>
                 </div>
               </CardContent>
@@ -591,7 +591,7 @@ export default function PricingPage() {
                       <div key={employee.id} className="flex items-center justify-between p-3 bg-blue-50 rounded-lg">
                         <div className="flex-1">
                           <p className="text-sm font-medium">Salário: R$ {parseFloat(employee.salary).toFixed(2)}</p>
-                          <p className="text-xs text-gray-600">
+                          <p className="text-xs text-theme-muted">
                             Custo Total: R$ {calculateEmployeeCost(employee.salary, employee.workDays).toFixed(2)}/mês
                           </p>
                         </div>
@@ -642,11 +642,11 @@ export default function PricingPage() {
                     </div>
 
                     {newEmployeeSalary && (
-                      <div className="bg-white border border-blue-300 rounded p-3">
+                      <div className="bg-card border border-blue-300 rounded p-3">
                         <p className="text-sm font-semibold text-blue-800">
                           Custo Real: R$ {calculateEmployeeCost(newEmployeeSalary, newEmployeeWorkDays).toFixed(2)}/mês
                         </p>
-                        <p className="text-xs text-gray-600 mt-1">
+                        <p className="text-xs text-theme-muted mt-1">
                           Inclui: INSS (20%), FGTS (8%), RAT (3%), Salário Educação (2,5%), Sistema S (3,58%), Férias, 13º
                         </p>
                       </div>
@@ -717,7 +717,7 @@ export default function PricingPage() {
                       onChange={(e) => setTaxRate(e.target.value)}
                       placeholder="6"
                     />
-                    <p className="text-xs text-gray-500">
+                    <p className="text-xs text-theme-muted">
                       {taxRegime === "simples_nacional" && "Anexo I: 4-6% | Anexo III: 6-17.5%"}
                       {taxRegime === "mei" && "DAS MEI: 0%"}
                     </p>
@@ -733,7 +733,7 @@ export default function PricingPage() {
                       onChange={(e) => setDesiredMargin(e.target.value)}
                       placeholder="30"
                     />
-                    <p className="text-xs text-gray-500">Lucro líquido desejado</p>
+                    <p className="text-xs text-theme-muted">Lucro líquido desejado</p>
                   </div>
                 </div>
 
@@ -765,27 +765,27 @@ export default function PricingPage() {
                 </div>
                 <div className="space-y-3 text-sm">
                   <div className="flex justify-between">
-                    <span className="text-gray-600">Custo direto:</span>
+                    <span className="text-theme-muted">Custo direto:</span>
                     <span className="font-semibold">R$ {parseFloat(cost || "0").toFixed(2)}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-gray-600">Custos fixos totais:</span>
+                    <span className="text-theme-muted">Custos fixos totais:</span>
                     <span className="font-semibold">R$ {totalFixedCosts.toFixed(2)}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-gray-600">Custo por unidade:</span>
+                    <span className="text-theme-muted">Custo por unidade:</span>
                     <span className="font-semibold">R$ {costPerUnit.toFixed(2)}</span>
                   </div>
                   <div className="flex justify-between border-t pt-2">
-                    <span className="text-gray-600">Markup:</span>
+                    <span className="text-theme-muted">Markup:</span>
                     <span className="font-semibold text-blue-600">{markup.toFixed(1)}%</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-gray-600">Lucro por venda:</span>
+                    <span className="text-theme-muted">Lucro por venda:</span>
                     <span className="font-semibold text-green-600">R$ {netProfit.toFixed(2)}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-gray-600">Break-even:</span>
+                    <span className="text-theme-muted">Break-even:</span>
                     <span className="font-semibold">{breakEven.toFixed(0)} vendas</span>
                   </div>
                 </div>
@@ -807,7 +807,7 @@ export default function PricingPage() {
                     <div key={product.id} className="flex items-center justify-between p-2 bg-gray-50 rounded">
                       <div className="flex-1">
                         <p className="font-medium text-sm">{product.name}</p>
-                        <p className="text-xs text-gray-600">R$ {product.finalPrice.toFixed(2)}</p>
+                        <p className="text-xs text-theme-muted">R$ {product.finalPrice.toFixed(2)}</p>
                       </div>
                       <Button
                         variant="ghost"
@@ -832,25 +832,25 @@ export default function PricingPage() {
           <CardContent>
             <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
               <div className="text-center p-4 bg-orange-50 rounded-lg">
-                <p className="text-sm text-gray-600 mb-1">Custo</p>
+                <p className="text-sm text-theme-muted mb-1">Custo</p>
                 <p className="text-xl font-bold text-orange-600">
                   {suggestedPrice > 0 ? ((costPerUnit / suggestedPrice) * 100).toFixed(1) : 0}%
                 </p>
               </div>
               <div className="text-center p-4 bg-red-50 rounded-lg">
-                <p className="text-sm text-gray-600 mb-1">Impostos</p>
+                <p className="text-sm text-theme-muted mb-1">Impostos</p>
                 <p className="text-xl font-bold text-red-600">{taxRate}%</p>
               </div>
               <div className="text-center p-4 bg-yellow-50 rounded-lg">
-                <p className="text-sm text-gray-600 mb-1">Despesas</p>
+                <p className="text-sm text-theme-muted mb-1">Despesas</p>
                 <p className="text-xl font-bold text-yellow-600">{variableExpenses}%</p>
               </div>
               <div className="text-center p-4 bg-green-50 rounded-lg">
-                <p className="text-sm text-gray-600 mb-1">Lucro</p>
+                <p className="text-sm text-theme-muted mb-1">Lucro</p>
                 <p className="text-xl font-bold text-green-600">{desiredMargin}%</p>
               </div>
               <div className="text-center p-4 bg-blue-50 rounded-lg">
-                <p className="text-sm text-gray-600 mb-1">Total</p>
+                <p className="text-sm text-theme-muted mb-1">Total</p>
                 <p className="text-xl font-bold text-blue-600">100%</p>
               </div>
             </div>

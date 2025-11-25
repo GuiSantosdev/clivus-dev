@@ -84,7 +84,7 @@ export default function ProlaborePage() {
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
-          <p className="mt-4 text-gray-600">Carregando...</p>
+          <p className="mt-4 text-theme-muted">Carregando...</p>
         </div>
       </div>
     );
@@ -93,15 +93,15 @@ export default function ProlaborePage() {
   return (
     <div className="p-8">
       <div className="mb-6">
-        <h1 className="text-3xl font-bold text-gray-900">Calculadora de Pró-labore</h1>
-        <p className="text-gray-600 mt-2">Calcule o pró-labore ideal conforme a legislação brasileira</p>
+        <h1 className="text-3xl font-bold text-theme">Calculadora de Pró-labore</h1>
+        <p className="text-theme-muted mt-2">Calcule o pró-labore ideal conforme a legislação brasileira</p>
       </div>
 
         <Card className="mb-6 border-blue-200 bg-blue-50">
           <CardContent className="p-4">
             <div className="flex items-start space-x-3">
               <AlertCircle className="h-5 w-5 text-blue-600 mt-0.5" />
-              <div className="text-sm text-gray-700">
+              <div className="text-sm text-theme">
                 <p className="font-semibold mb-1">O que é Pró-labore?</p>
                 <p>
                   O pró-labore é a remuneração dos sócios que trabalham na empresa. 
@@ -180,7 +180,7 @@ export default function ProlaborePage() {
                   }
                   placeholder="Ex: 10"
                 />
-                <p className="text-xs text-gray-500 mt-1">
+                <p className="text-xs text-theme-muted mt-1">
                   Percentual do lucro líquido destinado ao pró-labore
                 </p>
               </div>
@@ -206,7 +206,7 @@ export default function ProlaborePage() {
               {resultado ? (
                 <div className="space-y-4">
                   <div className="p-4 bg-green-50 rounded-lg">
-                    <p className="text-sm text-gray-600 mb-1">Pró-labore Bruto</p>
+                    <p className="text-sm text-theme-muted mb-1">Pró-labore Bruto</p>
                     <p className="text-3xl font-bold text-green-600">
                       R$ {resultado.prolabore.toFixed(2)}
                     </p>
@@ -214,21 +214,21 @@ export default function ProlaborePage() {
 
                   <div className="space-y-3">
                     <div className="flex justify-between items-center p-3 bg-gray-50 rounded">
-                      <span className="text-sm text-gray-600">INSS (11%)</span>
+                      <span className="text-sm text-theme-muted">INSS (11%)</span>
                       <span className="font-semibold text-red-600">
                         - R$ {resultado.inss.toFixed(2)}
                       </span>
                     </div>
 
                     <div className="flex justify-between items-center p-3 bg-gray-50 rounded">
-                      <span className="text-sm text-gray-600">IR (Simplificado)</span>
+                      <span className="text-sm text-theme-muted">IR (Simplificado)</span>
                       <span className="font-semibold text-red-600">
                         - R$ {resultado.ir.toFixed(2)}
                       </span>
                     </div>
 
                     <div className="flex justify-between items-center p-4 bg-blue-50 rounded-lg border-2 border-blue-200">
-                      <span className="font-semibold text-gray-900">Valor Líquido</span>
+                      <span className="font-semibold text-theme">Valor Líquido</span>
                       <span className="text-xl font-bold text-blue-600">
                         R$ {resultado.liquido.toFixed(2)}
                       </span>
@@ -237,7 +237,7 @@ export default function ProlaborePage() {
 
                   <div className="flex items-start space-x-2 p-3 bg-yellow-50 rounded border border-yellow-200">
                     <AlertCircle className="h-4 w-4 text-yellow-600 mt-0.5" />
-                    <p className="text-xs text-gray-600">
+                    <p className="text-xs text-theme-muted">
                       Este cálculo é uma estimativa. Consulte seu contador para valores exatos
                       considerando sua situação específica.
                     </p>
@@ -246,7 +246,7 @@ export default function ProlaborePage() {
               ) : (
                 <div className="text-center py-12">
                   <Calculator className="h-16 w-16 text-gray-300 mx-auto mb-4" />
-                  <p className="text-gray-500">
+                  <p className="text-theme-muted">
                     Preencha os dados e clique em "Calcular" para ver o resultado
                   </p>
                 </div>
@@ -260,7 +260,7 @@ export default function ProlaborePage() {
             <CardTitle>Como funciona o cálculo?</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="space-y-3 text-sm text-gray-700">
+            <div className="space-y-3 text-sm text-theme">
               <div className="flex items-start space-x-2">
                 <CheckCircle className="h-4 w-4 text-green-600 mt-0.5" />
                 <p>

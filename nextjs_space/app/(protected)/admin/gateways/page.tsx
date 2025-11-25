@@ -370,7 +370,7 @@ export default function GatewaysManagementPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 p-8">
+    <div className="min-h-screen bg-muted-soft p-8">
       <div className="max-w-5xl mx-auto space-y-8">
         {/* Header */}
         <div className="flex items-center justify-between">
@@ -381,10 +381,10 @@ export default function GatewaysManagementPage() {
               </Button>
             </Link>
             <div>
-              <h1 className="text-3xl font-bold text-gray-900">
+              <h1 className="text-3xl font-bold text-theme">
                 Gateways de Pagamento
               </h1>
-              <p className="text-gray-600">
+              <p className="text-theme-muted">
                 Configure os gateways de pagamento do sistema
               </p>
             </div>
@@ -480,8 +480,8 @@ export default function GatewaysManagementPage() {
               <CardContent className="space-y-6">
                 {/* Webhook URL */}
                 {gateway.webhookUrl && (
-                  <div className="p-4 bg-gray-50 rounded-lg border border-gray-200">
-                    <Label className="text-sm font-semibold text-gray-700 mb-2 block">
+                  <div className="p-4 bg-muted-soft rounded-lg border border-theme">
+                    <Label className="text-sm font-semibold text-theme mb-2 block">
                       🔗 URL do Webhook
                     </Label>
                     <div className="flex gap-2">
@@ -497,7 +497,7 @@ export default function GatewaysManagementPage() {
                         Copiar
                       </Button>
                     </div>
-                    <p className="text-xs text-gray-600 mt-2">
+                    <p className="text-xs text-theme-muted mt-2">
                       Configure esta URL no painel do {gateway.displayName}
                     </p>
                   </div>
@@ -529,7 +529,7 @@ export default function GatewaysManagementPage() {
                               onClick={() =>
                                 toggleShowSecret(`${gateway.name}-${field.key}`)
                               }
-                              className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
+                              className="absolute right-3 top-1/2 -translate-y-1/2 text-theme-muted hover:text-theme"
                             >
                               {showSecrets[`${gateway.name}-${field.key}`] ? (
                                 <EyeOff className="w-4 h-4" />
@@ -540,15 +540,15 @@ export default function GatewaysManagementPage() {
                           )}
                         </div>
                       </div>
-                      <p className="text-xs text-gray-600">
-                        Variável: <code className="bg-gray-100 px-1 rounded">{field.envVar}</code>
+                      <p className="text-xs text-theme-muted">
+                        Variável: <code className="bg-muted-soft px-1 rounded">{field.envVar}</code>
                       </p>
                     </div>
                   ))}
                 </div>
 
                 {/* Action Buttons */}
-                <div className="flex gap-3 pt-4 border-t border-gray-200">
+                <div className="flex gap-3 pt-4 border-t border-theme">
                   <Button
                     onClick={() => handleSaveConfiguration(gateway.name)}
                     disabled={loading || saving}

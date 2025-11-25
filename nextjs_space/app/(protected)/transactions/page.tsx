@@ -544,7 +544,7 @@ export default function TransactionsPage() {
                 {planningEnabled && availablePlannedTransactions.length > 0 && (
                   <div className="border p-4 rounded-lg bg-blue-50">
                     <Label>📌 Vincular ao Planejamento (Opcional)</Label>
-                    <p className="text-sm text-gray-600 mb-2">
+                    <p className="text-sm text-theme-muted mb-2">
                       Esta transação está relacionada a uma receita/despesa planejada?
                     </p>
                     <Select
@@ -674,7 +674,7 @@ export default function TransactionsPage() {
           </CardHeader>
           <CardContent>
             {transactions.length === 0 ? (
-              <p className="text-center text-gray-500 py-8">
+              <p className="text-center text-theme-muted py-8">
                 Nenhuma transação encontrada
               </p>
             ) : (
@@ -699,7 +699,7 @@ export default function TransactionsPage() {
                             </span>
                           )}
                         </div>
-                        <div className="flex items-center gap-3 text-sm text-gray-600">
+                        <div className="flex items-center gap-3 text-sm text-theme-muted">
                           <span className="flex items-center gap-1">
                             <Tag className="w-3 h-3" />
                             {transaction.category}
@@ -728,7 +728,7 @@ export default function TransactionsPage() {
                           {transaction.type === "income" ? "+" : "-"} R${" "}
                           {transaction.amount.toFixed(2)}
                         </p>
-                        <p className="text-xs text-gray-500">
+                        <p className="text-xs text-theme-muted">
                           {new Date(transaction.date).toLocaleDateString("pt-BR")}
                         </p>
                       </div>

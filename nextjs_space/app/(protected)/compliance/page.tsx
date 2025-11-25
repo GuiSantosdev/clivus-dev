@@ -105,7 +105,7 @@ export default function CompliancePage() {
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
-          <p className="mt-4 text-gray-600">Carregando...</p>
+          <p className="mt-4 text-theme-muted">Carregando...</p>
         </div>
       </div>
     );
@@ -120,24 +120,24 @@ export default function CompliancePage() {
   return (
     <div className="p-8">
       <div className="mb-6">
-        <h1 className="text-3xl font-bold text-gray-900">Compliance Fiscal</h1>
-        <p className="text-gray-600 mt-2">Monitore suas obrigações fiscais e mantenha-se em conformidade</p>
+        <h1 className="text-3xl font-bold text-theme">Compliance Fiscal</h1>
+        <p className="text-theme-muted mt-2">Monitore suas obrigações fiscais e mantenha-se em conformidade</p>
       </div>
 
         <div className="grid md:grid-cols-3 gap-6 mb-8">
           <Card>
             <CardHeader className="pb-3">
-              <CardTitle className="text-sm font-medium text-gray-600">
+              <CardTitle className="text-sm font-medium text-theme-muted">
                 Status Geral
               </CardTitle>
             </CardHeader>
             <CardContent>
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-3xl font-bold text-gray-900">
+                  <p className="text-3xl font-bold text-theme">
                     {compliancePercentage}%
                   </p>
-                  <p className="text-xs text-gray-500 mt-1">Em conformidade</p>
+                  <p className="text-xs text-theme-muted mt-1">Em conformidade</p>
                 </div>
                 <ShieldCheck
                   className={`h-12 w-12 ${
@@ -154,7 +154,7 @@ export default function CompliancePage() {
 
           <Card>
             <CardHeader className="pb-3">
-              <CardTitle className="text-sm font-medium text-gray-600">
+              <CardTitle className="text-sm font-medium text-theme-muted">
                 Em Conformidade
               </CardTitle>
             </CardHeader>
@@ -162,7 +162,7 @@ export default function CompliancePage() {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-3xl font-bold text-green-600">{okCount}</p>
-                  <p className="text-xs text-gray-500 mt-1">de {totalCount} itens</p>
+                  <p className="text-xs text-theme-muted mt-1">de {totalCount} itens</p>
                 </div>
                 <CheckCircle className="h-12 w-12 text-green-600" />
               </div>
@@ -171,7 +171,7 @@ export default function CompliancePage() {
 
           <Card>
             <CardHeader className="pb-3">
-              <CardTitle className="text-sm font-medium text-gray-600">
+              <CardTitle className="text-sm font-medium text-theme-muted">
                 Requer Atenção
               </CardTitle>
             </CardHeader>
@@ -181,7 +181,7 @@ export default function CompliancePage() {
                   <p className="text-3xl font-bold text-yellow-600">
                     {warningCount + errorCount}
                   </p>
-                  <p className="text-xs text-gray-500 mt-1">alertas ativos</p>
+                  <p className="text-xs text-theme-muted mt-1">alertas ativos</p>
                 </div>
                 <AlertTriangle className="h-12 w-12 text-yellow-600" />
               </div>
@@ -219,10 +219,10 @@ export default function CompliancePage() {
                         <XCircle className="h-5 w-5 text-red-600 mt-0.5" />
                       )}
                       <div className="flex-1">
-                        <h3 className="font-semibold text-gray-900">{item.title}</h3>
-                        <p className="text-sm text-gray-600 mt-1">{item.description}</p>
+                        <h3 className="font-semibold text-theme">{item.title}</h3>
+                        <p className="text-sm text-theme-muted mt-1">{item.description}</p>
                         {item.dueDate && (
-                          <div className="flex items-center mt-2 text-sm text-gray-700">
+                          <div className="flex items-center mt-2 text-sm text-theme">
                             <Calendar className="h-4 w-4 mr-1" />
                             <span>Prazo: {item.dueDate}</span>
                           </div>
@@ -249,7 +249,7 @@ export default function CompliancePage() {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="space-y-3 text-sm text-gray-700">
+            <div className="space-y-3 text-sm text-theme">
               <div className="flex items-start space-x-2">
                 <CheckCircle className="h-4 w-4 text-green-600 mt-0.5" />
                 <p>

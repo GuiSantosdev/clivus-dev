@@ -87,14 +87,14 @@ export default function AdminPage() {
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
-          <p className="mt-4 text-gray-600">Carregando dados...</p>
+          <p className="mt-4 text-theme-muted">Carregando dados...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
+    <div className="min-h-screen bg-theme">
       <div className="container mx-auto px-4 py-8">
         {/* Header */}
         <div className="flex items-center justify-between mb-8">
@@ -102,13 +102,13 @@ export default function AdminPage() {
             <div>
               <div className="flex items-center gap-2">
                 <Crown className="h-6 w-6 text-yellow-600" />
-                <h1 className="text-3xl font-bold text-gray-900">Dashboard SuperAdmin</h1>
+                <h1 className="text-3xl font-bold text-theme">Dashboard SuperAdmin</h1>
               </div>
-              <p className="text-gray-600">Visão completa do negócio Clivus</p>
+              <p className="text-theme-muted">Visão completa do negócio Clivus</p>
             </div>
           </div>
           <div className="text-right">
-            <p className="text-sm text-gray-600">Última atualização</p>
+            <p className="text-sm text-theme-muted">Última atualização</p>
             <p className="text-sm font-semibold">{new Date().toLocaleDateString('pt-BR')}</p>
           </div>
         </div>
@@ -351,7 +351,7 @@ export default function AdminPage() {
                 {(stats?.salesByPlan || []).map((plan, index) => (
                   <div 
                     key={plan.plan}
-                    className="flex items-center justify-between p-3 bg-gray-50 rounded-lg"
+                    className="flex items-center justify-between p-3 bg-muted-soft rounded-lg"
                   >
                     <div className="flex items-center gap-3">
                       <div 
@@ -360,14 +360,14 @@ export default function AdminPage() {
                       />
                       <div>
                         <p className="font-semibold capitalize">{plan.plan}</p>
-                        <p className="text-xs text-gray-600">{plan.count} vendas</p>
+                        <p className="text-xs text-theme-muted">{plan.count} vendas</p>
                       </div>
                     </div>
                     <div className="text-right">
                       <p className="font-bold text-green-600">
                         R$ {plan.revenue.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
                       </p>
-                      <p className="text-xs text-gray-600">
+                      <p className="text-xs text-theme-muted">
                         {((plan.count / (stats?.totalPayments || 1)) * 100).toFixed(1)}%
                       </p>
                     </div>
@@ -385,7 +385,7 @@ export default function AdminPage() {
               <CardTitle>Gerenciar Planos</CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-sm text-gray-600 mb-4">
+              <p className="text-sm text-theme-muted mb-4">
                 Configure os planos de assinatura, preços e recursos.
               </p>
               <Link href="/admin/plans">
@@ -399,7 +399,7 @@ export default function AdminPage() {
               <CardTitle>Gerenciar Vendas</CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-sm text-gray-600 mb-4">
+              <p className="text-sm text-theme-muted mb-4">
                 Visualize vendas, pagamentos e envie credenciais.
               </p>
               <Link href="/admin/sales">
