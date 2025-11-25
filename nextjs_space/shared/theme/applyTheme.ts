@@ -15,17 +15,7 @@ export function applyTheme(themeId: ThemeId): void {
 
   const html = document.documentElement;
   
-  // Remove TODAS as classes de tema anteriores (com e sem prefixo)
-  html.classList.remove(
-    "simples", "moderado", "moderno",
-    "theme-simples", "theme-moderado", "theme-moderno"
-  );
-  
-  // Aplica AMBAS as classes de tema (para compatibilidade total)
-  html.classList.add(themeId); // sem prefixo (para next-themes)
-  html.classList.add(`theme-${themeId}`); // com prefixo (para CSS legado)
-  
-  // Atualiza data-attribute para compatibilidade
+  // Atualiza APENAS o data-attribute (next-themes gerencia isso)
   html.setAttribute("data-theme", themeId);
   
   // Salva no localStorage para persistência
@@ -35,7 +25,7 @@ export function applyTheme(themeId: ThemeId): void {
     console.warn("Erro ao salvar tema no localStorage:", error);
   }
   
-  console.log(`✅ Tema aplicado: ${themeId}`);
+  console.log(`✅ Tema aplicado: ${themeId} - Verifique o atributo data-theme no <html>`);
 }
 
 /**

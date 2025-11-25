@@ -19,10 +19,12 @@ export function Providers({ children }: { children: React.ReactNode }) {
   return (
     <SessionProvider>
       <ThemeProvider
-        attribute="class"
+        attribute="data-theme"
         defaultTheme="simples"
         themes={["simples", "moderado", "moderno"]}
         enableSystem={false}
+        forcedTheme={undefined}
+        storageKey="clivus-theme"
       >
         {children}
       </ThemeProvider>

@@ -32,8 +32,6 @@
      Fundo branco, ação primária verde vibrante, sidebar branca
      ZERO degradê, ZERO sombra forte, ZERO efeitos extras
      ======================================= */
-  .simples,
-  .theme-simples,
   html[data-theme="simples"] {
     --background: 0 0% 100%;
     --foreground: 0 0% 10%;
@@ -51,8 +49,6 @@
      Fundo branco, ação primária amarelo/dourado, sidebar amarela
      Estilo corporativo, sem gradientes
      ======================================= */
-  .moderado,
-  .theme-moderado,
   html[data-theme="moderado"] {
     --background: 0 0% 100%;
     --foreground: 0 0% 10%;
@@ -70,8 +66,6 @@
      Fundo preto profundo, sidebar azul escuro, ação primária roxa
      Secundária azul, gradiente suave roxo → azul, brilhos neon discretos
      ======================================= */
-  .moderno,
-  .theme-moderno,
   html[data-theme="moderno"] {
     --background: 240 10% 8%;
     --foreground: 0 0% 98%;
