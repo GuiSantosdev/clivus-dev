@@ -4,6 +4,10 @@ import crypto from "crypto";
 /**
  * EFI (Gerencianet) Payment Gateway Integration
  * API v2 Documentation: https://dev.efipay.com.br/docs
+ * 
+ * ✅ OAuth 2.0 com cache de token
+ * ✅ Renovação automática
+ * ✅ Proteção contra "Unexpected token U"
  */
 
 // ===========================
@@ -32,7 +36,103 @@ export function getEfiConfig(): EfiConfig {
 }
 
 // ===========================
-// API REQUEST WRAPPER
+// TOKEN CACHE (Server Memory)
+// ===========================
+
+interface TokenCache {
+  access_token: string;
+  token_type: string;
+  expires_at: number; // timestamp em ms
+}
+
+let cachedToken: TokenCache | null = null;
+
+/**
+ * Verifica se o token em cache ainda é válido
+ */
+function isTokenValid(): boolean {
+  if (!cachedToken) return false;
+  
+  // Considera token inválido se faltam menos de 5 minutos para expirar
+  const expiresIn5Min = Date.now() + (5 * 60 * 1000);
+  return cachedToken.expires_at > expiresIn5Min;
+}
+
+// ===========================
+// AUTHENTICATION (OAuth 2.0)
+// ===========================
+
+/**
+ * Obtém um access token válido (do cache ou gerando novo)
+ */
+export async function getEfiAccessToken(): Promise<string> {
+  // Retorna token em cache se ainda for válido
+  if (isTokenValid() && cachedToken) {
+    console.log("[EFI Auth] Using cached token");
+    return cachedToken.access_token;
+  }
+
+  const config = getEfiConfig();
+
+  if (!config.clientId || !config.clientSecret) {
+    throw new Error("EFI Client ID ou Client Secret não configurados");
+  }
+
+  const baseUrl =
+    config.environment === "production"
+      ? "https://cobrancas.api.efipay.com.br/v1"
+      : "https://cobrancas-h.api.efipay.com.br/v1";
+
+  const url = `${baseUrl}/authorize`;
+
+  const credentials = Buffer.from(`${config.clientId}:${config.clientSecret}`).toString("base64");
+
+  console.log("[EFI Auth] Requesting new access token...");
+
+  try {
+    const response = await fetch(url, {
+      method: "POST",
+      headers: {
+        Authorization: `Basic ${credentials}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        grant_type: "client_credentials",
+      }),
+    });
+
+    // PROTEÇÃO: Verificar se resposta é JSON antes de parsear
+    const contentType = response.headers.get("content-type");
+    if (!contentType || !contentType.includes("application/json")) {
+      const text = await response.text();
+      throw new Error(`EFI retornou resposta não-JSON: ${text.substring(0, 200)}`);
+    }
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.error_description || "Erro ao obter token de acesso");
+    }
+
+    // Armazenar token em cache
+    // expires_in geralmente vem em segundos (ex: 3600 = 1 hora)
+    const expiresIn = data.expires_in || 3600;
+    cachedToken = {
+      access_token: data.access_token,
+      token_type: data.token_type || "Bearer",
+      expires_at: Date.now() + (expiresIn * 1000),
+    };
+
+    console.log("[EFI Auth] ✅ Token obtained and cached (expires in", expiresIn, "seconds)");
+    return cachedToken.access_token;
+  } catch (error: any) {
+    console.error("[EFI Auth Error]", error.message);
+    throw new Error(`Erro ao autenticar com EFI: ${error.message}`);
+  }
+}
+
+// ===========================
+// API REQUEST WRAPPER (com proteção anti-erro)
 // ===========================
 
 async function efiRequest(
@@ -71,10 +171,29 @@ async function efiRequest(
 
     console.log("[EFI Response] Status:", response.status);
 
-    const data = await response.json();
+    // PROTEÇÃO CRÍTICA: Ler como texto primeiro
+    const text = await response.text();
+    
+    // Verificar se é JSON válido
+    let data: any;
+    try {
+      data = JSON.parse(text);
+    } catch (parseError) {
+      console.error("[EFI] ❌ Resposta não é JSON válido:", text.substring(0, 500));
+      throw new Error(`Erro EFI: Resposta inválida (não-JSON): ${text.substring(0, 200)}`);
+    }
+
     console.log("[EFI Response] Data:", JSON.stringify(data, null, 2));
 
+    // Se não for OK, lançar erro com mensagem da API
     if (!response.ok) {
+      // Se token expirou, limpar cache e tentar novamente
+      if (response.status === 401 && cachedToken) {
+        console.log("[EFI] Token expirado, limpando cache...");
+        cachedToken = null;
+        throw new Error("EFI_TOKEN_EXPIRED");
+      }
+
       throw new Error(
         `EFI API Error: ${data.error_description || data.message || "Erro desconhecido"}`
       );
@@ -82,56 +201,13 @@ async function efiRequest(
 
     return data;
   } catch (error: any) {
-    console.error("[EFI Error]", error.message);
-    throw new Error(`Erro ao comunicar com EFI: ${error.message}`);
-  }
-}
-
-// ===========================
-// AUTHENTICATION
-// ===========================
-
-export async function getEfiAccessToken(): Promise<string> {
-  const config = getEfiConfig();
-
-  if (!config.clientId || !config.clientSecret) {
-    throw new Error("EFI Client ID ou Client Secret não configurados");
-  }
-
-  const baseUrl =
-    config.environment === "production"
-      ? "https://cobrancas.api.efipay.com.br/v1"
-      : "https://cobrancas-h.api.efipay.com.br/v1";
-
-  const url = `${baseUrl}/authorize`;
-
-  const credentials = Buffer.from(`${config.clientId}:${config.clientSecret}`).toString("base64");
-
-  console.log("[EFI Auth] Requesting access token...");
-
-  try {
-    const response = await fetch(url, {
-      method: "POST",
-      headers: {
-        Authorization: `Basic ${credentials}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        grant_type: "client_credentials",
-      }),
-    });
-
-    const data = await response.json();
-
-    if (!response.ok) {
-      throw new Error(data.error_description || "Erro ao obter token de acesso");
+    // Se foi erro de token expirado, tentar novamente (uma única vez)
+    if (error.message === "EFI_TOKEN_EXPIRED") {
+      throw error; // Deixa o chamador tentar novamente
     }
 
-    console.log("[EFI Auth] Token obtained successfully");
-    return data.access_token;
-  } catch (error: any) {
-    console.error("[EFI Auth Error]", error.message);
-    throw new Error(`Erro ao autenticar com EFI: ${error.message}`);
+    console.error("[EFI Error]", error.message);
+    throw new Error(`Erro ao comunicar com EFI: ${error.message}`);
   }
 }
 
@@ -215,8 +291,6 @@ interface CreateChargeParams {
 }
 
 export async function createEfiCharge(params: CreateChargeParams): Promise<any> {
-  const accessToken = await getEfiAccessToken();
-
   const {
     userName,
     userEmail,
@@ -273,21 +347,45 @@ export async function createEfiCharge(params: CreateChargeParams): Promise<any> 
     }
   }
 
-  // Criar cobrança usando ONE-STEP
-  const chargeResponse = await efiRequest("/charge/one-step/link", "POST", body, accessToken);
-  const chargeId = chargeResponse.data.charge_id;
-  const paymentUrl = chargeResponse.data.payment_url;
+  // Tentar criar cobrança com retry automático em caso de token expirado
+  let attempts = 0;
+  const maxAttempts = 2;
 
-  console.log("[EFI] One-step charge created:", chargeId);
-  console.log("[EFI] Payment URL:", paymentUrl);
+  while (attempts < maxAttempts) {
+    try {
+      // Obter token (do cache ou renovando)
+      const accessToken = await getEfiAccessToken();
+      
+      // Criar cobrança usando ONE-STEP
+      const chargeResponse = await efiRequest("/charge/one-step/link", "POST", body, accessToken);
+      const chargeId = chargeResponse.data.charge_id;
+      const paymentUrl = chargeResponse.data.payment_url;
 
-  // One-step retorna um link de pagamento universal
-  // O cliente escolhe o método (PIX, Boleto, Cartão) na página da EFI
-  return {
-    chargeId,
-    paymentUrl, // Link universal para todos os métodos
-    paymentMethod: "link", // Indica que é um link de pagamento
-  };
+      console.log("[EFI] ✅ One-step charge created:", chargeId);
+      console.log("[EFI] Payment URL:", paymentUrl);
+
+      // One-step retorna um link de pagamento universal
+      // O cliente escolhe o método (PIX, Boleto, Cartão) na página da EFI
+      return {
+        chargeId,
+        paymentUrl, // Link universal para todos os métodos
+        paymentMethod: "link", // Indica que é um link de pagamento
+      };
+    } catch (error: any) {
+      attempts++;
+      
+      // Se foi erro de token expirado e ainda há tentativas, tentar novamente
+      if (error.message === "EFI_TOKEN_EXPIRED" && attempts < maxAttempts) {
+        console.log("[EFI] Token expirado, tentando novamente com novo token...");
+        continue;
+      }
+      
+      // Qualquer outro erro ou se já tentou 2 vezes, lançar erro
+      throw error;
+    }
+  }
+
+  throw new Error("Erro ao criar cobrança EFI após múltiplas tentativas");
 }
 
 // ===========================
@@ -295,8 +393,26 @@ export async function createEfiCharge(params: CreateChargeParams): Promise<any> 
 // ===========================
 
 export async function getEfiChargeStatus(chargeId: string): Promise<any> {
-  const accessToken = await getEfiAccessToken();
-  return efiRequest(`/charge/${chargeId}`, "GET", undefined, accessToken);
+  let attempts = 0;
+  const maxAttempts = 2;
+
+  while (attempts < maxAttempts) {
+    try {
+      const accessToken = await getEfiAccessToken();
+      return await efiRequest(`/charge/${chargeId}`, "GET", undefined, accessToken);
+    } catch (error: any) {
+      attempts++;
+      
+      if (error.message === "EFI_TOKEN_EXPIRED" && attempts < maxAttempts) {
+        console.log("[EFI] Token expirado ao buscar status, tentando novamente...");
+        continue;
+      }
+      
+      throw error;
+    }
+  }
+
+  throw new Error("Erro ao buscar status da cobrança EFI após múltiplas tentativas");
 }
 
 // ===========================

@@ -180,6 +180,36 @@
   .glow-effect {
     box-shadow: var(--shadow-glow);
   }
+
+  /* Theme Shadow Utilities */
+  .shadow-theme-sm {
+    box-shadow: 0 1px 2px hsl(var(--foreground) / 0.05);
+  }
+
+  .shadow-theme-md {
+    box-shadow: 0 4px 6px -1px hsl(var(--foreground) / 0.1), 0 2px 4px -1px hsl(var(--foreground) / 0.06);
+  }
+
+  .shadow-theme-lg {
+    box-shadow: 0 10px 15px -3px hsl(var(--foreground) / 0.1), 0 4px 6px -2px hsl(var(--foreground) / 0.05);
+  }
+
+  .shadow-theme-xl {
+    box-shadow: 0 20px 25px -5px hsl(var(--foreground) / 0.1), 0 10px 10px -5px hsl(var(--foreground) / 0.04);
+  }
+
+  /* Radius Utilities (Theme-aware) */
+  .rounded-theme-sm {
+    border-radius: 0.25rem; /* 4px - Simples */
+  }
+
+  .rounded-theme-md {
+    border-radius: 0.5rem; /* 8px - Moderado */
+  }
+
+  .rounded-theme-lg {
+    border-radius: 0.75rem; /* 12px - Moderno */
+  }
 }
 
 /* Smooth scrolling */

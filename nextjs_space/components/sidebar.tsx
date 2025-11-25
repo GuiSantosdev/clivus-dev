@@ -243,7 +243,7 @@ export function Sidebar() {
       {/* Sidebar - Fixo no desktop, recolhível no mobile */}
       <aside
         className={`
-          fixed top-0 left-0 h-full bg-theme-surface border-r border-gray-200/50
+          fixed top-0 left-0 h-full bg-sidebar border-r border-theme
           transition-all duration-300 z-40 flex flex-col
           ${isMobileMenuOpen ? "translate-x-0" : "-translate-x-full"}
           lg:translate-x-0
@@ -252,14 +252,14 @@ export function Sidebar() {
         `}
       >
         {/* Logo + Collapse Button */}
-        <div className="p-4 border-b border-gray-200/50 relative">
+        <div className="p-4 border-b border-theme relative">
           <Link href={userRole === "superadmin" ? "/admin" : "/dashboard"}>
             <div className="flex items-center gap-3 group">
-              <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center flex-shrink-0">
-                <Briefcase className="h-6 w-6 text-white" />
+              <div className="w-10 h-10 bg-primary rounded-lg flex items-center justify-center flex-shrink-0">
+                <Briefcase className="h-6 w-6 text-primary-foreground" />
               </div>
               <div className={`whitespace-nowrap overflow-hidden transition-all duration-300 ${isCollapsed ? "lg:hidden" : "lg:block"}`}>
-                <h1 className="font-bold text-lg text-theme">
+                <h1 className="font-bold text-lg text-sidebar">
                   {userRole === "superadmin" ? "SuperAdmin" : "Clivus"}
                 </h1>
                 <p className="text-xs text-theme-muted">
@@ -272,7 +272,7 @@ export function Sidebar() {
           {/* Botão Toggle (Desktop) */}
           <button
             onClick={toggleSidebar}
-            className="hidden lg:flex absolute -right-3 top-1/2 -translate-y-1/2 w-6 h-6 rounded-full items-center justify-center transition-all shadow-theme-md bg-theme-surface text-theme border border-gray-200/50 hover:bg-muted hover:border-primary hover:text-primary z-50"
+            className="hidden lg:flex absolute -right-3 top-1/2 -translate-y-1/2 w-6 h-6 rounded-full items-center justify-center transition-all shadow-theme-md bg-card text-theme border border-theme hover:bg-sidebar-hover hover:border-primary hover:text-primary z-50"
             title={isCollapsed ? "Expandir menu" : "Recolher menu"}
           >
             {isCollapsed ? (
@@ -305,14 +305,14 @@ export function Sidebar() {
                           transition-all duration-200 group relative
                           ${
                             isActive
-                              ? "bg-primary/10 text-primary font-medium"
-                              : "text-theme hover:bg-muted"
+                              ? "bg-sidebar-active text-primary font-medium"
+                              : "text-theme hover:bg-sidebar-hover"
                           }
                           ${isCollapsed ? "lg:justify-center" : ""}
                         `}
                         title={isCollapsed ? item.name : ""}
                       >
-                        <Icon className={`h-5 w-5 flex-shrink-0 ${isActive ? "text-primary" : "text-theme-muted"}`} />
+                        <Icon className={`h-5 w-5 flex-shrink-0 ${isActive ? "text-primary" : "text-sidebar-icon"}`} />
                         <div className={`whitespace-nowrap overflow-hidden transition-all duration-300 ${isCollapsed ? "lg:hidden" : "lg:block"}`}>
                           <span className="text-sm">{item.name}</span>
                           <span className="block text-xs text-theme-muted mt-0.5">
