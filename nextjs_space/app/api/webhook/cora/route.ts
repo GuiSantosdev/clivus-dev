@@ -29,7 +29,7 @@ export async function POST(request: Request) {
     }
 
     const payload = JSON.parse(rawBody);
-    console.log("[CORA Webhook] Payload:", JSON.stringify(payload, null, 2));
+    console.log("[CORA Webhook] Evento:", payload?.event_type, "- ID:", payload?.data?.invoice_id);
 
     const { event, data } = payload;
     console.log(`[CORA Webhook] Evento recebido: ${event}`);

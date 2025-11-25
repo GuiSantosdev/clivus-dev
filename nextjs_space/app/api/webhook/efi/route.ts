@@ -23,7 +23,7 @@ export async function POST(request: Request) {
     console.log("[EFI Webhook] Assinatura validada!");
 
     const data = JSON.parse(body);
-    console.log("[EFI Webhook] Dados recebidos:", JSON.stringify(data, null, 2));
+    console.log("[EFI Webhook] Notificação recebida");
 
     const { event, data: eventData } = data;
 

@@ -33,8 +33,7 @@ export async function POST(request: Request) {
 
     // Parse the payload
     const payload = JSON.parse(rawBody);
-    console.log("📦 [Pagar.me Webhook] Evento:", payload.type);
-    console.log("📦 [Pagar.me Webhook] Data:", JSON.stringify(payload.data, null, 2));
+    console.log("📦 [Pagar.me Webhook] Evento:", payload.type, "- ID:", payload.data?.id);
 
     const { type, data } = payload;
 

@@ -11,7 +11,7 @@ export async function POST(request: Request) {
   try {
     const body = await request.json();
     
-    console.log("📩 Webhook Asaas recebido:", JSON.stringify(body, null, 2));
+    console.log("📩 Webhook Asaas recebido - Evento:", body?.event);
 
     const { event, payment } = body;
 
