@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useSession, signOut } from "next-auth/react";
+import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -17,18 +17,17 @@ import { Switch } from "@/components/ui/switch";
 import { toast } from "react-hot-toast";
 import {
   Palette,
-  Circle,
-  Square,
-  Sparkles,
   Save,
   ArrowLeft,
   Users,
   Building2,
   CheckCircle,
+  Sun,
+  Moon,
 } from "lucide-react";
 import Link from "next/link";
 
-type ThemePreset = "padrao" | "simples" | "moderado" | "moderno";
+type ThemePreset = "blue-light" | "blue-dark" | "green-light" | "green-dark" | "purple-light" | "purple-dark";
 
 interface GlobalSettings {
   id: number;
@@ -41,28 +40,40 @@ interface GlobalSettings {
 
 const THEME_OPTIONS = [
   {
-    value: "padrao",
-    label: "Padrão",
-    description: "Visual clássico e equilibrado",
-    icon: Circle,
+    value: "blue-light",
+    label: "Azul Claro",
+    description: "Tema azul padrão (light)",
+    icon: Sun,
   },
   {
-    value: "simples",
-    label: "Simples",
-    description: "Minimalista e limpo",
-    icon: Square,
+    value: "blue-dark",
+    label: "Azul Escuro",
+    description: "Tema azul escuro (dark)",
+    icon: Moon,
   },
   {
-    value: "moderado",
-    label: "Moderado",
-    description: "Balanceado e profissional",
-    icon: Palette,
+    value: "green-light",
+    label: "Verde Claro",
+    description: "Tema verde (light)",
+    icon: Sun,
   },
   {
-    value: "moderno",
-    label: "Moderno",
-    description: "Ousado e contemporâneo",
-    icon: Sparkles,
+    value: "green-dark",
+    label: "Verde Escuro",
+    description: "Tema verde escuro (dark)",
+    icon: Moon,
+  },
+  {
+    value: "purple-light",
+    label: "Roxo Claro",
+    description: "Tema roxo (light)",
+    icon: Sun,
+  },
+  {
+    value: "purple-dark",
+    label: "Roxo Escuro",
+    description: "Tema roxo escuro (dark)",
+    icon: Moon,
   },
 ];
 
@@ -75,7 +86,7 @@ export default function ThemeConfigPage() {
   const [settings, setSettings] = useState<GlobalSettings | null>(null);
 
   const [superadminThemePreset, setSuperadminThemePreset] =
-    useState<ThemePreset>("padrao");
+    useState<ThemePreset>("blue-light");
   const [allowOfficeOverride, setAllowOfficeOverride] = useState(false);
   const [allowUserOverride, setAllowUserOverride] = useState(true);
 
@@ -133,11 +144,11 @@ export default function ThemeConfigPage() {
       });
 
       if (response.ok) {
-        toast.success("✓ Configurações salvas com sucesso!");
-        await loadSettings();
+        toast.success("Configurações salvas com sucesso");
+        loadSettings();
       } else {
-        const error = await response.json();
-        toast.error(error.error || "Erro ao salvar configurações");
+        const data = await response.json();
+        toast.error(data.error || "Erro ao salvar configurações");
       }
     } catch (error) {
       console.error("Erro ao salvar configurações:", error);
@@ -147,224 +158,212 @@ export default function ThemeConfigPage() {
     }
   };
 
-  if (loading) {
+  if (loading || status === "loading") {
     return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-          <p className="text-theme-muted">Carregando configurações...</p>
+      <div className="p-8">
+        <div className="min-h-screen flex items-center justify-center">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto"></div>
+            <p className="mt-4 text-theme-muted">Carregando configurações...</p>
+          </div>
         </div>
       </div>
     );
   }
 
-  const currentThemeOption = THEME_OPTIONS.find(
-    (t) => t.value === superadminThemePreset
-  );
-
   return (
     <div className="p-8">
-      <div className="max-w-4xl mx-auto">
-        {/* Cabeçalho */}
-        <div className="mb-8">
+      <div className="max-w-4xl mx-auto space-y-6">
+        {/* Header */}
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-3xl font-bold text-theme flex items-center gap-2">
+              <Palette className="h-8 w-8 text-primary" />
+              Configuração de Temas
+            </h1>
+            <p className="text-theme-muted mt-2">
+              Gerencie o tema global e permissões de personalização
+            </p>
+          </div>
           <Link href="/admin">
-            <Button variant="outline" className="mb-4">
+            <Button variant="outline" size="sm">
               <ArrowLeft className="h-4 w-4 mr-2" />
-              Voltar ao Admin
+              Voltar
             </Button>
           </Link>
-          <h1 className="text-3xl font-bold mb-2">
-            Configuração de Temas do Sistema
-          </h1>
-          <p className="text-theme-muted">
-            Defina o tema padrão e permissões de personalização para todos os
-            usuários.
-          </p>
         </div>
 
-        {/* Card de Configuração */}
-        <Card className="mb-6">
+        {/* Tema Padrão Global */}
+        <Card className="bg-card">
           <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Palette className="h-5 w-5" />
+            <CardTitle className="flex items-center gap-2 text-theme">
+              <Palette className="h-5 w-5 text-primary" />
               Tema Padrão do Sistema
             </CardTitle>
-            <CardDescription>
-              Este tema será aplicado a todos os usuários que não escolherem um
-              tema personalizado.
+            <CardDescription className="text-theme-muted">
+              Este tema será aplicado a todos os usuários que não personalizaram
+              o próprio tema
             </CardDescription>
           </CardHeader>
-          <CardContent className="space-y-6">
-            {/* Seletor de Tema */}
-            <div>
-              <Label htmlFor="theme-select" className="text-base font-semibold mb-3 block">
-                Selecione o Tema Padrão
+          <CardContent>
+            <div className="space-y-2">
+              <Label htmlFor="theme-select" className="text-theme">
+                Selecione o Tema Global
               </Label>
               <Select
                 value={superadminThemePreset}
-                onValueChange={(value) =>
-                  setSuperadminThemePreset(value as ThemePreset)
-                }
+                onValueChange={(value) => setSuperadminThemePreset(value as ThemePreset)}
               >
-                <SelectTrigger id="theme-select" className="w-full">
+                <SelectTrigger id="theme-select">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  {THEME_OPTIONS.map((theme) => {
-                    const Icon = theme.icon;
+                  {THEME_OPTIONS.map((option) => {
+                    const Icon = option.icon;
                     return (
-                      <SelectItem key={theme.value} value={theme.value}>
-                        <div className="flex items-center gap-3">
+                      <SelectItem key={option.value} value={option.value}>
+                        <div className="flex items-center gap-2">
                           <Icon className="h-4 w-4" />
-                          <div className="flex flex-col">
-                            <span className="font-medium">{theme.label}</span>
-                            <span className="text-xs text-muted-foreground">
-                              {theme.description}
-                            </span>
-                          </div>
+                          <span>{option.label}</span>
                         </div>
                       </SelectItem>
                     );
                   })}
                 </SelectContent>
               </Select>
-
-              {/* Preview do Tema Selecionado */}
-              {currentThemeOption && (
-                <div className="mt-4 p-4 bg-muted rounded-lg">
-                  <p className="text-sm font-medium mb-2">
-                    Tema Selecionado: {currentThemeOption.label}
-                  </p>
-                  <p className="text-xs text-muted-foreground">
-                    {currentThemeOption.description}
-                  </p>
-                </div>
-              )}
+              <p className="text-xs text-theme-muted">
+                Tema atual: <strong>{superadminThemePreset}</strong>
+              </p>
             </div>
           </CardContent>
         </Card>
 
-        {/* Card de Permissões */}
-        <Card className="mb-6">
+        {/* Permissões */}
+        <Card className="bg-card">
           <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Users className="h-5 w-5" />
+            <CardTitle className="flex items-center gap-2 text-theme">
+              <Users className="h-5 w-5 text-primary" />
               Permissões de Personalização
             </CardTitle>
-            <CardDescription>
-              Controle quem pode personalizar o tema do sistema.
+            <CardDescription className="text-theme-muted">
+              Controle quem pode personalizar o tema do sistema
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
-            {/* Permitir que usuários alterem tema */}
-            <div className="flex items-center justify-between p-4 bg-muted/50 rounded-lg">
-              <div className="flex-1">
-                <div className="flex items-center gap-2 mb-1">
-                  <Users className="h-4 w-4 text-blue-600" />
-                  <Label htmlFor="allow-user-override" className="font-semibold cursor-pointer">
-                    Permitir Usuários Escolherem Tema
+            {/* Permissão de Escritório (Futura Implementação) */}
+            <div className="flex items-center justify-between p-4 bg-muted-soft rounded-lg border border-theme">
+              <div className="space-y-1">
+                <div className="flex items-center gap-2">
+                  <Building2 className="h-5 w-5 text-theme-muted" />
+                  <Label htmlFor="allow-office" className="text-theme cursor-pointer">
+                    Permitir Escritórios Personalizarem
                   </Label>
                 </div>
-                <p className="text-sm text-muted-foreground">
-                  Se habilitado, cada usuário poderá escolher seu próprio tema
-                  na sidebar. Caso contrário, todos usarão o tema padrão.
+                <p className="text-xs text-theme-muted">
+                  Donos de escritório poderão definir tema para seus membros
+                  (Funcionalidade futura)
                 </p>
               </div>
               <Switch
-                id="allow-user-override"
-                checked={allowUserOverride}
-                onCheckedChange={setAllowUserOverride}
-              />
-            </div>
-
-            {/* Permitir que donos de escritório alterem tema (futura implementação) */}
-            <div className="flex items-center justify-between p-4 bg-muted/50 rounded-lg opacity-50">
-              <div className="flex-1">
-                <div className="flex items-center gap-2 mb-1">
-                  <Building2 className="h-4 w-4 text-purple-600" />
-                  <Label className="font-semibold">
-                    Permitir Donos de Escritório Definirem Tema
-                  </Label>
-                  <span className="text-xs bg-yellow-100 text-yellow-800 px-2 py-0.5 rounded">
-                    Em Breve
-                  </span>
-                </div>
-                <p className="text-sm text-muted-foreground">
-                  Permite que donos de escritório definam um tema para todos
-                  os membros do escritório. (Funcionalidade futura)
-                </p>
-              </div>
-              <Switch
+                id="allow-office"
                 checked={allowOfficeOverride}
                 onCheckedChange={setAllowOfficeOverride}
                 disabled
               />
             </div>
+
+            {/* Permissão de Usuário */}
+            <div className="flex items-center justify-between p-4 bg-muted-soft rounded-lg border border-theme">
+              <div className="space-y-1">
+                <div className="flex items-center gap-2">
+                  <Users className="h-5 w-5 text-theme-muted" />
+                  <Label htmlFor="allow-user" className="text-theme cursor-pointer">
+                    Permitir Usuários Personalizarem
+                  </Label>
+                </div>
+                <p className="text-xs text-theme-muted">
+                  Usuários individuais poderão escolher seu próprio tema
+                </p>
+              </div>
+              <Switch
+                id="allow-user"
+                checked={allowUserOverride}
+                onCheckedChange={setAllowUserOverride}
+              />
+            </div>
           </CardContent>
         </Card>
 
-        {/* Card de Hierarquia de Temas */}
-        <Card className="mb-6">
+        {/* Hierarquia */}
+        <Card className="bg-card">
           <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <CheckCircle className="h-5 w-5 text-green-600" />
-              Como Funciona a Hierarquia de Temas?
+            <CardTitle className="flex items-center gap-2 text-theme">
+              <CheckCircle className="h-5 w-5 text-primary" />
+              Como Funciona a Hierarquia
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="space-y-3">
-              <div className="flex items-start gap-3 p-3 bg-green-50 rounded-lg">
-                <span className="text-green-600 font-bold text-lg">1º</span>
+            <div className="space-y-3 text-sm text-theme-muted">
+              <div className="flex items-start gap-2">
+                <div className="h-6 w-6 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0 mt-0.5">
+                  <span className="text-xs font-bold text-primary">1</span>
+                </div>
                 <div>
-                  <p className="font-semibold text-green-900">Tema do Usuário</p>
-                  <p className="text-sm text-green-700">
-                    Se o usuário escolher um tema personalizado, ele terá
-                    prioridade sobre todos os outros.
+                  <strong className="text-theme">Tema do Usuário</strong>
+                  <p>Se o usuário personalizou, usará o tema escolhido por ele</p>
+                </div>
+              </div>
+
+              <div className="flex items-start gap-2">
+                <div className="h-6 w-6 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0 mt-0.5">
+                  <span className="text-xs font-bold text-primary">2</span>
+                </div>
+                <div>
+                  <strong className="text-theme">Tema do Escritório</strong>
+                  <p>
+                    Se não, e pertence a um escritório, usará o tema do escritório
+                    (Funcionalidade futura)
                   </p>
                 </div>
               </div>
 
-              <div className="flex items-start gap-3 p-3 bg-purple-50 rounded-lg opacity-50">
-                <span className="text-purple-600 font-bold text-lg">2º</span>
+              <div className="flex items-start gap-2">
+                <div className="h-6 w-6 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0 mt-0.5">
+                  <span className="text-xs font-bold text-primary">3</span>
+                </div>
                 <div>
-                  <p className="font-semibold text-purple-900">
-                    Tema do Escritório{" "}
-                    <span className="text-xs bg-yellow-100 text-yellow-800 px-2 py-0.5 rounded">
-                      Em Breve
-                    </span>
-                  </p>
-                  <p className="text-sm text-purple-700">
-                    Se o usuário não tiver um tema, o tema do escritório será
-                    aplicado (se configurado).
+                  <strong className="text-theme">Tema Global (SuperAdmin)</strong>
+                  <p>
+                    Se não, usará o tema padrão definido aqui pelo SuperAdmin
                   </p>
                 </div>
               </div>
 
-              <div className="flex items-start gap-3 p-3 bg-blue-50 rounded-lg">
-                <span className="text-blue-600 font-bold text-lg">3º</span>
+              <div className="flex items-start gap-2">
+                <div className="h-6 w-6 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0 mt-0.5">
+                  <span className="text-xs font-bold text-primary">4</span>
+                </div>
                 <div>
-                  <p className="font-semibold text-blue-900">
-                    Tema Padrão do Sistema
-                  </p>
-                  <p className="text-sm text-blue-700">
-                    Se nenhum dos anteriores estiver configurado, o tema padrão
-                    do sistema é aplicado.
-                  </p>
+                  <strong className="text-theme">Fallback</strong>
+                  <p>Se nenhum estiver definido, usará "blue-light" (tema padrão do sistema)</p>
                 </div>
               </div>
             </div>
           </CardContent>
         </Card>
 
-        {/* Botão de Salvar */}
+        {/* Botão Salvar */}
         <div className="flex justify-end gap-3">
           <Link href="/admin">
-            <Button variant="outline">Cancelar</Button>
+            <Button variant="outline">
+              <ArrowLeft className="h-4 w-4 mr-2" />
+              Cancelar
+            </Button>
           </Link>
           <Button onClick={handleSave} disabled={saving}>
             {saving ? (
               <>
-                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2" />
                 Salvando...
               </>
             ) : (

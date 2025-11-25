@@ -27,7 +27,7 @@ export async function GET(request: NextRequest) {
       globalSettings = await prisma.globalSettings.create({
         data: {
           id: 1,
-          superadminThemePreset: "padrao",
+          superadminThemePreset: "blue-light",
           allowOfficeOverride: false,
           allowUserOverride: true,
         },
@@ -52,7 +52,7 @@ export async function GET(request: NextRequest) {
       user?.themePreset ||
       officeTheme ||
       globalSettings.superadminThemePreset ||
-      "padrao";
+      "blue-light";
 
     return NextResponse.json(
       {
@@ -103,8 +103,8 @@ export async function PUT(request: NextRequest) {
       );
     }
 
-    // Validar tema
-    const validThemes = ["padrao", "simples", "moderado", "moderno", null];
+    // Validar tema (sistema universal)
+    const validThemes = ["blue-light", "blue-dark", "green-light", "green-dark", "purple-light", "purple-dark", null];
     if (themePreset !== null && !validThemes.includes(themePreset)) {
       return NextResponse.json(
         { error: "Tema inválido" },

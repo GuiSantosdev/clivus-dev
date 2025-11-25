@@ -1,14 +1,14 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useTheme } from "next-themes";
 import {
   Palette,
   Check,
-  Circle,
-  Square,
-  Sparkles,
   Lock,
   Info,
+  Sun,
+  Moon,
 } from "lucide-react";
 import {
   Select,
@@ -21,19 +21,15 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { toast } from "react-hot-toast";
 
-type ThemePreset = "padrao" | "simples" | "moderado" | "moderno";
+type ThemePreset = "blue-light" | "blue-dark" | "green-light" | "green-dark" | "purple-light" | "purple-dark";
 
 interface ThemeOption {
   value: ThemePreset;
   label: string;
   description: string;
   icon: React.ReactNode;
-  colors: {
-    bg: string;
-    surface: string;
-    primary: string;
-    text: string;
-  };
+  category: "blue" | "green" | "purple";
+  isDark: boolean;
 }
 
 interface ThemeHierarchy {
@@ -48,65 +44,64 @@ interface ThemeHierarchy {
 
 const THEME_OPTIONS: ThemeOption[] = [
   {
-    value: "padrao",
-    label: "Padrão",
-    description: "Visual clássico e equilibrado",
-    icon: <Circle className="h-4 w-4" />,
-    colors: {
-      bg: "#ffffff",
-      surface: "#ffffff",
-      primary: "#3b82f6",
-      text: "#1f2937",
-    },
+    value: "blue-light",
+    label: "Azul Claro",
+    description: "Tema azul padrão (light)",
+    icon: <Sun className="h-4 w-4" />,
+    category: "blue",
+    isDark: false,
   },
   {
-    value: "simples",
-    label: "Simples",
-    description: "Minimalista e limpo",
-    icon: <Square className="h-4 w-4" />,
-    colors: {
-      bg: "#ffffff",
-      surface: "#fafafa",
-      primary: "#404040",
-      text: "#171717",
-    },
+    value: "blue-dark",
+    label: "Azul Escuro",
+    description: "Tema azul escuro (dark)",
+    icon: <Moon className="h-4 w-4" />,
+    category: "blue",
+    isDark: true,
   },
   {
-    value: "moderado",
-    label: "Moderado",
-    description: "Balanceado e profissional",
-    icon: <Palette className="h-4 w-4" />,
-    colors: {
-      bg: "#fafbfc",
-      surface: "#ffffff",
-      primary: "#2563eb",
-      text: "#1e293b",
-    },
+    value: "green-light",
+    label: "Verde Claro",
+    description: "Tema verde (light)",
+    icon: <Sun className="h-4 w-4" />,
+    category: "green",
+    isDark: false,
   },
   {
-    value: "moderno",
-    label: "Moderno",
-    description: "Ousado e contemporâneo",
-    icon: <Sparkles className="h-4 w-4" />,
-    colors: {
-      bg: "#0a0a0f",
-      surface: "#16161f",
-      primary: "#8b5cf6",
-      text: "#f8f8f8",
-    },
+    value: "green-dark",
+    label: "Verde Escuro",
+    description: "Tema verde escuro (dark)",
+    icon: <Moon className="h-4 w-4" />,
+    category: "green",
+    isDark: true,
+  },
+  {
+    value: "purple-light",
+    label: "Roxo Claro",
+    description: "Tema roxo (light)",
+    icon: <Sun className="h-4 w-4" />,
+    category: "purple",
+    isDark: false,
+  },
+  {
+    value: "purple-dark",
+    label: "Roxo Escuro",
+    description: "Tema roxo escuro (dark)",
+    icon: <Moon className="h-4 w-4" />,
+    category: "purple",
+    isDark: true,
   },
 ];
 
 export function ThemeSelector() {
-  const [currentTheme, setCurrentTheme] = useState<ThemePreset>("padrao");
-  const [showPreview, setShowPreview] = useState(false);
-  const [mounted, setMounted] = useState(false);
-  const [loading, setLoading] = useState(true);
+  const { theme, setTheme } = useTheme();
+  const [currentTheme, setCurrentTheme] = useState<ThemePreset>("blue-light");
   const [hierarchy, setHierarchy] = useState<ThemeHierarchy | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [showPreview, setShowPreview] = useState(false);
+  const [previewTheme, setPreviewTheme] = useState<ThemePreset | null>(null);
 
-  // Carregar hierarquia de temas da API
   useEffect(() => {
-    setMounted(true);
     loadThemeHierarchy();
   }, []);
 
@@ -116,88 +111,76 @@ export function ThemeSelector() {
       if (response.ok) {
         const data = await response.json();
         setHierarchy(data);
-        setCurrentTheme(data.effectiveTheme || "padrao");
-        applyTheme(data.effectiveTheme || "padrao", false);
+        setCurrentTheme(data.effectiveTheme);
+        setTheme(data.effectiveTheme);
       } else {
-        // Fallback para localStorage se API falhar
-        const savedTheme = localStorage.getItem("theme-preset") as ThemePreset;
-        if (savedTheme && THEME_OPTIONS.find((t) => t.value === savedTheme)) {
-          setCurrentTheme(savedTheme);
-          applyTheme(savedTheme, false);
-        }
+        // Fallback para localStorage
+        const savedTheme = (localStorage.getItem("theme") as ThemePreset) || "blue-light";
+        setCurrentTheme(savedTheme);
+        setTheme(savedTheme);
       }
     } catch (error) {
-      console.error("Erro ao carregar hierarquia de temas:", error);
-      // Fallback para localStorage
-      const savedTheme = localStorage.getItem("theme-preset") as ThemePreset;
-      if (savedTheme && THEME_OPTIONS.find((t) => t.value === savedTheme)) {
-        setCurrentTheme(savedTheme);
-        applyTheme(savedTheme, false);
-      }
+      console.error("Erro ao carregar tema:", error);
+      const savedTheme = (localStorage.getItem("theme") as ThemePreset) || "blue-light";
+      setCurrentTheme(savedTheme);
+      setTheme(savedTheme);
     } finally {
       setLoading(false);
     }
   };
 
-  const applyTheme = (theme: ThemePreset, saveToAPI: boolean = true) => {
-    // Remove todos os data-theme anteriores
-    document.documentElement.removeAttribute("data-theme");
-
-    // Aplica o novo tema
-    if (theme !== "padrao") {
-      document.documentElement.setAttribute("data-theme", theme);
+  const handleThemeChange = (newTheme: ThemePreset) => {
+    if (hierarchy && !hierarchy.canChangeTheme) {
+      toast.error("Alteração de tema desabilitada pelo administrador");
+      return;
     }
 
-    // Salva no localStorage como backup
-    localStorage.setItem("theme-preset", theme);
-    setCurrentTheme(theme);
-
-    // Salva no backend se permitido
-    if (saveToAPI && hierarchy?.canChangeTheme) {
-      saveThemeToAPI(theme);
-    }
+    setCurrentTheme(newTheme);
+    setTheme(newTheme);
+    localStorage.setItem("theme", newTheme);
+    saveThemeToAPI(newTheme);
   };
 
-  const saveThemeToAPI = async (theme: ThemePreset) => {
+  const saveThemeToAPI = async (newTheme: ThemePreset) => {
     try {
       const response = await fetch("/api/user/theme", {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ themePreset: theme }),
+        body: JSON.stringify({ themePreset: newTheme }),
       });
 
       if (response.ok) {
-        toast.success("Tema salvo com sucesso!");
-        // Recarregar hierarquia para refletir mudanças
-        await loadThemeHierarchy();
+        toast.success("Tema atualizado com sucesso");
+        loadThemeHierarchy();
       } else {
-        const error = await response.json();
-        toast.error(error.error || "Erro ao salvar tema");
+        const data = await response.json();
+        toast.error(data.error || "Erro ao salvar tema");
       }
     } catch (error) {
       console.error("Erro ao salvar tema:", error);
-      toast.error("Erro ao salvar tema");
     }
   };
 
-  const handleThemeChange = (value: string) => {
-    const theme = value as ThemePreset;
+  const handlePreviewTheme = (themeToPreview: ThemePreset) => {
+    setPreviewTheme(themeToPreview);
+    setTheme(themeToPreview);
+  };
 
-    // Verificar se usuário pode alterar
-    if (hierarchy && !hierarchy.canChangeTheme) {
-      toast.error("Você não tem permissão para alterar o tema");
-      return;
+  const closePreview = () => {
+    setShowPreview(false);
+    setPreviewTheme(null);
+    setTheme(currentTheme);
+  };
+
+  const applyPreviewTheme = () => {
+    if (previewTheme) {
+      handleThemeChange(previewTheme);
+      setShowPreview(false);
+      setPreviewTheme(null);
     }
-
-    applyTheme(theme, true);
   };
 
   const resetToDefault = async () => {
-    if (!hierarchy?.canChangeTheme) {
-      toast.error("Você não tem permissão para alterar o tema");
-      return;
-    }
-
     try {
       const response = await fetch("/api/user/theme", {
         method: "PUT",
@@ -206,8 +189,10 @@ export function ThemeSelector() {
       });
 
       if (response.ok) {
-        toast.success("Tema resetado para padrão!");
-        await loadThemeHierarchy();
+        toast.success("Tema resetado para o padrão do sistema");
+        loadThemeHierarchy();
+      } else {
+        toast.error("Erro ao resetar tema");
       }
     } catch (error) {
       console.error("Erro ao resetar tema:", error);
@@ -215,226 +200,166 @@ export function ThemeSelector() {
     }
   };
 
-  // Evita hidratação incorreta
-  if (!mounted || loading) {
+  const canChange = hierarchy?.canChangeTheme ?? true;
+
+  if (loading) {
     return (
-      <div className="flex items-center gap-2">
-        <Palette className="h-5 w-5 text-gray-400" />
-        <span className="text-sm text-gray-500">Carregando...</span>
+      <div className="p-4">
+        <div className="h-8 bg-muted animate-pulse rounded" />
       </div>
     );
   }
 
-  const currentOption = THEME_OPTIONS.find((t) => t.value === currentTheme);
-  const canChange = hierarchy?.canChangeTheme ?? true;
-
   return (
-    <div className="relative">
-      <div className="flex flex-col gap-2">
-        {/* Informação sobre permissões */}
-        {hierarchy && !canChange && (
-          <div className="flex items-center gap-2 p-2 bg-muted rounded-lg">
-            <Lock className="h-4 w-4 text-muted-foreground" />
-            <span className="text-xs text-muted-foreground">
-              Tema definido pelo administrador
-            </span>
+    <div className="space-y-4">
+      {/* Status */}
+      <div className="space-y-2">
+        {!canChange && (
+          <div className="flex items-center gap-2 text-xs text-theme-muted bg-muted-soft p-2 rounded">
+            <Lock className="h-3 w-3" />
+            <span>Tema definido pelo administrador</span>
           </div>
         )}
-
-        {/* Informação sobre tema herdado */}
-        {hierarchy && hierarchy.userTheme === null && (
-          <div className="flex items-center gap-2 p-2 bg-blue-50 rounded-lg">
-            <Info className="h-4 w-4 text-blue-600" />
-            <span className="text-xs text-blue-600">
-              Usando tema padrão do sistema
-            </span>
+        {hierarchy?.userTheme === null && (
+          <div className="flex items-center gap-2 text-xs text-theme-muted bg-muted-soft p-2 rounded">
+            <Info className="h-3 w-3" />
+            <span>Usando tema padrão do sistema</span>
           </div>
         )}
-
-        <div className="flex items-center gap-2">
-          {/* Seletor de Tema */}
-          <Select
-            value={currentTheme}
-            onValueChange={handleThemeChange}
-            disabled={!canChange}
-          >
-            <SelectTrigger className="w-[200px]">
-              <div className="flex items-center gap-2">
-                <Palette className="h-4 w-4" />
-                <SelectValue />
-              </div>
-            </SelectTrigger>
-            <SelectContent>
-              {THEME_OPTIONS.map((theme) => (
-                <SelectItem key={theme.value} value={theme.value}>
-                  <div className="flex items-center gap-3">
-                    {theme.icon}
-                    <div className="flex flex-col">
-                      <span className="font-medium">{theme.label}</span>
-                      <span className="text-xs text-muted-foreground">
-                        {theme.description}
-                      </span>
-                    </div>
-                    {currentTheme === theme.value && (
-                      <Check className="h-4 w-4 ml-auto text-primary" />
-                    )}
-                  </div>
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-
-          {/* Botão de Preview */}
-          <Button
-            variant="outline"
-            size="icon"
-            onClick={() => setShowPreview(!showPreview)}
-            title="Ver preview dos temas"
-          >
-            <Palette className="h-4 w-4" />
-          </Button>
-
-          {/* Botão de Reset (só aparece se usuário tem tema personalizado) */}
-          {hierarchy?.userTheme && canChange && (
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={resetToDefault}
-              title="Resetar para tema padrão"
-              className="text-xs"
-            >
-              Resetar
-            </Button>
-          )}
-        </div>
       </div>
 
-      {/* Preview dos Temas */}
-      {showPreview && (
-        <Card className="absolute top-full right-0 mt-2 w-[400px] z-50 shadow-lg">
-          <CardContent className="p-4">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-sm font-semibold">
-                Aparências Disponíveis
-              </h3>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => setShowPreview(false)}
-              >
-                Fechar
-              </Button>
-            </div>
-            <div className="grid grid-cols-2 gap-3">
-              {THEME_OPTIONS.map((theme) => (
-                <button
-                  key={theme.value}
-                  onClick={() => {
-                    if (canChange) {
-                      handleThemeChange(theme.value);
-                      setShowPreview(false);
-                    } else {
-                      toast.error(
-                        "Você não tem permissão para alterar o tema"
-                      );
-                    }
-                  }}
-                  disabled={!canChange}
-                  className={
-                    `relative flex flex-col gap-2 p-3 rounded-lg border-2 transition-all hover:scale-105 ${
-                      currentTheme === theme.value
-                        ? "border-primary ring-2 ring-primary/20"
-                        : "border-border hover:border-primary/50"
-                    } ${
-                      !canChange ? "opacity-50 cursor-not-allowed" : ""
-                    }`
-                  }
-                >
-                  {/* Preview Visual */}
-                  <div className="flex gap-1 h-12">
-                    <div
-                      className="flex-1 rounded"
-                      style={{ backgroundColor: theme.colors.bg }}
-                    />
-                    <div
-                      className="flex-1 rounded"
-                      style={{ backgroundColor: theme.colors.surface }}
-                    />
-                    <div
-                      className="flex-1 rounded"
-                      style={{ backgroundColor: theme.colors.primary }}
-                    />
-                  </div>
+      {/* Seletor */}
+      <div className="flex items-center gap-2">
+        <Palette className="h-5 w-5 text-primary" />
+        <Select
+          value={currentTheme}
+          onValueChange={(value) => handleThemeChange(value as ThemePreset)}
+          disabled={!canChange}
+        >
+          <SelectTrigger className="flex-1">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            {THEME_OPTIONS.map((option) => (
+              <SelectItem key={option.value} value={option.value}>
+                <div className="flex items-center gap-2">
+                  {option.icon}
+                  <span>{option.label}</span>
+                  {currentTheme === option.value && (
+                    <Check className="h-3 w-3 ml-auto" />
+                  )}
+                </div>
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      </div>
 
-                  {/* Info do Tema */}
-                  <div className="text-left">
-                    <div className="flex items-center gap-1.5 mb-1">
-                      {theme.icon}
-                      <span className="font-medium text-sm">
-                        {theme.label}
+      {/* Ações */}
+      <div className="flex gap-2">
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => setShowPreview(true)}
+          disabled={!canChange}
+          className="flex-1"
+        >
+          <Palette className="h-4 w-4 mr-2" />
+          Visualizar
+        </Button>
+        {hierarchy?.userTheme && canChange && (
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={resetToDefault}
+            className="flex-1"
+          >
+            Resetar
+          </Button>
+        )}
+      </div>
+
+      {/* Modal de Preview */}
+      {showPreview && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <Card className="w-full max-w-2xl mx-4 max-h-[90vh] overflow-y-auto">
+            <CardContent className="p-6 space-y-4">
+              <div className="flex items-center justify-between">
+                <h3 className="text-lg font-semibold">Visualizar Temas</h3>
+                <Button variant="ghost" size="sm" onClick={closePreview}>
+                  ✕
+                </Button>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                {THEME_OPTIONS.map((option) => (
+                  <Card
+                    key={option.value}
+                    className={`cursor-pointer transition-all ${
+                      previewTheme === option.value
+                        ? "ring-2 ring-primary"
+                        : "hover:shadow-md"
+                    }`}
+                    onClick={() => handlePreviewTheme(option.value)}
+                  >
+                    <CardContent className="p-4 space-y-2">
+                      <div className="flex items-center gap-2">
+                        {option.icon}
+                        <span className="font-medium">{option.label}</span>
+                        {previewTheme === option.value && (
+                          <Check className="h-4 w-4 ml-auto text-primary" />
+                        )}
+                      </div>
+                      <p className="text-xs text-theme-muted">
+                        {option.description}
+                      </p>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+
+              {/* Hierarquia */}
+              {hierarchy && (
+                <div className="mt-4 p-4 bg-muted-soft rounded space-y-2">
+                  <h4 className="text-sm font-semibold">Hierarquia de Temas</h4>
+                  <div className="text-xs space-y-1">
+                    <div>
+                      <span className="text-theme-muted">Seu tema: </span>
+                      <span className="font-medium">
+                        {hierarchy.userTheme || "(Padrão do sistema)"}
                       </span>
                     </div>
-                    <p className="text-xs text-muted-foreground">
-                      {theme.description}
-                    </p>
-                  </div>
-
-                  {/* Checkmark se selecionado */}
-                  {currentTheme === theme.value && (
-                    <div className="absolute top-2 right-2">
-                      <div className="bg-primary text-primary-foreground rounded-full p-1">
-                        <Check className="h-3 w-3" />
-                      </div>
+                    <div>
+                      <span className="text-theme-muted">Escritório: </span>
+                      <span className="font-medium">
+                        {hierarchy.officeTheme || "(Não definido)"}
+                      </span>
                     </div>
-                  )}
-                </button>
-              ))}
-            </div>
-
-            {/* Informação sobre o tema atual */}
-            {currentOption && (
-              <div className="mt-4 p-3 bg-muted rounded-lg">
-                <div className="flex items-start gap-2">
-                  <div className="mt-0.5">{currentOption.icon}</div>
-                  <div>
-                    <p className="text-sm font-medium mb-1">
-                      Tema Atual: {currentOption.label}
-                    </p>
-                    <p className="text-xs text-muted-foreground">
-                      {currentOption.description}
-                    </p>
-                    {hierarchy?.userTheme === null && (
-                      <p className="text-xs text-blue-600 mt-1">
-                        (Herdado do tema padrão do sistema)
-                      </p>
-                    )}
+                    <div>
+                      <span className="text-theme-muted">SuperAdmin: </span>
+                      <span className="font-medium">
+                        {hierarchy.superadminTheme}
+                      </span>
+                    </div>
                   </div>
                 </div>
-              </div>
-            )}
+              )}
 
-            {/* Informação sobre hierarquia */}
-            {hierarchy && (
-              <div className="mt-3 p-3 bg-blue-50 rounded-lg">
-                <p className="text-xs font-semibold text-blue-900 mb-2">
-                  Hierarquia de Temas:
-                </p>
-                <ul className="text-xs text-blue-700 space-y-1">
-                  {hierarchy.userTheme && (
-                    <li>✓ Seu tema: <strong>{hierarchy.userTheme}</strong></li>
-                  )}
-                  {hierarchy.officeTheme && (
-                    <li>○ Tema do escritório: {hierarchy.officeTheme}</li>
-                  )}
-                  <li>
-                    ○ Tema padrão do sistema:{" "}
-                    <strong>{hierarchy.superadminTheme}</strong>
-                  </li>
-                </ul>
+              <div className="flex gap-2 pt-4">
+                <Button variant="outline" onClick={closePreview} className="flex-1">
+                  Cancelar
+                </Button>
+                <Button
+                  onClick={applyPreviewTheme}
+                  disabled={!previewTheme}
+                  className="flex-1"
+                >
+                  Aplicar Tema
+                </Button>
               </div>
-            )}
-          </CardContent>
-        </Card>
+            </CardContent>
+          </Card>
+        </div>
       )}
     </div>
   );
