@@ -235,7 +235,7 @@ export default function PlanejPage() {
 
     if (actual === 0) {
       return {
-        icon: <XCircle className="w-5 h-5 text-gray-400" />,
+        icon: <XCircle className="w-5 h-5 text-theme-muted" />,
         color: "text-theme-muted",
         label: "Pendente",
       };
@@ -351,7 +351,7 @@ export default function PlanejPage() {
     <div className="p-8">
       <div className="max-w-7xl mx-auto space-y-6">
         <div className="flex items-center justify-between">
-          <h1 className="text-3xl font-bold">📅 Planejamento Financeiro</h1>
+          <h1 className="text-3xl font-bold text-theme">📅 Planejamento Financeiro</h1>
           <Button onClick={() => {
             setShowForm(!showForm);
             if (showForm) {

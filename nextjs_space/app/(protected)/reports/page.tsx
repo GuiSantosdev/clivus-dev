@@ -81,7 +81,7 @@ export default function ReportsPage() {
     <div className="p-8">
       <div className="mb-6">
         <h1 className="text-3xl font-bold text-theme">Relatórios Financeiros</h1>
-        <p className="text-theme-muted mt-2">Visualize e exporte seus relatórios financeiros</p>
+        <p className="text-theme text-base mt-2">Visualize e exporte seus relatórios financeiros</p>
       </div>
 
         {/* Summary Cards */}

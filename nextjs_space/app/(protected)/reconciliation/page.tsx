@@ -177,7 +177,7 @@ export default function ReconciliationPage() {
           <CardContent>
             <div className="text-center py-8">
               <AlertCircle className="h-16 w-16 text-accent mx-auto mb-4" />
-              <h3 className="text-xl font-semibold mb-2">
+              <h3 className="text-xl font-semibold text-theme mb-2">
                 Conciliação Bancária Automática
               </h3>
               <p className="text-theme-muted mb-6">
@@ -269,7 +269,7 @@ export default function ReconciliationPage() {
                   disabled={processing}
                   className="flex-1"
                 />
-                <FileSpreadsheet className="h-6 w-6 text-gray-400" />
+                <FileSpreadsheet className="h-6 w-6 text-theme-muted" />
               </div>
               <div className="mt-2 space-y-1">
                 <p className="text-xs text-theme-muted">
@@ -308,7 +308,7 @@ export default function ReconciliationPage() {
               {parsedTransactions.map((transaction, index) => (
                 <div
                   key={index}
-                  className="p-4 bg-gray-50 rounded-lg border border-gray-200"
+                  className="p-4 bg-gray-50 rounded-lg border border-theme"
                 >
                   {editingIndex === index ? (
                     // Edit Mode

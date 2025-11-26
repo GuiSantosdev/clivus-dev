@@ -303,7 +303,7 @@ export default function TeamPage() {
                   key={member.id}
                   className={`p-4 rounded-lg border-2 ${
                     member.status === "active"
-                      ? "bg-card border-gray-200"
+                      ? "bg-card border-theme"
                       : "bg-accent bg-opacity-10 border-accent border-opacity-30"
                   }`}
                 >

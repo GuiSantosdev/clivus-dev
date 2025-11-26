@@ -535,7 +535,7 @@ export default function DashboardPage() {
               </div>
 
               {/* Legenda */}
-              <div className="mt-4 pt-4 border-t border-gray-200 text-xs text-theme-muted flex items-center gap-4">
+              <div className="mt-4 pt-4 border-t border-theme text-xs text-theme-muted flex items-center gap-4">
                 <span>🟢 95-100% (Receitas) / 0-80% (Despesas): Ótimo</span>
                 <span>🟡 80-94% (Receitas) / 81-100% (Despesas): Atenção</span>
                 <span>🔴 {'<'}80% (Receitas) / {'>'}100% (Despesas): Crítico</span>
@@ -651,7 +651,7 @@ export default function DashboardPage() {
           <Card className="bg-gradient-to-br from-primary/10 to-primary/20 border-primary border-opacity-40">
             <CardContent className="p-6">
               <div className="flex flex-col items-center text-center space-y-2">
-                <div className="h-12 w-12 rounded-full bg-white flex items-center justify-center">
+                <div className="h-12 w-12 rounded-full bg-card flex items-center justify-center">
                   <CheckCircle className="h-6 w-6 text-primary" />
                 </div>
                 <h3 className="font-semibold text-theme">100% Online</h3>
@@ -663,7 +663,7 @@ export default function DashboardPage() {
           <Card className="bg-gradient-to-br from-green-50 to-green-100 border-green-300">
             <CardContent className="p-6">
               <div className="flex flex-col items-center text-center space-y-2">
-                <div className="h-12 w-12 rounded-full bg-white flex items-center justify-center">
+                <div className="h-12 w-12 rounded-full bg-card flex items-center justify-center">
                   <CheckCircle className="h-6 w-6 text-green-600" />
                 </div>
                 <h3 className="font-semibold text-theme">Backup Automático</h3>
@@ -695,7 +695,7 @@ export default function DashboardPage() {
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {/* Transações Mensais */}
                 {planLimits.limits.transactions_monthly !== undefined && (
-                  <div className="flex items-start space-x-3 p-3 bg-white rounded-lg border border-gray-200">
+                  <div className="flex items-start space-x-3 p-3 bg-card rounded-lg border border-theme">
                     <FileText className="h-5 w-5 text-primary mt-0.5" />
                     <div className="flex-1">
                       <p className="font-medium text-theme text-sm">Transações por Mês</p>
@@ -710,7 +710,7 @@ export default function DashboardPage() {
 
                 {/* Membros da Equipe */}
                 {planLimits.limits.team_members !== undefined && (
-                  <div className="flex items-start space-x-3 p-3 bg-white rounded-lg border border-gray-200">
+                  <div className="flex items-start space-x-3 p-3 bg-card rounded-lg border border-theme">
                     <Users className="h-5 w-5 text-purple-600 mt-0.5" />
                     <div className="flex-1">
                       <p className="font-medium text-theme text-sm">Membros da Equipe</p>
@@ -727,7 +727,7 @@ export default function DashboardPage() {
 
                 {/* Relatórios DRE */}
                 {planLimits.limits.dre_reports_monthly !== undefined && (
-                  <div className="flex items-start space-x-3 p-3 bg-white rounded-lg border border-gray-200">
+                  <div className="flex items-start space-x-3 p-3 bg-card rounded-lg border border-theme">
                     <PieChart className="h-5 w-5 text-green-600 mt-0.5" />
                     <div className="flex-1">
                       <p className="font-medium text-theme text-sm">Relatórios DRE/Mês</p>
@@ -744,7 +744,7 @@ export default function DashboardPage() {
 
                 {/* Calculadora de Pró-labore */}
                 {planLimits.limits.prolabore_calculator !== undefined && (
-                  <div className="flex items-start space-x-3 p-3 bg-white rounded-lg border border-gray-200">
+                  <div className="flex items-start space-x-3 p-3 bg-card rounded-lg border border-theme">
                     <Calculator className="h-5 w-5 text-orange-600 mt-0.5" />
                     <div className="flex-1">
                       <p className="font-medium text-theme text-sm">Calculadora Pró-labore</p>
@@ -759,7 +759,7 @@ export default function DashboardPage() {
 
                 {/* Compliance Fiscal */}
                 {planLimits.limits.compliance_alerts !== undefined && (
-                  <div className="flex items-start space-x-3 p-3 bg-white rounded-lg border border-gray-200">
+                  <div className="flex items-start space-x-3 p-3 bg-card rounded-lg border border-theme">
                     <ShieldCheck className="h-5 w-5 text-red-600 mt-0.5" />
                     <div className="flex-1">
                       <p className="font-medium text-theme text-sm">Alertas de Compliance</p>
@@ -774,7 +774,7 @@ export default function DashboardPage() {
 
                 {/* Controle de Investimentos */}
                 {planLimits.limits.investment_tracking !== undefined && (
-                  <div className="flex items-start space-x-3 p-3 bg-white rounded-lg border border-gray-200">
+                  <div className="flex items-start space-x-3 p-3 bg-card rounded-lg border border-theme">
                     <TrendingUp className="h-5 w-5 text-teal-600 mt-0.5" />
                     <div className="flex-1">
                       <p className="font-medium text-theme text-sm">Controle de Investimentos</p>
@@ -789,7 +789,7 @@ export default function DashboardPage() {
 
                 {/* Exportação PDF */}
                 {planLimits.limits.export_pdf !== undefined && (
-                  <div className="flex items-start space-x-3 p-3 bg-white rounded-lg border border-gray-200">
+                  <div className="flex items-start space-x-3 p-3 bg-card rounded-lg border border-theme">
                     <FileText className="h-5 w-5 text-pink-600 mt-0.5" />
                     <div className="flex-1">
                       <p className="font-medium text-theme text-sm">Exportação PDF</p>
@@ -804,7 +804,7 @@ export default function DashboardPage() {
 
                 {/* Categorias Personalizadas DRE */}
                 {planLimits.limits.custom_categories !== undefined && (
-                  <div className="flex items-start space-x-3 p-3 bg-white rounded-lg border border-gray-200">
+                  <div className="flex items-start space-x-3 p-3 bg-card rounded-lg border border-theme">
                     <PieChart className="h-5 w-5 text-indigo-600 mt-0.5" />
                     <div className="flex-1">
                       <p className="font-medium text-theme text-sm">Categorias Personalizadas DRE</p>
@@ -821,7 +821,7 @@ export default function DashboardPage() {
 
                 {/* Suporte Prioritário */}
                 {planLimits.limits.priority_support !== undefined && (
-                  <div className="flex items-start space-x-3 p-3 bg-white rounded-lg border border-gray-200">
+                  <div className="flex items-start space-x-3 p-3 bg-card rounded-lg border border-theme">
                     <CheckCircle className="h-5 w-5 text-accent mt-0.5" />
                     <div className="flex-1">
                       <p className="font-medium text-theme text-sm">Suporte Prioritário</p>
@@ -886,7 +886,7 @@ export default function DashboardPage() {
               </div>
             ) : (
               <div className="text-center py-8">
-                <Wallet className="h-12 w-12 text-gray-400 mx-auto mb-3" />
+                <Wallet className="h-12 w-12 text-theme-muted mx-auto mb-3" />
                 <p className="text-theme-muted">Nenhuma transação registrada ainda</p>
                 <Link href="/transactions">
                   <Button className="mt-4" size="sm">
