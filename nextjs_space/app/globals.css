@@ -15,38 +15,38 @@
     --surface: 210 20% 98%;            /* #f8f9fb - Cinza clarinho */
     --card: 0 0% 100%;                 /* #ffffff - Cards brancos */
     
-    /* Text Colors - Alto contraste */
-    --foreground: 222 47% 11%;         /* #0f172a - Texto escuro */
-    --muted-foreground: 215 16% 47%;   /* #64748b - Texto secundário */
+    /* Text Colors - Alto contraste para legibilidade */
+    --foreground: 222 47% 11%;         /* #0f172a - Texto ESCURO (preto quase) */
+    --muted-foreground: 215 16% 40%;   /* #64748b - Texto secundário ESCURO */
     
-    /* Primary - Verde Clivus */
-    --primary: 142 76% 36%;            /* #16a34a - Verde do logo */
-    --primary-foreground: 0 0% 100%;   /* Branco */
-    --primary-hover: 142 76% 32%;      /* Verde mais escuro no hover */
+    /* Primary - Azul Clivus Principal */
+    --primary: 210 100% 50%;           /* #0080ff - Azul vibrante do logo */
+    --primary-foreground: 0 0% 100%;   /* Branco - contraste perfeito */
+    --primary-hover: 210 100% 45%;     /* Azul mais escuro no hover */
     
-    /* Secondary - Azul Clivus */
-    --secondary: 199 89% 48%;          /* #0ea5e9 - Azul do logo */
-    --secondary-foreground: 0 0% 100%;
+    /* Secondary - Azul Clivus Claro */
+    --secondary: 199 89% 48%;          /* #0ea5e9 - Azul claro do logo */
+    --secondary-foreground: 0 0% 100%; /* Branco */
     --secondary-hover: 199 89% 42%;
     
-    /* Accent - Verde claro */
-    --accent: 142 71% 45%;             /* #10b981 - Verde accent */
+    /* Accent - Azul Ciano */
+    --accent: 189 85% 45%;             /* #0dcaf0 - Azul ciano */
     --accent-foreground: 0 0% 100%;
     
     /* UI Elements */
     --border: 214 32% 91%;             /* #e2e8f0 - Borda suave */
     --input: 0 0% 100%;
-    --ring: 142 76% 36%;
+    --ring: 210 100% 50%;
     
-    /* Sidebar - Branca com borda */
+    /* Sidebar - Branca com texto escuro */
     --sidebar-background: 0 0% 100%;
-    --sidebar-foreground: 222 47% 11%;
-    --sidebar-primary: 142 76% 36%;
+    --sidebar-foreground: 222 47% 11%; /* Texto ESCURO */
+    --sidebar-primary: 210 100% 50%;   /* Azul principal */
     --sidebar-accent: 199 89% 48%;
     --sidebar-border: 214 32% 91%;
     
     /* Status Colors */
-    --success: 142 71% 45%;
+    --success: 142 71% 45%;            /* Verde mantido para sucesso */
     --warning: 38 92% 50%;
     --error: 0 84% 60%;
     --info: 199 89% 48%;
@@ -56,8 +56,8 @@
     --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
     --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
     --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-    --shadow-glow-green: 0 0 20px rgba(22, 163, 74, 0.3);
-    --shadow-glow-blue: 0 0 20px rgba(14, 165, 233, 0.3);
+    --shadow-glow-blue: 0 0 20px rgba(0, 128, 255, 0.3);
+    --shadow-glow-cyan: 0 0 20px rgba(14, 165, 233, 0.3);
     
     /* Border Radius */
     --radius-sm: 0.375rem;
@@ -66,8 +66,8 @@
     --radius-xl: 1rem;
     
     /* Gradients */
-    --gradient-primary: linear-gradient(135deg, hsl(142 76% 36%), hsl(199 89% 48%));
-    --gradient-card: linear-gradient(135deg, rgba(22, 163, 74, 0.05), rgba(14, 165, 233, 0.05));
+    --gradient-primary: linear-gradient(135deg, hsl(210 100% 50%), hsl(199 89% 48%));
+    --gradient-card: linear-gradient(135deg, rgba(0, 128, 255, 0.05), rgba(14, 165, 233, 0.05));
   }
 
   /* MODO DARK */
@@ -77,38 +77,38 @@
     --surface: 217 33% 17%;            /* #1e293b - Superfície elevada */
     --card: 215 28% 17%;               /* #1e293b - Cards */
     
-    /* Text Colors */
-    --foreground: 210 40% 98%;         /* #f8fafc - Branco suave */
-    --muted-foreground: 215 20% 65%;   /* #94a3b8 - Cinza claro */
+    /* Text Colors - CLAROS para fundo escuro */
+    --foreground: 210 40% 98%;         /* #f8fafc - Branco suave (CLARO) */
+    --muted-foreground: 215 20% 70%;   /* #94a3b8 - Cinza CLARO (aumentado de 65% para 70%) */
     
-    /* Primary - Verde Clivus (mais vibrante no dark) */
-    --primary: 142 76% 45%;            /* #22c55e - Verde brilhante */
-    --primary-foreground: 222 47% 11%;
-    --primary-hover: 142 76% 50%;
+    /* Primary - Azul Clivus Vibrante */
+    --primary: 210 100% 60%;           /* #338eff - Azul brilhante */
+    --primary-foreground: 0 0% 100%;   /* Branco puro */
+    --primary-hover: 210 100% 65%;     /* Azul mais claro no hover */
     
-    /* Secondary - Azul Clivus (mais vibrante) */
-    --secondary: 199 89% 56%;          /* #38bdf8 - Azul brilhante */
-    --secondary-foreground: 222 47% 11%;
-    --secondary-hover: 199 89% 60%;
+    /* Secondary - Azul Clivus Claro */
+    --secondary: 199 89% 60%;          /* #38bdf8 - Azul brilhante */
+    --secondary-foreground: 0 0% 100%; /* Branco */
+    --secondary-hover: 199 89% 65%;
     
-    /* Accent */
-    --accent: 142 71% 45%;
+    /* Accent - Azul Ciano */
+    --accent: 189 85% 55%;             /* #22d3ee - Azul ciano brilhante */
     --accent-foreground: 0 0% 100%;
     
     /* UI Elements */
     --border: 217 33% 23%;             /* #334155 - Borda escura */
     --input: 217 33% 17%;
-    --ring: 142 76% 45%;
+    --ring: 210 100% 60%;
     
-    /* Sidebar */
+    /* Sidebar - Mais escuro com texto CLARO */
     --sidebar-background: 222 47% 8%;
-    --sidebar-foreground: 210 40% 98%;
-    --sidebar-primary: 142 76% 45%;
-    --sidebar-accent: 199 89% 56%;
+    --sidebar-foreground: 210 40% 98%; /* Texto CLARO */
+    --sidebar-primary: 210 100% 60%;   /* Azul brilhante */
+    --sidebar-accent: 199 89% 60%;
     --sidebar-border: 217 33% 20%;
     
     /* Status Colors */
-    --success: 142 71% 45%;
+    --success: 142 71% 50%;            /* Verde mantido */
     --warning: 38 92% 50%;
     --error: 0 84% 60%;
     --info: 199 89% 56%;
@@ -118,12 +118,12 @@
     --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.4), 0 2px 4px -1px rgba(0, 0, 0, 0.3);
     --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.5), 0 4px 6px -2px rgba(0, 0, 0, 0.3);
     --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.6), 0 10px 10px -5px rgba(0, 0, 0, 0.4);
-    --shadow-glow-green: 0 0 30px rgba(34, 197, 94, 0.5);
-    --shadow-glow-blue: 0 0 30px rgba(56, 189, 248, 0.5);
+    --shadow-glow-blue: 0 0 30px rgba(51, 142, 255, 0.5);
+    --shadow-glow-cyan: 0 0 30px rgba(56, 189, 248, 0.5);
     
     /* Gradients */
-    --gradient-primary: linear-gradient(135deg, hsl(142 76% 45%), hsl(199 89% 56%));
-    --gradient-card: linear-gradient(135deg, rgba(34, 197, 94, 0.1), rgba(56, 189, 248, 0.1));
+    --gradient-primary: linear-gradient(135deg, hsl(210 100% 60%), hsl(199 89% 60%));
+    --gradient-card: linear-gradient(135deg, rgba(51, 142, 255, 0.1), rgba(56, 189, 248, 0.1));
   }
 
 }
@@ -259,12 +259,12 @@
   }
 
   /* Glow Effects - Inspirados no vídeo */
-  .glow-green {
-    box-shadow: var(--shadow-glow-green);
-  }
-
   .glow-blue {
     box-shadow: var(--shadow-glow-blue);
+  }
+
+  .glow-cyan {
+    box-shadow: var(--shadow-glow-cyan);
   }
 
   .glow-primary {
@@ -320,18 +320,7 @@
     box-shadow: var(--shadow-xl);
   }
 
-  /* Card Hover com Glow Verde */
-  .card-hover-green {
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    will-change: transform, box-shadow;
-  }
-
-  .card-hover-green:hover {
-    transform: translateY(-4px) scale(1.01);
-    box-shadow: var(--shadow-glow-green);
-  }
-
-  /* Card Hover com Glow Azul */
+  /* Card Hover com Glow Azul Principal */
   .card-hover-blue {
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     will-change: transform, box-shadow;
@@ -340,6 +329,17 @@
   .card-hover-blue:hover {
     transform: translateY(-4px) scale(1.01);
     box-shadow: var(--shadow-glow-blue);
+  }
+
+  /* Card Hover com Glow Ciano */
+  .card-hover-cyan {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    will-change: transform, box-shadow;
+  }
+
+  .card-hover-cyan:hover {
+    transform: translateY(-4px) scale(1.01);
+    box-shadow: var(--shadow-glow-cyan);
   }
 
   /* Button Hover - Suave com scale */
@@ -361,7 +361,7 @@
 
   .btn-hover-glow:hover {
     transform: scale(1.05);
-    box-shadow: var(--shadow-glow-green);
+    box-shadow: var(--shadow-glow-blue);
   }
 
   /* Icon Hover - Rotação suave */
