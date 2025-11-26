@@ -161,6 +161,14 @@
     background: hsl(var(--surface));
   }
 
+  .bg-primary-soft {
+    background: hsl(var(--primary) / 0.05);
+  }
+
+  .bg-secondary-soft {
+    background: hsl(var(--secondary) / 0.05);
+  }
+
   /* Text Colors */
   .text-theme {
     color: hsl(var(--foreground));

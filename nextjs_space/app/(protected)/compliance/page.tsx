@@ -203,10 +203,10 @@ export default function CompliancePage() {
                   key={item.id}
                   className={`p-4 rounded-lg border-2 ${
                     item.status === "ok"
-                      ? "bg-green-50 border-green-200"
+                      ? "bg-card border-green-500/30"
                       : item.status === "warning"
-                      ? "bg-accent bg-opacity-10 border-accent border-opacity-30"
-                      : "bg-red-50 border-red-200"
+                      ? "bg-card border-accent/30"
+                      : "bg-card border-red-500/30"
                   }`}
                 >
                   <div className="flex items-start justify-between">
