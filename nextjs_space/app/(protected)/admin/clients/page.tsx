@@ -205,10 +205,10 @@ export default function ClientsManagementPage() {
         </div>
 
         {/* Info sobre Leads */}
-        <div className="bg-primary bg-opacity-5 border border-primary border-opacity-30 rounded-lg p-4">
-          <p className="text-sm text-blue-800">
+        <div className="bg-primary/5 border border-primary/20 rounded-lg p-4">
+          <p className="text-sm text-theme">
             💡 <strong>Dica:</strong> Para ver leads e usuários que ainda não completaram o pagamento, 
-            acesse <Link href="/admin/leads" className="underline font-semibold text-blue-900">Leads & Remarketing</Link>
+            acesse <Link href="/admin/leads" className="underline font-semibold text-primary">Leads & Remarketing</Link>
           </p>
         </div>
 

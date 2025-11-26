@@ -120,31 +120,31 @@ export default function LoginPage() {
           </h3>
           
           {/* SuperAdmin */}
-          <div className="mb-4 p-4 bg-gradient-to-r from-purple-50 to-indigo-50 rounded-lg border border-purple-200">
+          <div className="mb-4 p-4 bg-gradient-to-r from-primary/5 to-accent/5 rounded-lg border border-primary/20">
             <div className="flex items-center gap-2 mb-2">
-              <Shield className="w-4 h-4 text-purple-600" />
-              <span className="font-semibold text-purple-900">SuperAdmin</span>
+              <Shield className="w-4 h-4 text-primary" />
+              <span className="font-semibold text-theme">SuperAdmin</span>
             </div>
             <div className="space-y-2 text-sm">
               <div className="flex items-center justify-between">
-                <span className="text-gray-700">Email:</span>
+                <span className="text-theme-muted">Email:</span>
                 <div className="flex items-center gap-2">
                   <code className="bg-white px-2 py-1 rounded text-xs">admin@clivus.com.br</code>
                   <button
                     onClick={() => copyToClipboard("admin@clivus.com.br", "Email")}
-                    className="text-purple-600 hover:text-purple-800"
+                    className="text-primary hover:text-primary/80"
                   >
                     <Copy className="w-3 h-3" />
                   </button>
                 </div>
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-gray-700">Senha:</span>
+                <span className="text-theme-muted">Senha:</span>
                 <div className="flex items-center gap-2">
                   <code className="bg-white px-2 py-1 rounded text-xs">admin123</code>
                   <button
                     onClick={() => copyToClipboard("admin123", "Senha")}
-                    className="text-purple-600 hover:text-purple-800"
+                    className="text-primary hover:text-primary/80"
                   >
                     <Copy className="w-3 h-3" />
                   </button>
@@ -153,7 +153,7 @@ export default function LoginPage() {
             </div>
             <Button
               onClick={() => fillCredentials("admin@clivus.com.br", "admin123")}
-              className="w-full mt-3 bg-purple-600 hover:bg-purple-700 text-white text-xs"
+              className="w-full mt-3 bg-primary hover:bg-primary/90 text-white text-xs"
               size="sm"
             >
               Preencher Credenciais
@@ -161,31 +161,31 @@ export default function LoginPage() {
           </div>
 
           {/* Cliente */}
-          <div className="p-4 bg-gradient-to-r from-blue-50 to-cyan-50 rounded-lg border border-blue-200">
+          <div className="p-4 bg-gradient-to-r from-secondary/5 to-accent/5 rounded-lg border border-secondary/20">
             <div className="flex items-center gap-2 mb-2">
-              <User className="w-4 h-4 text-blue-600" />
-              <span className="font-semibold text-blue-900">Cliente</span>
+              <User className="w-4 h-4 text-secondary" />
+              <span className="font-semibold text-theme">Cliente</span>
             </div>
             <div className="space-y-2 text-sm">
               <div className="flex items-center justify-between">
-                <span className="text-gray-700">Email:</span>
+                <span className="text-theme-muted">Email:</span>
                 <div className="flex items-center gap-2">
                   <code className="bg-white px-2 py-1 rounded text-xs">teste@teste.com</code>
                   <button
                     onClick={() => copyToClipboard("teste@teste.com", "Email")}
-                    className="text-blue-600 hover:text-blue-800"
+                    className="text-secondary hover:text-secondary/80"
                   >
                     <Copy className="w-3 h-3" />
                   </button>
                 </div>
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-gray-700">Senha:</span>
+                <span className="text-theme-muted">Senha:</span>
                 <div className="flex items-center gap-2">
                   <code className="bg-white px-2 py-1 rounded text-xs">senha123</code>
                   <button
                     onClick={() => copyToClipboard("senha123", "Senha")}
-                    className="text-blue-600 hover:text-blue-800"
+                    className="text-secondary hover:text-secondary/80"
                   >
                     <Copy className="w-3 h-3" />
                   </button>
@@ -194,7 +194,7 @@ export default function LoginPage() {
             </div>
             <Button
               onClick={() => fillCredentials("teste@teste.com", "senha123")}
-              className="w-full mt-3 bg-blue-600 hover:bg-blue-700 text-white text-xs"
+              className="w-full mt-3 bg-secondary hover:bg-secondary/90 text-white text-xs"
               size="sm"
             >
               Preencher Credenciais

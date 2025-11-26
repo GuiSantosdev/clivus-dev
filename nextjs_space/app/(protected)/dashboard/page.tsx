@@ -675,7 +675,7 @@ export default function DashboardPage() {
 
         {/* Plan Limits Section */}
         {planLimits && (
-          <Card className="bg-gradient-to-br from-primary/10 to-accent/10 border-indigo-200">
+          <Card className="bg-gradient-to-br from-primary/5 to-accent/5 border-primary/20">
             <CardHeader>
               <CardTitle className="flex items-center justify-between">
                 <span>Seu Plano: {planLimits.planName}</span>
@@ -683,7 +683,7 @@ export default function DashboardPage() {
                   <Button 
                     size="sm" 
                     variant="outline" 
-                    className="border-indigo-300 text-indigo-700 hover:bg-indigo-100"
+                    className="border-primary/30 text-primary hover:bg-primary/5"
                     onClick={() => setShowPlansModal(true)}
                   >
                     Fazer Upgrade

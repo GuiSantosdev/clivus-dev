@@ -407,7 +407,7 @@ export default function LeadsManagementPage() {
     }
 
     return (
-      <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-indigo-100 text-indigo-800">
+      <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-primary/10 text-primary">
         Cadastro Completo
       </span>
     );
