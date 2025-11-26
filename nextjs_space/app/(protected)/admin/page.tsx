@@ -150,7 +150,7 @@ export default function AdminPage() {
           <Card className="hover:shadow-lg transition-shadow">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">Total de Vendas</CardTitle>
-              <ShoppingCart className="h-4 w-4 text-purple-600" />
+              <ShoppingCart className="h-4 w-4 text-primary" />
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">{stats?.totalPayments || 0}</div>
@@ -202,7 +202,7 @@ export default function AdminPage() {
           <Card className="hover:shadow-lg transition-shadow">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">Ticket Médio</CardTitle>
-              <Target className="h-4 w-4 text-teal-600" />
+              <Target className="h-4 w-4 text-secondary" />
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">
@@ -319,7 +319,7 @@ export default function AdminPage() {
         <Card className="mb-6">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <Package className="h-5 w-5 text-purple-600" />
+              <Package className="h-5 w-5 text-primary" />
               Distribuição de Vendas por Plano
             </CardTitle>
           </CardHeader>

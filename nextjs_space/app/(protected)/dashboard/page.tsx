@@ -379,7 +379,7 @@ export default function DashboardPage() {
             <CardHeader className="bg-gradient-to-r from-primary/10 to-secondary/10">
               <div className="flex items-center justify-between">
                 <CardTitle className="flex items-center space-x-2">
-                  <Calendar className="h-5 w-5 text-purple-600" />
+                  <Calendar className="h-5 w-5 text-primary" />
                   <span>📊 Planejamento vs Realizado - {new Date().toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' })}</span>
                 </CardTitle>
                 <Link href="/planej">
@@ -579,11 +579,11 @@ export default function DashboardPage() {
           </Link>
 
           <Link href="/dre">
-            <Card className="hover:shadow-lg transition-shadow cursor-pointer border-teal-200 hover:border-teal-400">
+            <Card className="hover:shadow-lg transition-shadow cursor-pointer border-secondary/20 hover:border-secondary">
               <CardContent className="p-6">
                 <div className="flex flex-col items-center text-center space-y-2">
-                  <div className="h-12 w-12 rounded-full bg-teal-100 flex items-center justify-center">
-                    <FileText className="h-6 w-6 text-teal-600" />
+                  <div className="h-12 w-12 rounded-full bg-secondary/10 flex items-center justify-center">
+                    <FileText className="h-6 w-6 text-secondary" />
                   </div>
                   <h3 className="font-semibold text-theme">DRE</h3>
                   <p className="text-xs text-theme-muted">Demonstração do Resultado do Exercício</p>
@@ -593,11 +593,11 @@ export default function DashboardPage() {
           </Link>
 
           <Link href="/reports">
-            <Card className="hover:shadow-lg transition-shadow cursor-pointer border-purple-200 hover:border-purple-400">
+            <Card className="hover:shadow-lg transition-shadow cursor-pointer border-primary/20 hover:border-primary">
               <CardContent className="p-6">
                 <div className="flex flex-col items-center text-center space-y-2">
-                  <div className="h-12 w-12 rounded-full bg-purple-100 flex items-center justify-center">
-                    <Wallet className="h-6 w-6 text-purple-600" />
+                  <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center">
+                    <Wallet className="h-6 w-6 text-primary" />
                   </div>
                   <h3 className="font-semibold text-theme">Dashboard Executivo</h3>
                   <p className="text-xs text-theme-muted">Indicadores importantes do negócio</p>
@@ -621,11 +621,11 @@ export default function DashboardPage() {
           </Link>
 
           <Link href="/investments">
-            <Card className="hover:shadow-lg transition-shadow cursor-pointer border-indigo-200 hover:border-indigo-400">
+            <Card className="hover:shadow-lg transition-shadow cursor-pointer border-primary/20 hover:border-primary">
               <CardContent className="p-6">
                 <div className="flex flex-col items-center text-center space-y-2">
-                  <div className="h-12 w-12 rounded-full bg-indigo-100 flex items-center justify-center">
-                    <PieChart className="h-6 w-6 text-indigo-600" />
+                  <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center">
+                    <PieChart className="h-6 w-6 text-primary" />
                   </div>
                   <h3 className="font-semibold text-theme">Controle de Investimentos</h3>
                   <p className="text-xs text-theme-muted">Investimentos pessoais e empresariais</p>
@@ -711,7 +711,7 @@ export default function DashboardPage() {
                 {/* Membros da Equipe */}
                 {planLimits.limits.team_members !== undefined && (
                   <div className="flex items-start space-x-3 p-3 bg-card rounded-lg border border-theme">
-                    <Users className="h-5 w-5 text-purple-600 mt-0.5" />
+                    <Users className="h-5 w-5 text-primary mt-0.5" />
                     <div className="flex-1">
                       <p className="font-medium text-theme text-sm">Membros da Equipe</p>
                       <p className="text-xs text-theme-muted">
@@ -775,7 +775,7 @@ export default function DashboardPage() {
                 {/* Controle de Investimentos */}
                 {planLimits.limits.investment_tracking !== undefined && (
                   <div className="flex items-start space-x-3 p-3 bg-card rounded-lg border border-theme">
-                    <TrendingUp className="h-5 w-5 text-teal-600 mt-0.5" />
+                    <TrendingUp className="h-5 w-5 text-secondary mt-0.5" />
                     <div className="flex-1">
                       <p className="font-medium text-theme text-sm">Controle de Investimentos</p>
                       <p className="text-xs text-theme-muted">
@@ -805,7 +805,7 @@ export default function DashboardPage() {
                 {/* Categorias Personalizadas DRE */}
                 {planLimits.limits.custom_categories !== undefined && (
                   <div className="flex items-start space-x-3 p-3 bg-card rounded-lg border border-theme">
-                    <PieChart className="h-5 w-5 text-indigo-600 mt-0.5" />
+                    <PieChart className="h-5 w-5 text-primary mt-0.5" />
                     <div className="flex-1">
                       <p className="font-medium text-theme text-sm">Categorias Personalizadas DRE</p>
                       <p className="text-xs text-theme-muted">

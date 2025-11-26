@@ -71,7 +71,7 @@
   }
 
   /* MODO DARK */
-  .dark {
+  html.dark {
     /* Backgrounds - Escuro moderno */
     --background: 222 47% 11%;         /* #0f172a - Azul escuro profundo */
     --surface: 217 33% 17%;            /* #1e293b - Superfície elevada */

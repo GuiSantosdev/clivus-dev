@@ -323,7 +323,7 @@ export default function TeamPage() {
                             </span>
                           )}
                           {member.role === "admin" && (
-                            <span className="px-2 py-0.5 bg-purple-100 text-purple-700 text-xs rounded-full">
+                            <span className="px-2 py-0.5 bg-primary/10 text-purple-700 text-xs rounded-full">
                               Admin
                             </span>
                           )}
@@ -364,7 +364,7 @@ export default function TeamPage() {
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
-              <div className="p-4 bg-purple-50 rounded-lg">
+              <div className="p-4 bg-primary/5 rounded-lg">
                 <h4 className="font-semibold text-theme mb-2">Administrador</h4>
                 <ul className="text-sm text-theme space-y-1">
                   <li>✓ Visualizar todas as informações financeiras</li>

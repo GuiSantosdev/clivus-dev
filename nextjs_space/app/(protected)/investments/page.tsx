@@ -216,12 +216,12 @@ export default function InvestmentsPage() {
             <CardContent>
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-3xl font-bold text-purple-600">
+                  <p className="text-3xl font-bold text-primary">
                     R$ {cnpjTotal.toFixed(2)}
                   </p>
                   <p className="text-xs text-theme-muted mt-1">{cnpjInvestments.length} ativos</p>
                 </div>
-                <TrendingUp className="h-12 w-12 text-purple-600" />
+                <TrendingUp className="h-12 w-12 text-primary" />
               </div>
             </CardContent>
           </Card>
@@ -389,9 +389,9 @@ export default function InvestmentsPage() {
           </Card>
 
           <Card>
-            <CardHeader className="bg-purple-50">
+            <CardHeader className="bg-primary/5">
               <CardTitle className="flex items-center space-x-2">
-                <TrendingUp className="h-5 w-5 text-purple-600" />
+                <TrendingUp className="h-5 w-5 text-primary" />
                 <span>Investimentos CNPJ (Empresarial)</span>
               </CardTitle>
             </CardHeader>
@@ -415,7 +415,7 @@ export default function InvestmentsPage() {
                         </div>
                         <div className="text-right flex items-center space-x-3">
                           <div>
-                            <p className="text-lg font-semibold text-purple-600">
+                            <p className="text-lg font-semibold text-primary">
                               R$ {investment.amount.toFixed(2)}
                             </p>
                           </div>

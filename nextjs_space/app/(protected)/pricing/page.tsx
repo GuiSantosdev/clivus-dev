@@ -406,7 +406,7 @@ export default function PricingPage() {
 
                     <div className="space-y-2">
                       <Label htmlFor="internet" className="flex items-center gap-2">
-                        <Wifi className="h-4 w-4 text-purple-600" />
+                        <Wifi className="h-4 w-4 text-primary" />
                         Internet
                       </Label>
                       <Input

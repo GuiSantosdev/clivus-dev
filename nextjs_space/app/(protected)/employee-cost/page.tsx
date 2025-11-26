@@ -425,7 +425,7 @@ Gerado em ${new Date().toLocaleDateString('pt-BR')} pelo Clivus
                   </div>
                   <div className="flex justify-between items-center">
                     <span className="text-theme-muted">Multiplicador:</span>
-                    <span className="text-lg font-bold text-indigo-600">{multiplier.toFixed(2)}x</span>
+                    <span className="text-lg font-bold text-primary">{multiplier.toFixed(2)}x</span>
                   </div>
                 </div>
 
