@@ -635,11 +635,11 @@ export default function DashboardPage() {
           </Link>
 
           <Link href="/team">
-            <Card className="hover:shadow-lg transition-shadow cursor-pointer border-pink-200 hover:border-pink-400">
+            <Card className="hover:shadow-lg transition-shadow cursor-pointer border-primary/20 hover:border-primary">
               <CardContent className="p-6">
                 <div className="flex flex-col items-center text-center space-y-2">
-                  <div className="h-12 w-12 rounded-full bg-pink-100 flex items-center justify-center">
-                    <Users className="h-6 w-6 text-pink-600" />
+                  <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center">
+                    <Users className="h-6 w-6 text-primary" />
                   </div>
                   <h3 className="font-semibold text-theme">Multi-usuário</h3>
                   <p className="text-xs text-theme-muted">Acesso ao contador e sócios</p>

@@ -831,25 +831,25 @@ export default function PricingPage() {
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
-              <div className="text-center p-4 bg-orange-50 rounded-lg">
+              <div className="text-center p-4 bg-card border border-accent/30 rounded-lg">
                 <p className="text-sm text-theme-muted mb-1">Custo</p>
-                <p className="text-xl font-bold text-orange-600">
+                <p className="text-xl font-bold text-accent">
                   {suggestedPrice > 0 ? ((costPerUnit / suggestedPrice) * 100).toFixed(1) : 0}%
                 </p>
               </div>
-              <div className="text-center p-4 bg-red-50 rounded-lg">
+              <div className="text-center p-4 bg-card border border-red-500/30 rounded-lg">
                 <p className="text-sm text-theme-muted mb-1">Impostos</p>
                 <p className="text-xl font-bold text-red-600">{taxRate}%</p>
               </div>
-              <div className="text-center p-4 bg-accent bg-opacity-10 rounded-lg">
+              <div className="text-center p-4 bg-accent/10 rounded-lg">
                 <p className="text-sm text-theme-muted mb-1">Despesas</p>
                 <p className="text-xl font-bold text-accent">{variableExpenses}%</p>
               </div>
-              <div className="text-center p-4 bg-green-50 rounded-lg">
+              <div className="text-center p-4 bg-card border border-green-500/30 rounded-lg">
                 <p className="text-sm text-theme-muted mb-1">Lucro</p>
                 <p className="text-xl font-bold text-green-600">{desiredMargin}%</p>
               </div>
-              <div className="text-center p-4 bg-primary bg-opacity-5 rounded-lg">
+              <div className="text-center p-4 bg-primary/5 rounded-lg">
                 <p className="text-sm text-theme-muted mb-1">Total</p>
                 <p className="text-xl font-bold text-primary">100%</p>
               </div>

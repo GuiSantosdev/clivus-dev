@@ -351,7 +351,7 @@ export default function LeadsManagementPage() {
   const getStatusBadge = (lead: Lead) => {
     if (lead.status === "novo") {
       return (
-        <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium bg-primary bg-opacity-10 text-primary">
+        <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium bg-primary/10 text-primary">
           <UserPlus className="h-3 w-3" />
           Novo Lead
         </span>
@@ -360,7 +360,7 @@ export default function LeadsManagementPage() {
 
     if (lead.status === "registered") {
       return (
-        <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium bg-accent bg-opacity-20 text-accent">
+        <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium bg-accent/20 text-accent">
           <UserPlus className="h-3 w-3" />
           Cadastrado
         </span>
@@ -369,7 +369,7 @@ export default function LeadsManagementPage() {
 
     if (lead.lastCheckoutAttempt) {
       return (
-        <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium bg-orange-100 text-orange-800">
+        <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium bg-card border border-accent/30 text-accent">
           <ShoppingCart className="h-3 w-3" />
           Checkout Iniciado
         </span>
@@ -387,7 +387,7 @@ export default function LeadsManagementPage() {
 
     if (lead.status === "payment_failed") {
       return (
-        <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800">
+        <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium bg-card border border-red-500/30 text-red-600">
           <AlertCircle className="h-3 w-3" />
           Pagamento Falhou
         </span>
@@ -400,7 +400,7 @@ export default function LeadsManagementPage() {
   const getSourceBadge = (source: string) => {
     if (source === "landing_page") {
       return (
-        <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
+        <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-card border border-green-500/30 text-green-600">
           Landing Page
         </span>
       );
@@ -830,7 +830,7 @@ export default function LeadsManagementPage() {
                             size="sm"
                             onClick={() => handleDelete(lead.id, lead.type)}
                             disabled={deletingId === lead.id}
-                            className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                            className="text-red-600 hover:text-red-700 hover:bg-muted-soft"
                           >
                             <Trash2 className="h-4 w-4" />
                           </Button>
@@ -846,12 +846,12 @@ export default function LeadsManagementPage() {
       </Card>
 
       {/* Info sobre Remarketing */}
-      <Card className="mt-6 bg-primary bg-opacity-5 border-primary border-opacity-30">
+      <Card className="mt-6 bg-primary/5 border-primary/30">
         <CardContent className="pt-6">
           <div className="flex items-start gap-3">
             <TrendingUp className="h-5 w-5 text-primary mt-0.5" />
             <div>
-              <h3 className="font-semibold text-blue-900 mb-2">
+              <h3 className="font-semibold text-theme mb-2">
                 💡 Dicas para Remarketing
               </h3>
               <ul className="text-sm text-primary space-y-1">
