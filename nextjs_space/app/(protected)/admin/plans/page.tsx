@@ -444,8 +444,8 @@ export default function AdminPlansPage() {
           )}
 
           <div className="mt-8 bg-primary bg-opacity-5 border border-primary border-opacity-30 rounded-lg p-4">
-            <h4 className="font-semibold text-blue-900 mb-2">💡 Dicas:</h4>
-            <ul className="text-sm text-blue-800 space-y-1">
+            <h4 className="font-semibold text-theme mb-2">💡 Dicas:</h4>
+            <ul className="text-sm text-theme-muted space-y-1">
               <li>• <strong>-1</strong> = Ilimitado (sem restrições)</li>
               <li>• <strong>0</strong> = Desabilitado (funcionalidade não disponível)</li>
               <li>• <strong>&gt;0</strong> = Limite específico (ex: 50 transações por mês)</li>

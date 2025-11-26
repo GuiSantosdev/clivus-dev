@@ -192,7 +192,7 @@ export default function CompliancePage() {
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center space-x-2">
-              <Scale className="h-5 w-5 text-blue-600" />
+              <Scale className="h-5 w-5 text-primary" />
               <span>Verificações de Compliance</span>
             </CardTitle>
           </CardHeader>
@@ -228,7 +228,7 @@ export default function CompliancePage() {
                           </div>
                         )}
                         {item.action && (
-                          <p className="text-sm font-medium text-blue-600 mt-2">
+                          <p className="text-sm font-medium text-primary mt-2">
                             → {item.action}
                           </p>
                         )}
@@ -244,7 +244,7 @@ export default function CompliancePage() {
         <Card className="mt-6">
           <CardHeader>
             <CardTitle className="flex items-center space-x-2">
-              <FileText className="h-5 w-5 text-blue-600" />
+              <FileText className="h-5 w-5 text-primary" />
               <span>Dicas de Compliance</span>
             </CardTitle>
           </CardHeader>

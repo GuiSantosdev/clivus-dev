@@ -351,7 +351,7 @@ export default function LeadsManagementPage() {
   const getStatusBadge = (lead: Lead) => {
     if (lead.status === "novo") {
       return (
-        <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium bg-primary bg-opacity-10 text-blue-800">
+        <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium bg-primary bg-opacity-10 text-primary">
           <UserPlus className="h-3 w-3" />
           Novo Lead
         </span>
@@ -378,7 +378,7 @@ export default function LeadsManagementPage() {
 
     if (lead.status === "payment_pending") {
       return (
-        <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
+        <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium bg-primary/10 text-primary">
           <Clock className="h-3 w-3" />
           Pagamento Pendente
         </span>
@@ -503,7 +503,7 @@ export default function LeadsManagementPage() {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-3xl font-bold text-purple-600">{stats.paymentPending}</p>
+            <p className="text-3xl font-bold text-primary">{stats.paymentPending}</p>
           </CardContent>
         </Card>
       </div>
@@ -854,7 +854,7 @@ export default function LeadsManagementPage() {
               <h3 className="font-semibold text-blue-900 mb-2">
                 💡 Dicas para Remarketing
               </h3>
-              <ul className="text-sm text-blue-800 space-y-1">
+              <ul className="text-sm text-primary space-y-1">
                 <li>
                   • <strong>Novos Leads:</strong> Ainda não se cadastraram. Envie emails de boas-vindas e benefícios.
                 </li>

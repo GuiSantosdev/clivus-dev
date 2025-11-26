@@ -232,7 +232,7 @@ export default function DrePage() {
         <div className="flex items-center justify-between mb-6">
           <div>
             <h1 className="text-3xl font-bold text-theme flex items-center gap-2">
-              <FileText className="h-8 w-8 text-blue-600" />
+              <FileText className="h-8 w-8 text-primary" />
               DRE - Demonstração do Resultado do Exercício
             </h1>
             <p className="text-theme-muted mt-1">
@@ -311,7 +311,7 @@ export default function DrePage() {
         {isEditingPlano && (
           <Card className="mb-6 border-2 border-primary">
             <CardHeader>
-              <CardTitle className="text-blue-600">
+              <CardTitle className="text-primary">
                 Personalizar Plano de Contas
               </CardTitle>
             </CardHeader>

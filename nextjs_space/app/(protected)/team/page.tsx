@@ -155,7 +155,7 @@ export default function TeamPage() {
         <Card className="mb-6 border-primary border-opacity-30 bg-primary bg-opacity-5">
           <CardContent className="p-4">
             <div className="flex items-start space-x-3">
-              <AlertCircle className="h-5 w-5 text-blue-600 mt-0.5" />
+              <AlertCircle className="h-5 w-5 text-primary mt-0.5" />
               <div className="text-sm text-theme">
                 <p className="font-semibold mb-1">Multi-usuário - Colaboração Segura</p>
                 <p>
@@ -181,7 +181,7 @@ export default function TeamPage() {
                   <p className="text-3xl font-bold text-theme">{teamMembers.length}</p>
                   <p className="text-xs text-theme-muted mt-1">na equipe</p>
                 </div>
-                <Users className="h-12 w-12 text-blue-600" />
+                <Users className="h-12 w-12 text-primary" />
               </div>
             </CardContent>
           </Card>
@@ -292,7 +292,7 @@ export default function TeamPage() {
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center space-x-2">
-              <Shield className="h-5 w-5 text-blue-600" />
+              <Shield className="h-5 w-5 text-primary" />
               <span>Membros da Equipe</span>
             </CardTitle>
           </CardHeader>
@@ -310,7 +310,7 @@ export default function TeamPage() {
                   <div className="flex items-center justify-between">
                     <div className="flex items-center space-x-4 flex-1">
                       <div className="h-12 w-12 rounded-full bg-primary bg-opacity-10 flex items-center justify-center">
-                        <span className="text-blue-600 font-semibold text-lg">
+                        <span className="text-primary font-semibold text-lg">
                           {member.name.charAt(0).toUpperCase()}
                         </span>
                       </div>
