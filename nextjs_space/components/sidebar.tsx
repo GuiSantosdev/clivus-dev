@@ -170,7 +170,6 @@ const superAdminMenuItems = [
         icon: BarChart3,
         description: "Gerenciar ads",
       },
-      },
       {
         name: "Configurações",
         href: "/admin/settings",
