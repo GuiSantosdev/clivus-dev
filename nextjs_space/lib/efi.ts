@@ -1,5 +1,6 @@
 
 import crypto from "crypto";
+import { prisma } from "./db";
 
 /**
  * EFI (Gerencianet) Payment Gateway Integration
@@ -8,6 +9,7 @@ import crypto from "crypto";
  * ✅ OAuth 2.0 com cache de token
  * ✅ Renovação automática
  * ✅ Proteção contra "Unexpected token U"
+ * ✅ Credenciais do banco de dados (fallback para .env)
  */
 
 // ===========================
@@ -21,7 +23,42 @@ interface EfiConfig {
   webhookSecret?: string;
 }
 
-export function getEfiConfig(): EfiConfig {
+/**
+ * Busca configurações do EFI
+ * Prioridade: Banco de Dados > Variáveis de Ambiente
+ */
+export async function getEfiConfig(): Promise<EfiConfig> {
+  try {
+    // Tentar buscar do banco primeiro
+    const gateway = await prisma.gateway.findUnique({
+      where: { name: "efi" },
+    });
+
+    if (gateway && gateway.isEnabled) {
+      const config = gateway.environment === "sandbox" 
+        ? gateway.sandboxConfig 
+        : gateway.productionConfig;
+      
+      const webhookSecret = gateway.environment === "sandbox"
+        ? gateway.sandboxWebhook
+        : gateway.productionWebhook;
+
+      if (config && typeof config === 'object' && 'clientId' in config && 'clientSecret' in config) {
+        console.log(`[EFI Config] Usando credenciais ${gateway.environment} do banco de dados`);
+        return {
+          clientId: String(config.clientId),
+          clientSecret: String(config.clientSecret),
+          environment: gateway.environment as "sandbox" | "production",
+          webhookSecret: webhookSecret || undefined,
+        };
+      }
+    }
+  } catch (error) {
+    console.warn("[EFI Config] Erro ao buscar do banco, usando fallback .env:", error);
+  }
+
+  // Fallback para variáveis de ambiente
+  console.log("[EFI Config] Usando credenciais do .env (fallback)");
   const clientId = process.env.EFI_CLIENT_ID || "";
   const clientSecret = process.env.EFI_CLIENT_SECRET || "";
   const environment = (process.env.EFI_ENVIRONMENT as "sandbox" | "production") || "sandbox";
@@ -72,7 +109,7 @@ export async function getEfiAccessToken(): Promise<string> {
     return cachedToken.access_token;
   }
 
-  const config = getEfiConfig();
+  const config = await getEfiConfig();
 
   if (!config.clientId || !config.clientSecret) {
     throw new Error("EFI Client ID ou Client Secret não configurados");
@@ -141,7 +178,7 @@ async function efiRequest(
   body?: any,
   accessToken?: string
 ): Promise<any> {
-  const config = getEfiConfig();
+  const config = await getEfiConfig();
   const baseUrl =
     config.environment === "production"
       ? "https://cobrancas.api.efipay.com.br/v1"
@@ -437,8 +474,8 @@ export function mapEfiStatus(efiStatus: string): "pending" | "completed" | "fail
 // WEBHOOK VALIDATION
 // ===========================
 
-export function validateEfiWebhook(signature: string, body: string): boolean {
-  const config = getEfiConfig();
+export async function validateEfiWebhook(signature: string, body: string): Promise<boolean> {
+  const config = await getEfiConfig();
 
   if (!config.webhookSecret) {
     console.warn("[EFI Webhook] Webhook secret não configurado, pulando validação");

@@ -1,68 +1,89 @@
-
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
-import prisma from "@/lib/db";
+import { prisma } from "@/lib/db";
 
 export const dynamic = "force-dynamic";
 
+/**
+ * PUT /api/admin/gateways/[name]
+ * Atualiza configurações de um gateway
+ */
 export async function PUT(
-  request: Request,
+  req: NextRequest,
   { params }: { params: { name: string } }
 ) {
+  const session = await getServerSession(authOptions);
+
+  if (!session || session.user.role !== "superadmin") {
+    return NextResponse.json({ error: "Não autorizado" }, { status: 401 });
+  }
+
   try {
-    const session = await getServerSession(authOptions);
-
-    if (!session || session.user?.role !== "superadmin") {
-      return NextResponse.json(
-        { error: "Acesso não autorizado" },
-        { status: 401 }
-      );
-    }
-
-    const body = await request.json();
-    const { isEnabled } = body;
-
-    if (typeof isEnabled !== "boolean") {
-      return NextResponse.json(
-        { error: "isEnabled deve ser um booleano" },
-        { status: 400 }
-      );
-    }
+    const body = await req.json();
+    const { name } = params;
 
     // Verificar se o gateway existe
     const existingGateway = await prisma.gateway.findUnique({
-      where: { name: params.name },
+      where: { name },
     });
 
+    const updateData: any = {};
+
+    // Atualizar isEnabled se fornecido
+    if (typeof body.isEnabled === "boolean") {
+      updateData.isEnabled = body.isEnabled;
+    }
+
+    // Atualizar environment se fornecido
+    if (body.environment) {
+      updateData.environment = body.environment;
+    }
+
+    // Atualizar configurações se fornecidas
+    if (body.sandboxConfig !== undefined) {
+      updateData.sandboxConfig = body.sandboxConfig;
+    }
+
+    if (body.productionConfig !== undefined) {
+      updateData.productionConfig = body.productionConfig;
+    }
+
+    if (body.sandboxWebhook !== undefined) {
+      updateData.sandboxWebhook = body.sandboxWebhook || null;
+    }
+
+    if (body.productionWebhook !== undefined) {
+      updateData.productionWebhook = body.productionWebhook || null;
+    }
+
+    // Se o gateway não existe, criar um novo
     if (!existingGateway) {
-      // Se não existe, criar
-      const gateway = await prisma.gateway.create({
+      const displayName = name.charAt(0).toUpperCase() + name.slice(1);
+      
+      const newGateway = await prisma.gateway.create({
         data: {
-          name: params.name,
-          displayName: capitalizeFirstLetter(params.name),
-          isEnabled,
+          name,
+          displayName,
+          ...updateData,
         },
       });
-      return NextResponse.json({ gateway });
+
+      return NextResponse.json(newGateway);
     }
 
     // Atualizar gateway existente
-    const gateway = await prisma.gateway.update({
-      where: { name: params.name },
-      data: { isEnabled },
+    const updatedGateway = await prisma.gateway.update({
+      where: { name },
+      data: updateData,
     });
 
-    return NextResponse.json({ gateway });
-  } catch (error) {
-    console.error("Erro ao atualizar gateway:", error);
+    return NextResponse.json(updatedGateway);
+  } catch (error: any) {
+    console.error("[Gateway PUT Error]", error);
     return NextResponse.json(
       { error: "Erro ao atualizar gateway" },
       { status: 500 }
     );
   }
-}
-
-function capitalizeFirstLetter(str: string): string {
-  return str.charAt(0).toUpperCase() + str.slice(1);
 }

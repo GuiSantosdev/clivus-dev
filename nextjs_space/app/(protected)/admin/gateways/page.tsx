@@ -1,224 +1,80 @@
-
 "use client";
 
 import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import Link from "next/link";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-  CardDescription,
-} from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
-import toast from "react-hot-toast";
+import { Switch } from "@/components/ui/switch";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { toast } from "react-hot-toast";
 import {
-  CreditCard,
   CheckCircle,
   XCircle,
-  ArrowLeft,
-  Save,
-  Eye,
-  EyeOff,
+  Settings,
+  RefreshCw,
+  Shield,
   AlertCircle,
+  Server,
+  TestTube,
+  Loader2,
 } from "lucide-react";
 
 interface GatewayConfig {
-  name: string;
-  displayName: string;
-  description: string;
-  icon: string;
-  fields: {
-    key: string;
-    label: string;
-    placeholder: string;
-    type: "text" | "password";
-    envVar: string;
-  }[];
-  webhookUrl?: string;
+  [key: string]: string;
 }
 
-interface GatewayStatus {
+interface Gateway {
   id: string;
   name: string;
   displayName: string;
-  enabled: boolean;
-  configured: boolean;
-  lastCheckAt: string;
-  error?: string;
+  isEnabled: boolean;
+  environment: string;
+  sandboxConfig: GatewayConfig | null;
+  productionConfig: GatewayConfig | null;
+  sandboxWebhook: string | null;
+  productionWebhook: string | null;
+  connectionStatus: string;
+  connectionError: string | null;
+  lastConnectionTest: string | null;
 }
 
-export default function GatewaysManagementPage() {
+// Definição dos campos necessários por gateway
+const GATEWAY_FIELDS: Record<string, { field: string; label: string; type?: string }[]> = {
+  efi: [
+    { field: "clientId", label: "Client ID" },
+    { field: "clientSecret", label: "Client Secret", type: "password" },
+  ],
+  asaas: [
+    { field: "apiKey", label: "API Key", type: "password" },
+  ],
+  stripe: [
+    { field: "secretKey", label: "Secret Key", type: "password" },
+  ],
+  cora: [
+    { field: "clientId", label: "Client ID" },
+  ],
+  pagarme: [
+    { field: "apiKey", label: "API Key", type: "password" },
+  ],
+};
+
+export default function AdminGatewaysPage() {
   const { data: session, status } = useSession();
   const router = useRouter();
-  const [loading, setLoading] = useState(false);
-  const [saving, setSaving] = useState(false);
-  const [hasChanges, setHasChanges] = useState(false);
-  const [showSecrets, setShowSecrets] = useState<Record<string, boolean>>({});
-  const [gatewayValues, setGatewayValues] = useState<Record<string, string>>({});
-  const [gatewayStatuses, setGatewayStatuses] = useState<GatewayStatus[]>([]);
+  const [gateways, setGateways] = useState<Gateway[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [editingGateway, setEditingGateway] = useState<string | null>(null);
+  const [testingConnection, setTestingConnection] = useState<string | null>(null);
 
-  const gateways: GatewayConfig[] = [
-    {
-      name: "asaas",
-      displayName: "Asaas",
-      description: "Gateway brasileiro com suporte a PIX, Boleto e Cartão",
-      icon: "🇧🇷",
-      fields: [
-        {
-          key: "apiKey",
-          label: "API Key",
-          placeholder: "$aact_...",
-          type: "password",
-          envVar: "ASAAS_API_KEY",
-        },
-        {
-          key: "webhookSecret",
-          label: "Webhook Secret (Opcional)",
-          placeholder: "seu_secret_aqui",
-          type: "password",
-          envVar: "ASAAS_WEBHOOK_SECRET",
-        },
-        {
-          key: "environment",
-          label: "Ambiente",
-          placeholder: "production ou sandbox",
-          type: "text",
-          envVar: "ASAAS_ENVIRONMENT",
-        },
-      ],
-      webhookUrl: `${process.env.NEXT_PUBLIC_APP_URL || "https://seu-dominio.com.br"}/api/webhook/asaas`,
-    },
-    {
-      name: "cora",
-      displayName: "CORA",
-      description: "Banco brasileiro com boletos + QR Code PIX integrado",
-      icon: "🏦",
-      fields: [
-        {
-          key: "apiKey",
-          label: "API Key (Client ID)",
-          placeholder: "cora_api_key_...",
-          type: "password",
-          envVar: "CORA_API_KEY",
-        },
-        {
-          key: "webhookSecret",
-          label: "Webhook Secret (Opcional)",
-          placeholder: "seu_secret_aqui",
-          type: "password",
-          envVar: "CORA_WEBHOOK_SECRET",
-        },
-        {
-          key: "environment",
-          label: "Ambiente",
-          placeholder: "production ou sandbox",
-          type: "text",
-          envVar: "CORA_ENVIRONMENT",
-        },
-      ],
-
-      webhookUrl: `${process.env.NEXT_PUBLIC_APP_URL || "https://seu-dominio.com.br"}/api/webhook/cora`,
-    },
-    {
-      name: "pagarme",
-      displayName: "Pagar.me",
-      description: "Gateway brasileiro com PIX, Boleto e Cartão de Crédito",
-      icon: "💳",
-      fields: [
-        {
-          key: "apiKey",
-          label: "API Key (Secret Key)",
-          placeholder: "sk_test_... ou sk_live_...",
-          type: "password",
-          envVar: "PAGARME_API_KEY",
-        },
-        {
-          key: "webhookSecret",
-          label: "Webhook Secret",
-          placeholder: "wh_secret_...",
-          type: "password",
-          envVar: "PAGARME_WEBHOOK_SECRET",
-        },
-        {
-          key: "environment",
-          label: "Ambiente",
-          placeholder: "test ou live",
-          type: "text",
-          envVar: "PAGARME_ENVIRONMENT",
-        },
-      ],
-
-      webhookUrl: `${process.env.NEXT_PUBLIC_APP_URL || "https://seu-dominio.com.br"}/api/webhook/pagarme`,
-    },
-    {
-      name: "efi",
-      displayName: "EFI (Gerencianet)",
-      description: "Gateway brasileiro com PIX, Boleto e Cartão de Crédito",
-      icon: "🟢",
-      fields: [
-        {
-          key: "clientId",
-          label: "Client ID",
-          placeholder: "Client_Id_...",
-          type: "password",
-          envVar: "EFI_CLIENT_ID",
-        },
-        {
-          key: "clientSecret",
-          label: "Client Secret",
-          placeholder: "Client_Secret_...",
-          type: "password",
-          envVar: "EFI_CLIENT_SECRET",
-        },
-        {
-          key: "webhookSecret",
-          label: "Webhook Secret (Opcional)",
-          placeholder: "seu_secret_aqui",
-          type: "password",
-          envVar: "EFI_WEBHOOK_SECRET",
-        },
-        {
-          key: "environment",
-          label: "Ambiente",
-          placeholder: "sandbox ou production",
-          type: "text",
-          envVar: "EFI_ENVIRONMENT",
-        },
-      ],
-
-      webhookUrl: `${process.env.NEXT_PUBLIC_APP_URL || "https://seu-dominio.com.br"}/api/webhook/efi`,
-    },
-    {
-      name: "stripe",
-      displayName: "Stripe",
-      description: "Gateway internacional para cartões de crédito",
-      icon: "💳",
-      fields: [
-        {
-          key: "secretKey",
-          label: "Secret Key",
-          placeholder: "sk_...",
-          type: "password",
-          envVar: "STRIPE_SECRET_KEY",
-        },
-        {
-          key: "webhookSecret",
-          label: "Webhook Secret",
-          placeholder: "whsec_...",
-          type: "password",
-          envVar: "STRIPE_WEBHOOK_SECRET",
-        },
-      ],
-
-      webhookUrl: `${process.env.NEXT_PUBLIC_APP_URL || "https://seu-dominio.com.br"}/api/webhook`,
-    },
-  ];
+  // Form states
+  const [selectedEnvironment, setSelectedEnvironment] = useState<"sandbox" | "production">("sandbox");
+  const [sandboxConfig, setSandboxConfig] = useState<GatewayConfig>({});
+  const [productionConfig, setProductionConfig] = useState<GatewayConfig>({});
+  const [sandboxWebhook, setSandboxWebhook] = useState("");
+  const [productionWebhook, setProductionWebhook] = useState("");
 
   useEffect(() => {
     if (status === "unauthenticated") {
@@ -226,32 +82,27 @@ export default function GatewaysManagementPage() {
     } else if (status === "authenticated") {
       if (session?.user?.role !== "superadmin") {
         router.push("/dashboard");
-        return;
+      } else {
+        loadGateways();
       }
-      fetchGatewayStatuses();
     }
   }, [status, session, router]);
 
-  const fetchGatewayStatuses = async () => {
+  const loadGateways = async () => {
     try {
-      setLoading(true);
-      const response = await fetch("/api/gateways/status");
-      if (response.ok) {
-        const data: GatewayStatus[] = await response.json();
-        setGatewayStatuses(data);
-        console.log("✅ Status dos gateways carregado:", data);
-      } else {
-        toast.error("Erro ao carregar status dos gateways");
-      }
-    } catch (error) {
-      console.error("Erro ao buscar status dos gateways:", error);
-      toast.error("Erro ao buscar status dos gateways");
+      const response = await fetch("/api/admin/gateways");
+      if (!response.ok) throw new Error("Erro ao carregar gateways");
+      
+      const data = await response.json();
+      setGateways(data);
+    } catch (error: any) {
+      toast.error(`Erro: ${error.message}`);
     } finally {
       setLoading(false);
     }
   };
 
-  const handleToggleGateway = async (gatewayName: string, currentStatus: boolean) => {
+  const handleToggleEnabled = async (gatewayName: string, currentStatus: boolean) => {
     try {
       const response = await fetch(`/api/admin/gateways/${gatewayName}`, {
         method: "PUT",
@@ -259,381 +110,340 @@ export default function GatewaysManagementPage() {
         body: JSON.stringify({ isEnabled: !currentStatus }),
       });
 
-      if (response.ok) {
-        toast.success(
-          `Gateway ${gatewayName} ${!currentStatus ? "habilitado" : "desabilitado"} com sucesso!`
-        );
-        // Recarregar status após mudança
-        await fetchGatewayStatuses();
-      } else {
-        toast.error("Erro ao atualizar status do gateway");
-      }
-    } catch (error) {
-      console.error("Erro ao atualizar gateway:", error);
-      toast.error("Erro ao atualizar status do gateway");
+      if (!response.ok) throw new Error("Erro ao atualizar status");
+
+      toast.success(`Gateway ${!currentStatus ? "ativado" : "desativado"} com sucesso`);
+      loadGateways();
+    } catch (error: any) {
+      toast.error(`Erro: ${error.message}`);
     }
   };
 
-  // Função auxiliar para obter o status de um gateway específico
-  const getGatewayStatus = (gatewayName: string): GatewayStatus | undefined => {
-    return gatewayStatuses.find(status => status.name === gatewayName);
+  const handleEditGateway = (gateway: Gateway) => {
+    setEditingGateway(gateway.name);
+    setSelectedEnvironment(gateway.environment as "sandbox" | "production");
+    setSandboxConfig((gateway.sandboxConfig as GatewayConfig) || {});
+    setProductionConfig((gateway.productionConfig as GatewayConfig) || {});
+    setSandboxWebhook(gateway.sandboxWebhook || "");
+    setProductionWebhook(gateway.productionWebhook || "");
   };
 
-  const handleSaveConfiguration = async (gatewayName: string) => {
+  const handleSaveGateway = async () => {
+    if (!editingGateway) return;
+
     try {
-      setLoading(true);
-      
-      // Obter gateway específico
-      const gateway = gateways.find(g => g.name === gatewayName);
-      if (!gateway) {
-        toast.error("Gateway não encontrado");
-        return;
-      }
+      const payload = {
+        environment: selectedEnvironment,
+        sandboxConfig,
+        productionConfig,
+        sandboxWebhook,
+        productionWebhook,
+      };
 
-      // Preparar variáveis para salvar
-      const envVars: { [key: string]: string } = {};
-      
-      gateway.fields.forEach((field) => {
-        const value = gatewayValues[field.envVar];
-        if (value && value.trim()) {
-          envVars[field.envVar] = value.trim();
-        }
-      });
-
-      if (Object.keys(envVars).length === 0) {
-        toast.error("Preencha pelo menos um campo antes de salvar");
-        return;
-      }
-
-      // Salvar no servidor
-      const response = await fetch("/api/admin/gateways", {
-        method: "POST",
+      const response = await fetch(`/api/admin/gateways/${editingGateway}`, {
+        method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ envVars }),
+        body: JSON.stringify(payload),
       });
-
-      const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.error || "Erro ao salvar");
+        const data = await response.json();
+        throw new Error(data.error || "Erro ao salvar configurações");
       }
 
-      toast.success(
-        `✅ ${data.message}\n\n⚠️ IMPORTANTE: Reinicie o servidor para aplicar as mudanças:\n\n` +
-        `pkill -f "next dev"\ncd /home/ubuntu/clivus_landing_page/nextjs_space\nyarn dev`,
-        { 
-          duration: 10000,
-        }
-      );
-
-      setHasChanges(false);
-      
-      // Recarregar status após salvar
-      await fetchGatewayStatuses();
-
+      toast.success("Configurações salvas com sucesso!");
+      setEditingGateway(null);
+      loadGateways();
     } catch (error: any) {
-      console.error("Erro ao salvar:", error);
-      toast.error(error.message || "Erro ao salvar configuração");
+      toast.error(`Erro: ${error.message}`);
+    }
+  };
+
+  const handleTestConnection = async (gatewayName: string, environment: string) => {
+    setTestingConnection(gatewayName);
+    
+    try {
+      const response = await fetch("/api/admin/gateways/test-connection", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ gatewayName, environment }),
+      });
+
+      const result = await response.json();
+
+      if (result.success) {
+        toast.success(`Conexão ${environment} testada com sucesso!`);
+      } else {
+        toast.error(`Falha no teste: ${result.error}`);
+      }
+
+      loadGateways();
+    } catch (error: any) {
+      toast.error(`Erro: ${error.message}`);
     } finally {
-      setLoading(false);
+      setTestingConnection(null);
     }
   };
 
-  const toggleShowSecret = (fieldKey: string) => {
-    setShowSecrets((prev) => ({
-      ...prev,
-      [fieldKey]: !prev[fieldKey],
-    }));
-  };
-
-  const handleValueChange = (envVar: string, value: string) => {
-    setGatewayValues((prev) => ({
-      ...prev,
-      [envVar]: value,
-    }));
-    setHasChanges(true);
-  };
-
-  const handleCopyWebhook = (url?: string) => {
-    if (url) {
-      navigator.clipboard.writeText(url);
-      toast.success("URL do webhook copiada!");
+  const getConnectionStatusIcon = (status: string) => {
+    switch (status) {
+      case "success":
+        return <CheckCircle className="h-5 w-5 text-green-600" />;
+      case "failed":
+        return <XCircle className="h-5 w-5 text-red-600" />;
+      default:
+        return <AlertCircle className="h-5 w-5 text-theme-muted" />;
     }
   };
 
-  if (loading && !gateways) {
+  if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+      <div className="p-8 flex items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
       </div>
     );
   }
 
+  const editingGatewayData = gateways.find((g) => g.name === editingGateway);
+
   return (
-    <div className="min-h-screen bg-muted-soft p-8">
-      <div className="max-w-5xl mx-auto space-y-8">
-        {/* Header */}
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <Link href="/admin">
-              <Button variant="outline" size="icon">
-                <ArrowLeft className="w-4 h-4" />
-              </Button>
-            </Link>
-            <div>
-              <h1 className="text-3xl font-bold text-theme">
-                Gateways de Pagamento
-              </h1>
-              <p className="text-theme-muted">
-                Configure os gateways de pagamento do sistema
-              </p>
+    <div className="p-8">
+      <div className="flex items-center justify-between mb-6">
+        <div>
+          <h1 className="text-3xl font-bold text-theme flex items-center gap-2">
+            <Settings className="h-8 w-8" />
+            Configuração de Gateways
+          </h1>
+          <p className="text-theme-muted mt-2">
+            Configure as credenciais de sandbox e produção para cada gateway de pagamento
+          </p>
+        </div>
+        <Button onClick={loadGateways} variant="outline">
+          <RefreshCw className="h-4 w-4 mr-2" />
+          Atualizar
+        </Button>
+      </div>
+
+      {/* Alert de informação */}
+      <Card className="mb-6 bg-primary/5 border-primary/30">
+        <CardContent className="pt-6">
+          <div className="flex items-start gap-3">
+            <Shield className="h-5 w-5 text-primary mt-0.5" />
+            <div className="flex-1">
+              <h3 className="font-semibold text-theme mb-2">
+                ℹ️ Como usar esta tela
+              </h3>
+              <ul className="text-sm text-theme-muted space-y-1">
+                <li>• Configure credenciais separadamente para <strong>Sandbox</strong> (testes) e <strong>Produção</strong></li>
+                <li>• Use o botão <strong>Testar Conexão</strong> para validar as credenciais antes de ativar</li>
+                <li>• Ative apenas os gateways que deseja disponibilizar no checkout</li>
+                <li>• O ambiente selecionado (Sandbox/Produção) será usado automaticamente no checkout</li>
+              </ul>
             </div>
           </div>
-        </div>
+        </CardContent>
+      </Card>
 
-        {/* Alert Info */}
-        <Card className="border-primary border-opacity-30 bg-primary bg-opacity-5">
-          <CardContent className="pt-6">
-            <div className="flex gap-3">
-              <AlertCircle className="w-5 h-5 text-primary flex-shrink-0 mt-0.5" />
-              <div className="space-y-2">
-                <p className="text-sm text-blue-900 font-medium">
-                  📝 Como Configurar os Gateways
-                </p>
-                <div className="text-sm text-blue-800 space-y-1">
-                  <p>1. Edite o arquivo <code className="bg-primary bg-opacity-10 px-1 rounded">.env</code> no servidor</p>
-                  <p>2. Adicione as credenciais dos gateways que deseja usar</p>
-                  <p>3. Configure os webhooks nos painéis dos gateways</p>
-                  <p>4. Reinicie o servidor Next.js para aplicar as mudanças</p>
-                </div>
-                <p className="text-xs text-primary mt-2">
-                  💡 Consulte a documentação <strong>ADMIN_SETUP.md</strong> para instruções gerais e os guias específicos de cada gateway para instruções detalhadas
-                </p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+      {/* Lista de Gateways */}
+      <div className="grid grid-cols-1 gap-6">
+        {gateways.map((gateway) => {
+          const fields = GATEWAY_FIELDS[gateway.name] || [];
+          const isEditing = editingGateway === gateway.name;
 
-        {/* Gateways */}
-        <div className="space-y-6">
-          {gateways.map((gateway) => {
-            const status = getGatewayStatus(gateway.name);
-            const isConfigured = status?.configured || false;
-            const isEnabled = status?.enabled || false;
-            const error = status?.error;
-
-            return (
-              <Card key={gateway.name}>
-                <CardHeader>
-                  <div className="flex items-start justify-between">
-                    <div className="flex items-center gap-3">
-                      <span className="text-3xl">{gateway.icon}</span>
-                      <div className="flex-1">
-                        <CardTitle className="flex items-center gap-2 flex-wrap">
-                          {gateway.displayName}
-                          {isEnabled && isConfigured ? (
-                            <span className="inline-flex items-center gap-1 px-2 py-1 bg-green-100 text-green-800 rounded-full text-xs font-medium">
-                              <CheckCircle className="w-3 h-3" />
-                              Configurado
-                            </span>
-                          ) : !isConfigured ? (
-                            <span className="inline-flex items-center gap-1 px-2 py-1 bg-red-100 text-red-800 rounded-full text-xs font-medium">
-                              <XCircle className="w-3 h-3" />
-                              Não Configurado
-                            </span>
-                          ) : (
-                            <span className="inline-flex items-center gap-1 px-2 py-1 bg-accent bg-opacity-20 text-accent rounded-full text-xs font-medium">
-                              <AlertCircle className="w-3 h-3" />
-                              Desabilitado
-                            </span>
-                          )}
-                        </CardTitle>
-                        <CardDescription>{gateway.description}</CardDescription>
-                        {error && (
-                          <div className="mt-2 text-xs text-red-600 bg-red-50 border border-red-200 rounded px-2 py-1">
-                            ⚠️ {error}
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                    
-                    {/* Toggle para habilitar/desabilitar */}
-                    <div className="flex flex-col items-end gap-2">
-                      <div className="flex items-center gap-2">
-                        <Label htmlFor={`gateway-${gateway.name}-toggle`} className="text-sm font-medium">
-                          {isEnabled ? "Habilitado" : "Desabilitado"}
-                        </Label>
-                        <Switch
-                          id={`gateway-${gateway.name}-toggle`}
-                          checked={isEnabled}
-                          onCheckedChange={() => handleToggleGateway(gateway.name, isEnabled)}
-                        />
-                      </div>
-                      {!isEnabled && (
-                        <span className="text-xs text-red-600 font-medium">
-                          Gateway desabilitado no checkout
-                        </span>
+          return (
+            <Card key={gateway.id}>
+              <CardHeader>
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <CardTitle className="text-theme">{gateway.displayName}</CardTitle>
+                    <div className="flex items-center gap-2">
+                      {getConnectionStatusIcon(gateway.connectionStatus)}
+                      {gateway.connectionStatus === "success" && (
+                        <span className="text-xs text-green-600">Configurado</span>
+                      )}
+                      {gateway.connectionStatus === "failed" && (
+                        <span className="text-xs text-red-600">Erro</span>
+                      )}
+                      {gateway.connectionStatus === "untested" && (
+                        <span className="text-xs text-theme-muted">Não testado</span>
                       )}
                     </div>
                   </div>
-                </CardHeader>
-              <CardContent className="space-y-6">
-                {/* Webhook URL */}
-                {gateway.webhookUrl && (
-                  <div className="p-4 bg-muted-soft rounded-lg border border-theme">
-                    <Label className="text-sm font-semibold text-theme mb-2 block">
-                      🔗 URL do Webhook
-                    </Label>
-                    <div className="flex gap-2">
-                      <Input
-                        value={gateway.webhookUrl}
-                        readOnly
-                        className="font-mono text-sm"
-                      />
-                      <Button
-                        onClick={() => handleCopyWebhook(gateway.webhookUrl)}
-                        variant="outline"
-                      >
-                        Copiar
-                      </Button>
-                    </div>
-                    <p className="text-xs text-theme-muted mt-2">
-                      Configure esta URL no painel do {gateway.displayName}
-                    </p>
+                  <div className="flex items-center gap-2">
+                    <Switch
+                      checked={gateway.isEnabled}
+                      onCheckedChange={() => handleToggleEnabled(gateway.name, gateway.isEnabled)}
+                    />
+                    <span className="text-sm text-theme-muted">
+                      {gateway.isEnabled ? "Ativo" : "Inativo"}
+                    </span>
                   </div>
+                </div>
+                {gateway.connectionError && (
+                  <CardDescription className="text-red-600 mt-2">
+                    ⚠️ {gateway.connectionError}
+                  </CardDescription>
                 )}
+              </CardHeader>
 
-                {/* Configuration Fields */}
-                <div className="space-y-4">
-                  {gateway.fields.map((field) => (
-                    <div key={field.key} className="space-y-2">
-                      <Label htmlFor={`${gateway.name}-${field.key}`}>
-                        {field.label}
-                      </Label>
-                      <div className="flex gap-2">
-                        <div className="relative flex-1">
-                          <Input
-                            id={`${gateway.name}-${field.key}`}
-                            type={
-                              field.type === "password" && !showSecrets[`${gateway.name}-${field.key}`]
-                                ? "password"
-                                : "text"
-                            }
-                            placeholder={field.placeholder}
-                            value={gatewayValues[field.envVar] || ""}
-                            onChange={(e) => handleValueChange(field.envVar, e.target.value)}
-                          />
-                          {field.type === "password" && (
-                            <button
-                              type="button"
-                              onClick={() =>
-                                toggleShowSecret(`${gateway.name}-${field.key}`)
-                              }
-                              className="absolute right-3 top-1/2 -translate-y-1/2 text-theme-muted hover:text-theme"
-                            >
-                              {showSecrets[`${gateway.name}-${field.key}`] ? (
-                                <EyeOff className="w-4 h-4" />
-                              ) : (
-                                <Eye className="w-4 h-4" />
-                              )}
-                            </button>
-                          )}
-                        </div>
+              <CardContent>
+                {!isEditing ? (
+                  <div className="space-y-4">
+                    <div className="grid grid-cols-2 gap-4 text-sm">
+                      <div>
+                        <Label className="text-theme-muted">Ambiente Ativo:</Label>
+                        <p className="text-theme font-medium capitalize">{gateway.environment}</p>
                       </div>
+                      <div>
+                        <Label className="text-theme-muted">Último Teste:</Label>
+                        <p className="text-theme">
+                          {gateway.lastConnectionTest
+                            ? new Date(gateway.lastConnectionTest).toLocaleString("pt-BR")
+                            : "Nunca"}
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="flex gap-2">
+                      <Button onClick={() => handleEditGateway(gateway)} variant="outline">
+                        <Settings className="h-4 w-4 mr-2" />
+                        Configurar
+                      </Button>
+                      
+                      {gateway.sandboxConfig && Object.keys(gateway.sandboxConfig).length > 0 && (
+                        <Button
+                          onClick={() => handleTestConnection(gateway.name, "sandbox")}
+                          variant="outline"
+                          disabled={testingConnection === gateway.name}
+                        >
+                          {testingConnection === gateway.name ? (
+                            <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                          ) : (
+                            <TestTube className="h-4 w-4 mr-2" />
+                          )}
+                          Testar Sandbox
+                        </Button>
+                      )}
+
+                      {gateway.productionConfig && Object.keys(gateway.productionConfig).length > 0 && (
+                        <Button
+                          onClick={() => handleTestConnection(gateway.name, "production")}
+                          variant="outline"
+                          disabled={testingConnection === gateway.name}
+                        >
+                          {testingConnection === gateway.name ? (
+                            <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                          ) : (
+                            <Server className="h-4 w-4 mr-2" />
+                          )}
+                          Testar Produção
+                        </Button>
+                      )}
+                    </div>
+                  </div>
+                ) : (
+                  <div className="space-y-6">
+                    {/* Seletor de Ambiente */}
+                    <div className="space-y-2">
+                      <Label>Ambiente Ativo no Checkout</Label>
+                      <Select
+                        value={selectedEnvironment}
+                        onValueChange={(value: "sandbox" | "production") => setSelectedEnvironment(value)}
+                      >
+                        <SelectTrigger>
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="sandbox">Sandbox (Testes)</SelectItem>
+                          <SelectItem value="production">Produção (Real)</SelectItem>
+                        </SelectContent>
+                      </Select>
                       <p className="text-xs text-theme-muted">
-                        Variável: <code className="bg-muted-soft px-1 rounded">{field.envVar}</code>
+                        Este ambiente será usado automaticamente no checkout
                       </p>
                     </div>
-                  ))}
-                </div>
 
-                {/* Action Buttons */}
-                <div className="flex gap-3 pt-4 border-t border-theme">
-                  <Button
-                    onClick={() => handleSaveConfiguration(gateway.name)}
-                    disabled={loading || saving}
-                    className="gap-2 bg-green-600 hover:bg-green-700 text-white"
-                  >
-                    <Save className="w-4 h-4" />
-                    {loading || saving ? "Salvando..." : "Salvar Configurações"}
-                  </Button>
-                  
-                  {/* Link para guia específico do gateway */}
-                  {gateway.name === "asaas" && (
-                    <Link href="/ASAAS_SETUP.md" target="_blank">
-                      <Button variant="outline" className="gap-2">
-                        📄 Guia Asaas
+                    {/* Credenciais Sandbox */}
+                    <Card className="bg-primary/5">
+                      <CardHeader>
+                        <CardTitle className="text-sm text-theme">Credenciais Sandbox (Testes)</CardTitle>
+                      </CardHeader>
+                      <CardContent className="space-y-4">
+                        {fields.map(({ field, label, type }) => (
+                          <div key={`sandbox-${field}`} className="space-y-2">
+                            <Label>{label}</Label>
+                            <Input
+                              type={type || "text"}
+                              value={sandboxConfig[field] || ""}
+                              onChange={(e) =>
+                                setSandboxConfig({ ...sandboxConfig, [field]: e.target.value })
+                              }
+                              placeholder={`Digite ${label.toLowerCase()}`}
+                            />
+                          </div>
+                        ))}
+                        <div className="space-y-2">
+                          <Label>Webhook Secret (Opcional)</Label>
+                          <Input
+                            type="password"
+                            value={sandboxWebhook}
+                            onChange={(e) => setSandboxWebhook(e.target.value)}
+                            placeholder="Secret para validar webhooks"
+                          />
+                        </div>
+                      </CardContent>
+                    </Card>
+
+                    {/* Credenciais Produção */}
+                    <Card className="bg-accent/5">
+                      <CardHeader>
+                        <CardTitle className="text-sm text-theme">Credenciais Produção (Real)</CardTitle>
+                      </CardHeader>
+                      <CardContent className="space-y-4">
+                        {fields.map(({ field, label, type }) => (
+                          <div key={`production-${field}`} className="space-y-2">
+                            <Label>{label}</Label>
+                            <Input
+                              type={type || "text"}
+                              value={productionConfig[field] || ""}
+                              onChange={(e) =>
+                                setProductionConfig({ ...productionConfig, [field]: e.target.value })
+                              }
+                              placeholder={`Digite ${label.toLowerCase()}`}
+                            />
+                          </div>
+                        ))}
+                        <div className="space-y-2">
+                          <Label>Webhook Secret (Opcional)</Label>
+                          <Input
+                            type="password"
+                            value={productionWebhook}
+                            onChange={(e) => setProductionWebhook(e.target.value)}
+                            placeholder="Secret para validar webhooks"
+                          />
+                        </div>
+                      </CardContent>
+                    </Card>
+
+                    {/* Botões de Ação */}
+                    <div className="flex gap-2">
+                      <Button onClick={handleSaveGateway} className="flex-1">
+                        <CheckCircle className="h-4 w-4 mr-2" />
+                        Salvar Configurações
                       </Button>
-                    </Link>
-                  )}
-                  {gateway.name === "efi" && (
-                    <Link href="/EFI_SETUP.md" target="_blank">
-                      <Button variant="outline" className="gap-2">
-                        📄 Guia EFI
+                      <Button
+                        onClick={() => setEditingGateway(null)}
+                        variant="outline"
+                      >
+                        Cancelar
                       </Button>
-                    </Link>
-                  )}
-                  {gateway.name === "cora" && (
-                    <Link href="/CORA_SETUP.md" target="_blank">
-                      <Button variant="outline" className="gap-2">
-                        📄 Guia CORA
-                      </Button>
-                    </Link>
-                  )}
-                  {gateway.name === "pagarme" && (
-                    <Link href="/PAGARME_SETUP.md" target="_blank">
-                      <Button variant="outline" className="gap-2">
-                        📄 Guia Pagar.me
-                      </Button>
-                    </Link>
-                  )}
-                </div>
+                    </div>
+                  </div>
+                )}
               </CardContent>
             </Card>
-            );
-          })}
-        </div>
-
-        {/* Documentation Links */}
-        <Card className="border-purple-200 bg-purple-50">
-          <CardContent className="pt-6">
-            <div className="flex gap-3">
-              <div className="text-2xl">📚</div>
-              <div className="space-y-2">
-                <p className="text-sm text-purple-900 font-medium">
-                  Documentação e Guias
-                </p>
-                <div className="flex flex-wrap gap-3">
-                  <Link href="/ADMIN_SETUP.md" target="_blank">
-                    <Button variant="outline" size="sm">
-                      📄 ADMIN_SETUP.md
-                    </Button>
-                  </Link>
-                  <Link href="/ASAAS_SETUP.md" target="_blank">
-                    <Button variant="outline" size="sm">
-                      📄 Guia Asaas
-                    </Button>
-                  </Link>
-                  <Link href="/EFI_SETUP.md" target="_blank">
-                    <Button variant="outline" size="sm">
-                      📄 Guia EFI
-                    </Button>
-                  </Link>
-                  <Link href="/CORA_SETUP.md" target="_blank">
-                    <Button variant="outline" size="sm">
-                      📄 Guia CORA
-                    </Button>
-                  </Link>
-                  <Link href="/PAGARME_SETUP.md" target="_blank">
-                    <Button variant="outline" size="sm">
-                      📄 Guia Pagar.me
-                    </Button>
-                  </Link>
-                </div>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+          );
+        })}
       </div>
     </div>
   );

@@ -78,7 +78,7 @@ export async function POST(request: NextRequest) {
     try {
       if (gateway === "efi") {
         // Gerar PIX com EFI (Gerencianet)
-        const efiConfig = getEfiConfig();
+        const efiConfig = await getEfiConfig();
         
         if (!efiConfig.clientId || !efiConfig.clientSecret) {
           throw new Error("Credenciais EFI não configuradas");

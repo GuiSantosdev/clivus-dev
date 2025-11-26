@@ -243,12 +243,29 @@ model Advertisement {
 }
 
 model Gateway {
-  id          String   @id @default(cuid())
-  name        String   @unique // "asaas", "stripe", "mercadopago", "cora"
-  displayName String   // "Asaas", "Stripe", etc.
-  isEnabled   Boolean  @default(true)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id                 String   @id @default(cuid())
+  name               String   @unique // "asaas", "stripe", "efi", "cora", "pagarme"
+  displayName        String   // "Asaas", "Stripe", "EFI", etc.
+  isEnabled          Boolean  @default(true)
+  environment        String   @default("sandbox") // "sandbox" ou "production"
+  
+  // Credenciais Sandbox (JSON flexível por gateway)
+  sandboxConfig      Json?    // Ex: {"clientId": "...", "clientSecret": "...", "apiKey": "..."}
+  
+  // Credenciais Production (JSON flexível por gateway)
+  productionConfig   Json?    // Ex: {"clientId": "...", "clientSecret": "...", "apiKey": "..."}
+  
+  // Webhook Secret (pode ser diferente por ambiente)
+  sandboxWebhook     String?
+  productionWebhook  String?
+  
+  // Status da última verificação de conexão
+  lastConnectionTest DateTime?
+  connectionStatus   String?  @default("untested") // "untested", "success", "failed"
+  connectionError    String?  // Mensagem de erro se falhou
+  
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
   
   @@map("gateways")
 }
