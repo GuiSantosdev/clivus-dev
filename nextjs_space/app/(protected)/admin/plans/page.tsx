@@ -346,7 +346,7 @@ export default function AdminPlansPage() {
               </Button>
               <div>
                 <h1 className="text-3xl font-bold text-theme flex items-center gap-3">
-                  <Settings className="w-8 h-8 text-blue-600" />
+                  <Settings className="w-8 h-8 text-primary" />
                   Gerenciar Funcionalidades
                 </h1>
                 <p className="text-theme-muted mt-1">
@@ -605,7 +605,7 @@ export default function AdminPlansPage() {
               </Button>
             </Link>
             <h1 className="text-3xl font-bold text-theme flex items-center gap-3">
-              <Package className="w-8 h-8 text-blue-600" />
+              <Package className="w-8 h-8 text-primary" />
               Gerenciar Planos
             </h1>
           </div>

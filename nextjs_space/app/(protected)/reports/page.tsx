@@ -87,9 +87,9 @@ export default function ReportsPage() {
         {/* Summary Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
           <Card>
-            <CardHeader className="bg-primary bg-opacity-5">
-              <CardTitle className="flex items-center space-x-2">
-                <PieChart className="h-5 w-5 text-blue-600" />
+            <CardHeader className="bg-primary/5">
+              <CardTitle className="flex items-center space-x-2 text-theme">
+                <PieChart className="h-5 w-5 text-primary" />
                 <span>CPF - Finanças Pessoais</span>
               </CardTitle>
             </CardHeader>
@@ -134,7 +134,7 @@ export default function ReportsPage() {
                           className="flex justify-between items-center text-sm"
                         >
                           <span className="text-theme-muted">{cat?.category}</span>
-                          <span className="font-medium">
+                          <span className="font-medium text-theme">
                             R$ {cat?.total?.toFixed(2)}
                           </span>
                         </div>
@@ -147,9 +147,9 @@ export default function ReportsPage() {
           </Card>
 
           <Card>
-            <CardHeader className="bg-green-50">
-              <CardTitle className="flex items-center space-x-2">
-                <BarChart3 className="h-5 w-5 text-green-600" />
+            <CardHeader className="bg-secondary/5">
+              <CardTitle className="flex items-center space-x-2 text-theme">
+                <BarChart3 className="h-5 w-5 text-secondary" />
                 <span>CNPJ - Finanças Empresariais</span>
               </CardTitle>
             </CardHeader>
@@ -194,7 +194,7 @@ export default function ReportsPage() {
                           className="flex justify-between items-center text-sm"
                         >
                           <span className="text-theme-muted">{cat?.category}</span>
-                          <span className="font-medium">
+                          <span className="font-medium text-theme">
                             R$ {cat?.total?.toFixed(2)}
                           </span>
                         </div>
@@ -217,7 +217,7 @@ export default function ReportsPage() {
               <div className="overflow-x-auto">
                 <table className="w-full">
                   <thead>
-                    <tr className="border-b">
+                    <tr className="border-b border-theme">
                       <th className="text-left p-3 font-medium text-theme">Mês</th>
                       <th className="text-right p-3 font-medium text-theme">CPF Receitas</th>
                       <th className="text-right p-3 font-medium text-theme">CPF Despesas</th>
@@ -227,7 +227,7 @@ export default function ReportsPage() {
                   </thead>
                   <tbody>
                     {reportData.monthly.map((month, index) => (
-                      <tr key={index} className="border-b hover:bg-gray-50">
+                      <tr key={index} className="border-b border-theme hover:bg-muted-soft">
                         <td className="p-3 text-theme">{month?.month}</td>
                         <td className="p-3 text-right text-green-600 font-medium">
                           R$ {month?.cpfIncome?.toFixed(2)}

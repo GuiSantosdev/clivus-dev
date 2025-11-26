@@ -732,7 +732,7 @@ export default function LeadsManagementPage() {
             <CardTitle>
               Lista de Leads ({filteredLeads.length})
               {selectedLeads.length > 0 && (
-                <span className="ml-2 text-sm font-normal text-blue-600">
+                <span className="ml-2 text-sm font-normal text-primary">
                   ({selectedLeads.length} selecionado{selectedLeads.length > 1 ? 's' : ''})
                 </span>
               )}
@@ -849,7 +849,7 @@ export default function LeadsManagementPage() {
       <Card className="mt-6 bg-primary bg-opacity-5 border-primary border-opacity-30">
         <CardContent className="pt-6">
           <div className="flex items-start gap-3">
-            <TrendingUp className="h-5 w-5 text-blue-600 mt-0.5" />
+            <TrendingUp className="h-5 w-5 text-primary mt-0.5" />
             <div>
               <h3 className="font-semibold text-blue-900 mb-2">
                 💡 Dicas para Remarketing

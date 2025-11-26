@@ -568,7 +568,7 @@ export default function TransactionsPage() {
                       </SelectContent>
                     </Select>
                     {formData.plannedTransactionId && (
-                      <p className="text-xs text-blue-600 mt-2">
+                      <p className="text-xs text-primary mt-2">
                         ℹ️ Ao vincular, o sistema atualizará automaticamente o valor realizado
                       </p>
                     )}
@@ -682,7 +682,7 @@ export default function TransactionsPage() {
                 {transactions.map((transaction) => (
                   <div
                     key={transaction.id}
-                    className="flex items-center justify-between p-4 border rounded-lg hover:bg-gray-50"
+                    className="flex items-center justify-between p-4 border rounded-lg hover:bg-muted-soft"
                   >
                     <div className="flex items-center gap-4">
                       {transaction.type === "income" ? (
@@ -694,7 +694,7 @@ export default function TransactionsPage() {
                         <div className="flex items-center gap-2">
                           <p className="font-semibold">{transaction.description}</p>
                           {transaction.isInstallment && (
-                            <span className="text-xs bg-primary bg-opacity-10 text-blue-800 px-2 py-1 rounded">
+                            <span className="text-xs bg-primary bg-opacity-10 text-primary px-2 py-1 rounded">
                               {transaction.installmentNumber}/{transaction.totalInstallments}x
                             </span>
                           )}

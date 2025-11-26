@@ -217,7 +217,7 @@ export default function DashboardPage() {
           </CardHeader>
           <CardContent className="space-y-4">
             {[1, 2, 3].map((i) => (
-              <div key={i} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+              <div key={i} className="flex items-center justify-between p-4 bg-muted-soft rounded-lg">
                 <div className="flex items-center space-x-3">
                   <Skeleton className="h-5 w-5 rounded-full" />
                   <div className="space-y-2">
@@ -394,7 +394,7 @@ export default function DashboardPage() {
                 {/* CPF Section */}
                 <div className="space-y-4">
                   <h3 className="font-semibold text-theme flex items-center">
-                    <User className="h-4 w-4 mr-2 text-blue-600" />
+                    <User className="h-4 w-4 mr-2 text-primary" />
                     CPF (Pessoal)
                   </h3>
                   
@@ -555,7 +555,7 @@ export default function DashboardPage() {
               <CardContent className="p-6">
                 <div className="flex flex-col items-center text-center space-y-2">
                   <div className="h-12 w-12 rounded-full bg-primary bg-opacity-10 flex items-center justify-center">
-                    <Calculator className="h-6 w-6 text-blue-600" />
+                    <Calculator className="h-6 w-6 text-primary" />
                   </div>
                   <h3 className="font-semibold text-theme">Calculadora de Pró-labore</h3>
                   <p className="text-xs text-theme-muted">Calcule automaticamente o pró-labore ideal</p>
@@ -652,7 +652,7 @@ export default function DashboardPage() {
             <CardContent className="p-6">
               <div className="flex flex-col items-center text-center space-y-2">
                 <div className="h-12 w-12 rounded-full bg-white flex items-center justify-center">
-                  <CheckCircle className="h-6 w-6 text-blue-600" />
+                  <CheckCircle className="h-6 w-6 text-primary" />
                 </div>
                 <h3 className="font-semibold text-theme">100% Online</h3>
                 <p className="text-xs text-theme-muted">Acesse pelo computador ou celular</p>
@@ -696,7 +696,7 @@ export default function DashboardPage() {
                 {/* Transações Mensais */}
                 {planLimits.limits.transactions_monthly !== undefined && (
                   <div className="flex items-start space-x-3 p-3 bg-white rounded-lg border border-gray-200">
-                    <FileText className="h-5 w-5 text-blue-600 mt-0.5" />
+                    <FileText className="h-5 w-5 text-primary mt-0.5" />
                     <div className="flex-1">
                       <p className="font-medium text-theme text-sm">Transações por Mês</p>
                       <p className="text-xs text-theme-muted">
@@ -849,7 +849,7 @@ export default function DashboardPage() {
                 {stats.recentTransactions.map((transaction) => (
                   <div
                     key={transaction?.id}
-                    className="flex items-center justify-between p-4 bg-gray-50 rounded-lg"
+                    className="flex items-center justify-between p-4 bg-muted-soft rounded-lg"
                   >
                     <div className="flex items-center space-x-3">
                       {transaction?.type === "income" ? (

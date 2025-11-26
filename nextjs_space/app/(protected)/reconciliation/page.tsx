@@ -406,7 +406,7 @@ export default function ReconciliationPage() {
                           {Math.abs(transaction.amount).toFixed(2)}
                         </p>
                         {transaction.matched && (
-                          <span className="px-2 py-1 bg-primary bg-opacity-10 text-blue-800 text-xs rounded-full">
+                          <span className="px-2 py-1 bg-primary bg-opacity-10 text-primary text-xs rounded-full">
                             Já existe
                           </span>
                         )}

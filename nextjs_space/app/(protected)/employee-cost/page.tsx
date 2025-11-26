@@ -253,8 +253,8 @@ Gerado em ${new Date().toLocaleDateString('pt-BR')} pelo Clivus
 
                 <div className="bg-primary bg-opacity-5 border border-primary border-opacity-30 rounded-lg p-4">
                   <div className="flex gap-2">
-                    <AlertCircle className="h-5 w-5 text-blue-600 flex-shrink-0 mt-0.5" />
-                    <div className="text-sm text-blue-800">
+                    <AlertCircle className="h-5 w-5 text-primary flex-shrink-0 mt-0.5" />
+                    <div className="text-sm text-primary">
                       <strong>Encargos Obrigatórios:</strong> INSS Patronal (20%), FGTS (8%), RAT (3%), 
                       Salário Educação (2,5%), Sistema S (3,58%), Férias, 13º Salário.
                     </div>
@@ -401,7 +401,7 @@ Gerado em ${new Date().toLocaleDateString('pt-BR')} pelo Clivus
           <div className="space-y-6">
             <Card className="border-primary border-opacity-30 bg-gradient-to-br from-primary/10 to-accent/10">
               <CardHeader>
-                <CardTitle className="flex items-center gap-2 text-blue-800">
+                <CardTitle className="flex items-center gap-2 text-primary">
                   <Calculator className="h-5 w-5" />
                   Custo Total
                 </CardTitle>
@@ -409,7 +409,7 @@ Gerado em ${new Date().toLocaleDateString('pt-BR')} pelo Clivus
               <CardContent className="space-y-4">
                 <div>
                   <p className="text-sm text-theme-muted mb-1">Custo Mensal Médio</p>
-                  <div className="text-4xl font-bold text-blue-600">
+                  <div className="text-4xl font-bold text-primary">
                     R$ {costs.monthlyCost.toFixed(2)}
                   </div>
                 </div>

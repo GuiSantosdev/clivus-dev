@@ -592,7 +592,7 @@ export default function PlanejPage() {
                   return (
                     <div
                       key={planned.id}
-                      className="flex items-center justify-between p-4 border rounded-lg hover:bg-gray-50"
+                      className="flex items-center justify-between p-4 border rounded-lg hover:bg-muted-soft"
                     >
                       <div className="flex items-center gap-4 flex-1">
                         {status.icon}
@@ -640,7 +640,7 @@ export default function PlanejPage() {
                           size="sm"
                           onClick={() => handleEdit(planned)}
                         >
-                          <Edit2 className="w-4 h-4 text-blue-600" />
+                          <Edit2 className="w-4 h-4 text-primary" />
                         </Button>
                         <Button
                           variant="ghost"
@@ -694,7 +694,7 @@ export default function PlanejPage() {
                   return (
                     <div
                       key={planned.id}
-                      className="flex items-center justify-between p-4 border rounded-lg hover:bg-gray-50"
+                      className="flex items-center justify-between p-4 border rounded-lg hover:bg-muted-soft"
                     >
                       <div className="flex items-center gap-4 flex-1">
                         {status.icon}
@@ -743,7 +743,7 @@ export default function PlanejPage() {
                           size="sm"
                           onClick={() => handleEdit(planned)}
                         >
-                          <Edit2 className="w-4 h-4 text-blue-600" />
+                          <Edit2 className="w-4 h-4 text-primary" />
                         </Button>
                         <Button
                           variant="ghost"

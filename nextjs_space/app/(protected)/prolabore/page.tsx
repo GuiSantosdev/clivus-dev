@@ -100,7 +100,7 @@ export default function ProlaborePage() {
         <Card className="mb-6 border-primary border-opacity-30 bg-primary bg-opacity-5">
           <CardContent className="p-4">
             <div className="flex items-start space-x-3">
-              <AlertCircle className="h-5 w-5 text-blue-600 mt-0.5" />
+              <AlertCircle className="h-5 w-5 text-primary mt-0.5" />
               <div className="text-sm text-theme">
                 <p className="font-semibold mb-1">O que é Pró-labore?</p>
                 <p>
@@ -117,7 +117,7 @@ export default function ProlaborePage() {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center space-x-2">
-                <Calculator className="h-5 w-5 text-blue-600" />
+                <Calculator className="h-5 w-5 text-primary" />
                 <span>Dados da Empresa</span>
               </CardTitle>
             </CardHeader>
@@ -213,14 +213,14 @@ export default function ProlaborePage() {
                   </div>
 
                   <div className="space-y-3">
-                    <div className="flex justify-between items-center p-3 bg-gray-50 rounded">
+                    <div className="flex justify-between items-center p-3 bg-muted-soft rounded">
                       <span className="text-sm text-theme-muted">INSS (11%)</span>
                       <span className="font-semibold text-red-600">
                         - R$ {resultado.inss.toFixed(2)}
                       </span>
                     </div>
 
-                    <div className="flex justify-between items-center p-3 bg-gray-50 rounded">
+                    <div className="flex justify-between items-center p-3 bg-muted-soft rounded">
                       <span className="text-sm text-theme-muted">IR (Simplificado)</span>
                       <span className="font-semibold text-red-600">
                         - R$ {resultado.ir.toFixed(2)}
@@ -229,7 +229,7 @@ export default function ProlaborePage() {
 
                     <div className="flex justify-between items-center p-4 bg-primary bg-opacity-5 rounded-lg border-2 border-primary border-opacity-30">
                       <span className="font-semibold text-theme">Valor Líquido</span>
-                      <span className="text-xl font-bold text-blue-600">
+                      <span className="text-xl font-bold text-primary">
                         R$ {resultado.liquido.toFixed(2)}
                       </span>
                     </div>
@@ -245,7 +245,7 @@ export default function ProlaborePage() {
                 </div>
               ) : (
                 <div className="text-center py-12">
-                  <Calculator className="h-16 w-16 text-gray-300 mx-auto mb-4" />
+                  <Calculator className="h-16 w-16 text-theme-muted mx-auto mb-4" />
                   <p className="text-theme-muted">
                     Preencha os dados e clique em "Calcular" para ver o resultado
                   </p>

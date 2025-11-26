@@ -395,7 +395,7 @@ export default function GatewaysManagementPage() {
         <Card className="border-primary border-opacity-30 bg-primary bg-opacity-5">
           <CardContent className="pt-6">
             <div className="flex gap-3">
-              <AlertCircle className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" />
+              <AlertCircle className="w-5 h-5 text-primary flex-shrink-0 mt-0.5" />
               <div className="space-y-2">
                 <p className="text-sm text-blue-900 font-medium">
                   📝 Como Configurar os Gateways
@@ -406,7 +406,7 @@ export default function GatewaysManagementPage() {
                   <p>3. Configure os webhooks nos painéis dos gateways</p>
                   <p>4. Reinicie o servidor Next.js para aplicar as mudanças</p>
                 </div>
-                <p className="text-xs text-blue-700 mt-2">
+                <p className="text-xs text-primary mt-2">
                   💡 Consulte a documentação <strong>ADMIN_SETUP.md</strong> para instruções gerais e os guias específicos de cada gateway para instruções detalhadas
                 </p>
               </div>

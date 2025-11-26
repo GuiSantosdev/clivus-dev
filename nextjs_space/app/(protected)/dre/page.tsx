@@ -309,7 +309,7 @@ export default function DrePage() {
 
         {/* Personalização do Plano de Contas */}
         {isEditingPlano && (
-          <Card className="mb-6 border-2 border-blue-500">
+          <Card className="mb-6 border-2 border-primary">
             <CardHeader>
               <CardTitle className="text-blue-600">
                 Personalizar Plano de Contas

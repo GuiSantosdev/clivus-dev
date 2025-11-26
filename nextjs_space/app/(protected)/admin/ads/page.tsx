@@ -282,7 +282,7 @@ export default function AdsManagementPage() {
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-blue-600">
+              <div className="text-2xl font-bold text-primary">
                 {totalImpressions.toLocaleString()}
               </div>
             </CardContent>
@@ -552,7 +552,7 @@ export default function AdsManagementPage() {
                               px-2 py-1 rounded text-xs font-medium
                               ${
                                 ad.type === "adsense"
-                                  ? "bg-primary bg-opacity-10 text-blue-700"
+                                  ? "bg-primary bg-opacity-10 text-primary"
                                   : "bg-purple-100 text-purple-700"
                               }
                             `}

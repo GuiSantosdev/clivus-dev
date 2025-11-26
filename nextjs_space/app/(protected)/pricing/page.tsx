@@ -376,7 +376,7 @@ export default function PricingPage() {
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="space-y-2">
                       <Label htmlFor="aluguel" className="flex items-center gap-2">
-                        <Building2 className="h-4 w-4 text-blue-600" />
+                        <Building2 className="h-4 w-4 text-primary" />
                         Aluguel
                       </Label>
                       <Input
@@ -436,7 +436,7 @@ export default function PricingPage() {
 
                     <div className="space-y-2">
                       <Label htmlFor="agua" className="flex items-center gap-2">
-                        <Droplet className="h-4 w-4 text-blue-400" />
+                        <Droplet className="h-4 w-4 text-primary" />
                         Água
                       </Label>
                       <Input
@@ -643,7 +643,7 @@ export default function PricingPage() {
 
                     {newEmployeeSalary && (
                       <div className="bg-card border border-primary border-opacity-40 rounded p-3">
-                        <p className="text-sm font-semibold text-blue-800">
+                        <p className="text-sm font-semibold text-primary">
                           Custo Real: R$ {calculateEmployeeCost(newEmployeeSalary, newEmployeeWorkDays).toFixed(2)}/mês
                         </p>
                         <p className="text-xs text-theme-muted mt-1">
@@ -673,8 +673,8 @@ export default function PricingPage() {
 
                 <div className="bg-primary bg-opacity-5 border border-primary border-opacity-30 rounded-lg p-4">
                   <div className="flex gap-2">
-                    <AlertCircle className="h-5 w-5 text-blue-600 flex-shrink-0 mt-0.5" />
-                    <div className="text-sm text-blue-800">
+                    <AlertCircle className="h-5 w-5 text-primary flex-shrink-0 mt-0.5" />
+                    <div className="text-sm text-primary">
                       <strong>Cálculo Automático:</strong> O sistema calcula automaticamente todos os encargos trabalhistas 
                       (INSS, FGTS, férias, 13º, RAT, etc.) para mostrar o custo REAL do funcionário.
                     </div>
@@ -739,8 +739,8 @@ export default function PricingPage() {
 
                 <div className="bg-primary bg-opacity-5 border border-primary border-opacity-30 rounded-lg p-4">
                   <div className="flex gap-2">
-                    <AlertCircle className="h-5 w-5 text-blue-600 flex-shrink-0 mt-0.5" />
-                    <div className="text-sm text-blue-800">
+                    <AlertCircle className="h-5 w-5 text-primary flex-shrink-0 mt-0.5" />
+                    <div className="text-sm text-primary">
                       <strong>Dica:</strong> A margem de lucro varia por segmento. Comércio: 20-40%, Serviços: 30-50%, 
                       Indústria: 15-30%. Sempre considere a concorrência e o valor percebido pelo cliente.
                     </div>
@@ -778,7 +778,7 @@ export default function PricingPage() {
                   </div>
                   <div className="flex justify-between border-t pt-2">
                     <span className="text-theme-muted">Markup:</span>
-                    <span className="font-semibold text-blue-600">{markup.toFixed(1)}%</span>
+                    <span className="font-semibold text-primary">{markup.toFixed(1)}%</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-theme-muted">Lucro por venda:</span>
@@ -804,7 +804,7 @@ export default function PricingPage() {
                 </CardHeader>
                 <CardContent className="space-y-2">
                   {savedProducts.map((product) => (
-                    <div key={product.id} className="flex items-center justify-between p-2 bg-gray-50 rounded">
+                    <div key={product.id} className="flex items-center justify-between p-2 bg-muted-soft rounded">
                       <div className="flex-1">
                         <p className="font-medium text-sm">{product.name}</p>
                         <p className="text-xs text-theme-muted">R$ {product.finalPrice.toFixed(2)}</p>
@@ -851,7 +851,7 @@ export default function PricingPage() {
               </div>
               <div className="text-center p-4 bg-primary bg-opacity-5 rounded-lg">
                 <p className="text-sm text-theme-muted mb-1">Total</p>
-                <p className="text-xl font-bold text-blue-600">100%</p>
+                <p className="text-xl font-bold text-primary">100%</p>
               </div>
             </div>
           </CardContent>

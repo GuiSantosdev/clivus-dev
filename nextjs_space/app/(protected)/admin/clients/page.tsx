@@ -219,7 +219,7 @@ export default function ClientsManagementPage() {
               <CardTitle className="text-sm font-medium text-theme-muted">
                 Total de Clientes
               </CardTitle>
-              <Users className="w-5 h-5 text-blue-600" />
+              <Users className="w-5 h-5 text-primary" />
             </CardHeader>
             <CardContent>
               <div className="text-3xl font-bold text-theme">{totalUsers}</div>
@@ -363,7 +363,7 @@ export default function ClientsManagementPage() {
                           <td className="py-3 px-4">
                             {lastPayment ? (
                               <div className="flex items-center gap-2">
-                                <Package className="w-4 h-4 text-blue-600" />
+                                <Package className="w-4 h-4 text-primary" />
                                 <span className="text-sm text-theme">
                                   {lastPayment.planDetails?.name || "N/A"}
                                 </span>

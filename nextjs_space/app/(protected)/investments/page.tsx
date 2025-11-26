@@ -156,7 +156,7 @@ export default function InvestmentsPage() {
         <Card className="mb-6 border-primary border-opacity-30 bg-primary bg-opacity-5">
           <CardContent className="p-4">
             <div className="flex items-start space-x-3">
-              <AlertCircle className="h-5 w-5 text-blue-600 mt-0.5" />
+              <AlertCircle className="h-5 w-5 text-primary mt-0.5" />
               <div className="text-sm text-theme">
                 <p className="font-semibold mb-1">Por que separar investimentos PF e PJ?</p>
                 <p>
@@ -183,7 +183,7 @@ export default function InvestmentsPage() {
                   </p>
                   <p className="text-xs text-theme-muted mt-1">CPF + CNPJ</p>
                 </div>
-                <DollarSign className="h-12 w-12 text-blue-600" />
+                <DollarSign className="h-12 w-12 text-primary" />
               </div>
             </CardContent>
           </Card>
@@ -348,7 +348,7 @@ export default function InvestmentsPage() {
                   {cpfInvestments.map((investment) => (
                     <div
                       key={investment.id}
-                      className="p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
+                      className="p-4 bg-muted-soft rounded-lg hover:bg-muted-soft transition-colors"
                     >
                       <div className="flex items-center justify-between">
                         <div className="flex-1">
@@ -381,7 +381,7 @@ export default function InvestmentsPage() {
                 </div>
               ) : (
                 <div className="text-center py-8">
-                  <PieChart className="h-12 w-12 text-gray-300 mx-auto mb-3" />
+                  <PieChart className="h-12 w-12 text-theme-muted mx-auto mb-3" />
                   <p className="text-theme-muted">Nenhum investimento pessoal registrado</p>
                 </div>
               )}
@@ -401,7 +401,7 @@ export default function InvestmentsPage() {
                   {cnpjInvestments.map((investment) => (
                     <div
                       key={investment.id}
-                      className="p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
+                      className="p-4 bg-muted-soft rounded-lg hover:bg-muted-soft transition-colors"
                     >
                       <div className="flex items-center justify-between">
                         <div className="flex-1">
@@ -434,7 +434,7 @@ export default function InvestmentsPage() {
                 </div>
               ) : (
                 <div className="text-center py-8">
-                  <TrendingUp className="h-12 w-12 text-gray-300 mx-auto mb-3" />
+                  <TrendingUp className="h-12 w-12 text-theme-muted mx-auto mb-3" />
                   <p className="text-theme-muted">Nenhum investimento empresarial registrado</p>
                 </div>
               )}
