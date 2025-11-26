@@ -245,7 +245,7 @@ export default function DashboardPage() {
       {/* Page Header */}
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-theme">Dashboard</h1>
-        <p className="text-theme-muted mt-2">
+        <p className="text-theme mt-2 text-lg">
           Olá, {session?.user?.name}! Bem-vindo ao Clivus
         </p>
       </div>
