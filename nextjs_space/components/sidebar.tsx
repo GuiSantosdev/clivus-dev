@@ -26,6 +26,8 @@ import {
   PieChart,
   ChevronLeft,
   ChevronRight,
+  Moon,
+  Sun,
 } from "lucide-react";
 
 
@@ -190,6 +192,9 @@ export function Sidebar() {
   const userRole = session?.user?.role || "user";
   const menuItems = userRole === "superadmin" ? superAdminMenuItems : clientMenuItems;
 
+  // State para Dark Mode
+  const [isDarkMode, setIsDarkMode] = useState(false);
+
   // Carrega preferência do localStorage ao montar
   useEffect(() => {
     const savedState = localStorage.getItem("sidebar-state");
@@ -198,6 +203,18 @@ export function Sidebar() {
     } else {
       setIsCollapsed(false);
     }
+
+    // Carrega tema salvo
+    const savedTheme = localStorage.getItem("theme");
+    const prefersDark = savedTheme === "dark" || 
+      (!savedTheme && window.matchMedia("(prefers-color-scheme: dark)").matches);
+    
+    setIsDarkMode(prefersDark);
+    if (prefersDark) {
+      document.documentElement.classList.add("dark");
+    } else {
+      document.documentElement.classList.remove("dark");
+    }
   }, []);
 
   // Persiste o estado quando muda
@@ -205,6 +222,20 @@ export function Sidebar() {
     const newState = !isCollapsed;
     setIsCollapsed(newState);
     localStorage.setItem("sidebar-state", newState ? "collapsed" : "expanded");
+  };
+
+  // Toggle Dark Mode
+  const toggleDarkMode = () => {
+    const newTheme = !isDarkMode;
+    setIsDarkMode(newTheme);
+    
+    if (newTheme) {
+      document.documentElement.classList.add("dark");
+      localStorage.setItem("theme", "dark");
+    } else {
+      document.documentElement.classList.remove("dark");
+      localStorage.setItem("theme", "light");
+    }
   };
 
   const handleLogout = async () => {
@@ -273,6 +304,31 @@ export function Sidebar() {
             ) : (
               <ChevronLeft className="h-4 w-4" />
             )}
+          </button>
+        </div>
+
+        {/* Theme Toggle Button */}
+        <div className="px-4 py-3 border-b border-theme">
+          <button
+            onClick={toggleDarkMode}
+            className={`
+              w-full flex items-center gap-3 p-3 rounded-lg
+              transition-all duration-200
+              bg-gradient-card border border-theme
+              hover:border-primary hover:shadow-theme-md
+              group
+              ${isCollapsed ? "justify-center" : "justify-start"}
+            `}
+            title={isDarkMode ? "Modo Claro" : "Modo Escuro"}
+          >
+            {isDarkMode ? (
+              <Sun className="h-5 w-5 text-primary group-hover:text-secondary transition-colors icon-hover" />
+            ) : (
+              <Moon className="h-5 w-5 text-primary group-hover:text-secondary transition-colors icon-hover" />
+            )}
+            <span className={`text-sm font-medium text-theme transition-all duration-300 ${isCollapsed ? "lg:hidden" : "lg:block"}`}>
+              {isDarkMode ? "Modo Claro" : "Modo Escuro"}
+            </span>
           </button>
         </div>
 
