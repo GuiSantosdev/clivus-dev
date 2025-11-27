@@ -2,12 +2,16 @@
  * CORA Payment Integration Helper (Direct Integration with mTLS)
  * API Documentation: https://developers.cora.com.br/
  * Now using certificate-based authentication (mTLS)
+ * 
+ * ✅ Configuração do banco de dados (fallback para .env)
+ * ✅ Ambiente dinâmico (sandbox ou production)
  */
 
 import https from "https";
 import fs from "fs";
 import path from "path";
 import crypto from "crypto";
+import { prisma } from "./db";
 
 // Tipo de ambiente CORA
 type CoraEnvironment = "sandbox" | "production";
@@ -89,12 +93,48 @@ type CoraPaymentStatus =
   | "CANCELED" // Cancelado
   | "EXPIRED"; // Vencido
 
-// Obter configuração do CORA
-function getCoraConfig(): CoraConfig {
-  const clientId = process.env.CORA_API_KEY || "";
-  const environment = (process.env.CORA_ENVIRONMENT ||
-    "sandbox") as CoraEnvironment;
-  const webhookSecret = process.env.CORA_WEBHOOK_SECRET || "";
+/**
+ * Busca configurações do CORA
+ * Prioridade: Banco de Dados > Variáveis de Ambiente
+ */
+async function getCoraConfig(): Promise<CoraConfig> {
+  let clientId = "";
+  let environment: CoraEnvironment = "sandbox";
+  let webhookSecret: string | undefined = undefined;
+
+  try {
+    // Tentar buscar do banco primeiro
+    const gateway = await prisma.gateway.findUnique({
+      where: { name: "cora" },
+    });
+
+    if (gateway && gateway.isEnabled) {
+      const config = gateway.environment === "sandbox" 
+        ? gateway.sandboxConfig 
+        : gateway.productionConfig;
+      
+      const ws = gateway.environment === "sandbox"
+        ? gateway.sandboxWebhook
+        : gateway.productionWebhook;
+
+      if (config && typeof config === 'object' && 'clientId' in config) {
+        console.log(`[CORA Config] Usando credenciais ${gateway.environment} do banco de dados`);
+        clientId = String(config.clientId);
+        environment = gateway.environment as CoraEnvironment;
+        webhookSecret = ws || undefined;
+      }
+    }
+  } catch (error) {
+    console.warn("[CORA Config] Erro ao buscar do banco, usando fallback .env:", error);
+  }
+
+  // Fallback para variáveis de ambiente
+  if (!clientId) {
+    console.log("[CORA Config] Usando credenciais do .env (fallback)");
+    clientId = process.env.CORA_API_KEY || "";
+    environment = (process.env.CORA_ENVIRONMENT || "sandbox") as CoraEnvironment;
+    webhookSecret = process.env.CORA_WEBHOOK_SECRET || undefined;
+  }
 
   // Caminhos dos certificados
   const certsPath = path.join(process.cwd(), "certs");
@@ -102,7 +142,7 @@ function getCoraConfig(): CoraConfig {
   const privateKeyPath = path.join(certsPath, "cora-private-key.key");
 
   if (!clientId) {
-    throw new Error("CORA_API_KEY (Client ID) não configurada nas variáveis de ambiente");
+    throw new Error("CORA_API_KEY (Client ID) não configurada");
   }
 
   if (!fs.existsSync(certificatePath)) {
@@ -132,11 +172,12 @@ async function coraRequest<T>(
     headers?: Record<string, string>;
   } = {}
 ): Promise<T> {
-  const config = getCoraConfig();
+  const config = await getCoraConfig();
   const baseUrl = getCoraBaseUrl(config.environment);
   const url = new URL(`${baseUrl}${endpoint}`);
 
   console.log(`[CORA] ${options.method || "GET"} ${url.toString()}`);
+  console.log(`[CORA] Environment: ${config.environment}`);
 
   // Ler certificados
   const cert = fs.readFileSync(config.certificatePath, "utf8");
@@ -305,11 +346,11 @@ export function mapCoraStatus(coraStatus: CoraPaymentStatus): string {
 /**
  * Validar webhook do CORA
  */
-export function validateCoraWebhook(
+export async function validateCoraWebhook(
   payload: string,
   signature: string
-): boolean {
-  const config = getCoraConfig();
+): Promise<boolean> {
+  const config = await getCoraConfig();
 
   if (!config.webhookSecret) {
     console.warn(
@@ -319,7 +360,6 @@ export function validateCoraWebhook(
   }
 
   // CORA usa HMAC SHA256 para assinatura
-  const crypto = require("crypto");
   const expectedSignature = crypto
     .createHmac("sha256", config.webhookSecret)
     .update(payload)

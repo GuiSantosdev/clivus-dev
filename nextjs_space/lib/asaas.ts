@@ -1,15 +1,68 @@
+import { prisma } from "./db";
 
 /**
  * Asaas Payment Gateway Integration
  * Documentação: https://docs.asaas.com/
+ * 
+ * ✅ Configuração do banco de dados (fallback para .env)
+ * ✅ Ambiente dinâmico (sandbox ou production)
  */
 
-const ASAAS_API_KEY = process.env.ASAAS_API_KEY;
-const ASAAS_ENVIRONMENT = process.env.ASAAS_ENVIRONMENT || "production";
-const ASAAS_BASE_URL =
-  ASAAS_ENVIRONMENT === "sandbox"
-    ? "https://sandbox.asaas.com/api/v3"
-    : "https://api.asaas.com/v3";
+// ===========================
+// CONFIGURATION
+// ===========================
+
+interface AsaasConfig {
+  apiKey: string;
+  environment: "sandbox" | "production";
+  webhookSecret?: string;
+}
+
+/**
+ * Busca configurações do Asaas
+ * Prioridade: Banco de Dados > Variáveis de Ambiente
+ */
+export async function getAsaasConfig(): Promise<AsaasConfig> {
+  try {
+    // Tentar buscar do banco primeiro
+    const gateway = await prisma.gateway.findUnique({
+      where: { name: "asaas" },
+    });
+
+    if (gateway && gateway.isEnabled) {
+      const config = gateway.environment === "sandbox" 
+        ? gateway.sandboxConfig 
+        : gateway.productionConfig;
+      
+      const webhookSecret = gateway.environment === "sandbox"
+        ? gateway.sandboxWebhook
+        : gateway.productionWebhook;
+
+      if (config && typeof config === 'object' && 'apiKey' in config) {
+        console.log(`[Asaas Config] Usando credenciais ${gateway.environment} do banco de dados`);
+        return {
+          apiKey: String(config.apiKey),
+          environment: gateway.environment as "sandbox" | "production",
+          webhookSecret: webhookSecret || undefined,
+        };
+      }
+    }
+  } catch (error) {
+    console.warn("[Asaas Config] Erro ao buscar do banco, usando fallback .env:", error);
+  }
+
+  // Fallback para variáveis de ambiente
+  console.log("[Asaas Config] Usando credenciais do .env (fallback)");
+  const apiKey = process.env.ASAAS_API_KEY || "";
+  const environment = (process.env.ASAAS_ENVIRONMENT as "sandbox" | "production") || "production";
+  const webhookSecret = process.env.ASAAS_WEBHOOK_SECRET || "";
+
+  return {
+    apiKey,
+    environment,
+    webhookSecret,
+  };
+}
 
 /**
  * Valida CPF com dígitos verificadores
@@ -137,14 +190,22 @@ async function asaasRequest(
   method: string = "GET",
   body?: any
 ) {
-  if (!ASAAS_API_KEY) {
+  // Buscar configurações dinamicamente
+  const config = await getAsaasConfig();
+
+  if (!config.apiKey) {
     throw new Error("ASAAS_API_KEY não está configurada");
   }
 
-  const url = `${ASAAS_BASE_URL}${endpoint}`;
+  // Determinar URL base baseado no ambiente configurado
+  const baseUrl = config.environment === "sandbox"
+    ? "https://sandbox.asaas.com/api/v3"
+    : "https://api.asaas.com/v3";
+
+  const url = `${baseUrl}${endpoint}`;
   const headers = {
     "Content-Type": "application/json",
-    access_token: ASAAS_API_KEY,
+    access_token: config.apiKey,
   };
 
   const options: RequestInit = {
@@ -157,7 +218,7 @@ async function asaasRequest(
   }
 
   console.log(`[Asaas Request] ${method} ${url}`);
-  console.log(`[Asaas Request] Headers:`, headers);
+  console.log(`[Asaas Request] Environment: ${config.environment}`);
   if (body) {
     console.log(`[Asaas Request] Body:`, JSON.stringify(body, null, 2));
   }
@@ -308,15 +369,14 @@ export function mapAsaasStatus(asaasStatus: string): string {
 /**
  * Valida webhook do Asaas
  */
-export function validateAsaasWebhook(
+export async function validateAsaasWebhook(
   signature: string,
   payload: string
-): boolean {
-  // Asaas não usa assinatura por padrão, mas você pode implementar
-  // validação adicional se configurar um token secreto
-  const webhookSecret = process.env.ASAAS_WEBHOOK_SECRET;
+): Promise<boolean> {
+  // Buscar configuração dinamicamente
+  const config = await getAsaasConfig();
 
-  if (!webhookSecret) {
+  if (!config.webhookSecret) {
     console.warn("ASAAS_WEBHOOK_SECRET não configurado");
     return true; // Permite webhook sem validação (não recomendado em produção)
   }

@@ -22,7 +22,7 @@ export async function POST(request: Request) {
     console.log("[CORA Webhook] Assinatura:", signature);
 
     // Validar webhook (se configurado)
-    const isValid = validateCoraWebhook(rawBody, signature);
+    const isValid = await validateCoraWebhook(rawBody, signature);
     if (!isValid) {
       console.error("[CORA Webhook] Assinatura inválida!");
       return NextResponse.json({ error: "Invalid signature" }, { status: 401 });

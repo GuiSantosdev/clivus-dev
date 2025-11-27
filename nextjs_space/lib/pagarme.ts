@@ -3,18 +3,67 @@
  * Pagar.me Payment Integration Helper
  * Provides utility functions for Pagar.me API v5 integration
  * Supports: PIX, Boleto, Credit Card
+ * 
+ * ✅ Configuração do banco de dados (fallback para .env)
+ * ✅ Ambiente dinâmico (test ou live)
  */
 
 import crypto from "crypto";
+import { prisma } from "./db";
+
+// ===========================
+// CONFIGURATION
+// ===========================
+
+interface PagarmeConfig {
+  apiKey: string;
+  webhookSecret?: string;
+  environment: "test" | "live";
+}
 
 /**
- * Pagar.me Configuration
+ * Busca configurações do Pagar.me
+ * Prioridade: Banco de Dados > Variáveis de Ambiente
  */
-export function getPagarmeConfig() {
+export async function getPagarmeConfig(): Promise<PagarmeConfig> {
+  try {
+    // Tentar buscar do banco primeiro
+    const gateway = await prisma.gateway.findUnique({
+      where: { name: "pagarme" },
+    });
+
+    if (gateway && gateway.isEnabled) {
+      const config = gateway.environment === "sandbox" 
+        ? gateway.sandboxConfig 
+        : gateway.productionConfig;
+      
+      const webhookSecret = gateway.environment === "sandbox"
+        ? gateway.sandboxWebhook
+        : gateway.productionWebhook;
+
+      if (config && typeof config === 'object' && 'apiKey' in config) {
+        console.log(`[Pagar.me Config] Usando credenciais ${gateway.environment} do banco de dados`);
+        return {
+          apiKey: String(config.apiKey),
+          webhookSecret: webhookSecret || undefined,
+          environment: gateway.environment === "sandbox" ? "test" : "live",
+        };
+      }
+    }
+  } catch (error) {
+    console.warn("[Pagar.me Config] Erro ao buscar do banco, usando fallback .env:", error);
+  }
+
+  // Fallback para variáveis de ambiente
+  console.log("[Pagar.me Config] Usando credenciais do .env (fallback)");
+  const apiKey = process.env.PAGARME_API_KEY || "";
+  const webhookSecret = process.env.PAGARME_WEBHOOK_SECRET || "";
+  const environment = (process.env.PAGARME_ENVIRONMENT || "test") as "test" | "live";
+
   return {
-    apiKey: process.env.PAGARME_API_KEY || "",
-    webhookSecret: process.env.PAGARME_WEBHOOK_SECRET || "",
-    environment: process.env.PAGARME_ENVIRONMENT || "test", // "test" or "live"
+    apiKey,
+    webhookSecret,
+    environment,
   };
 }
 
@@ -22,7 +71,6 @@ export function getPagarmeConfig() {
  * Get Pagar.me API Base URL based on environment
  */
 function getPagarmeBaseUrl() {
-  const { environment } = getPagarmeConfig();
   // Pagar.me v5 uses the same base URL for both test and production
   // Authentication with different keys determines the environment
   return "https://api.pagar.me/core/v5";
@@ -36,14 +84,15 @@ async function pagarmeRequest(
   method: string = "GET",
   data?: any
 ): Promise<any> {
-  const { apiKey } = getPagarmeConfig();
+  const config = await getPagarmeConfig();
   const baseUrl = getPagarmeBaseUrl();
   const url = `${baseUrl}${endpoint}`;
 
   // Pagar.me uses Basic Auth with API Key as username (password is empty)
-  const authString = Buffer.from(`${apiKey}:`).toString("base64");
+  const authString = Buffer.from(`${config.apiKey}:`).toString("base64");
 
   console.log(`[Pagar.me] ${method} ${url}`);
+  console.log(`[Pagar.me] Environment: ${config.environment}`);
   if (data) {
     console.log(`[Pagar.me] Request body:`, JSON.stringify(data, null, 2));
   }
@@ -296,20 +345,20 @@ export function mapPagarmeStatus(pagarmeStatus: string): "pending" | "completed"
 /**
  * Validate Pagar.me Webhook Signature
  */
-export function validatePagarmeWebhook(
+export async function validatePagarmeWebhook(
   payload: string,
   signature: string
-): boolean {
-  const { webhookSecret } = getPagarmeConfig();
+): Promise<boolean> {
+  const config = await getPagarmeConfig();
 
-  if (!webhookSecret) {
+  if (!config.webhookSecret) {
     console.warn("[Pagar.me] Webhook secret not configured, skipping validation");
     return true; // Allow webhook if secret is not configured
   }
 
   try {
     const expectedSignature = crypto
-      .createHmac("sha256", webhookSecret)
+      .createHmac("sha256", config.webhookSecret)
       .update(payload)
       .digest("hex");
 

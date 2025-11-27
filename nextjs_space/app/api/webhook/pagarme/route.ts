@@ -23,7 +23,7 @@ export async function POST(request: Request) {
     console.log("📝 [Pagar.me Webhook] Signature recebida:", signature ? "Sim" : "Não");
 
     // Validate webhook signature
-    const isValid = validatePagarmeWebhook(rawBody, signature);
+    const isValid = await validatePagarmeWebhook(rawBody, signature);
     if (!isValid) {
       console.error("❌ [Pagar.me Webhook] Assinatura inválida!");
       return NextResponse.json({ error: "Invalid signature" }, { status: 401 });
