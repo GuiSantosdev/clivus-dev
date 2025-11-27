@@ -41,6 +41,7 @@ export default function CheckoutPage() {
   // Novo estado para controlar o fluxo de pagamento
   const [paymentStep, setPaymentStep] = useState<'selection' | 'pix' | 'boleto_cartao' | 'completed'>('selection');
   const [pixData, setPixData] = useState<{qrCode: string; qrCodeText: string; paymentId: string} | null>(null);
+  const [boletoCartaoPaymentId, setBoletoCartaoPaymentId] = useState<string | null>(null);
   const [checkingPayment, setCheckingPayment] = useState(false);
   const [paymentCompleted, setPaymentCompleted] = useState(false);
 
@@ -189,6 +190,11 @@ export default function CheckoutPage() {
         console.log("🌐 [Checkout] Abrindo checkout em nova aba:", data.url);
         toast.success("🎉 Abrindo página de pagamento...", { duration: 2000 });
         
+        // Salvar paymentId
+        if (data.paymentId) {
+          setBoletoCartaoPaymentId(data.paymentId);
+        }
+        
         // Abrir em nova aba
         window.open(data.url, '_blank');
         
@@ -280,6 +286,52 @@ export default function CheckoutPage() {
     if (pixData?.qrCodeText) {
       navigator.clipboard.writeText(pixData.qrCodeText);
       toast.success("✅ Código PIX copiado!");
+    }
+  };
+
+  const handleManualCheckPayment = async () => {
+    // Determinar qual paymentId usar baseado no tipo de pagamento
+    const paymentIdToCheck = paymentStep === 'pix' 
+      ? pixData?.paymentId 
+      : boletoCartaoPaymentId;
+    
+    if (!paymentIdToCheck) {
+      toast.error("Nenhum pagamento iniciado");
+      return;
+    }
+
+    setLoading(true);
+    toast.loading("🔍 Verificando pagamento...", { id: "manual-check" });
+    
+    try {
+      const response = await fetch(`/api/checkout/check-payment?paymentId=${paymentIdToCheck}`);
+      const data = await response.json();
+      
+      console.log("🔍 [Manual Check] Resultado:", data);
+      
+      if (data.status === 'completed') {
+        toast.success("🎉 Pagamento confirmado! Você receberá um e-mail com suas credenciais de acesso.", { 
+          id: "manual-check",
+          duration: 6000 
+        });
+        setPaymentCompleted(true);
+        setPaymentStep('completed');
+        setCheckingPayment(false);
+      } else if (data.status === 'failed') {
+        toast.error("❌ Pagamento não foi aprovado. Tente novamente.", { id: "manual-check" });
+        setPaymentStep('selection');
+        setCheckingPayment(false);
+      } else {
+        toast.error("⏳ Pagamento ainda não foi confirmado. Aguarde alguns instantes e tente novamente.", { 
+          id: "manual-check",
+          duration: 5000
+        });
+      }
+    } catch (error) {
+      console.error("❌ [Manual Check] Erro:", error);
+      toast.error("Erro ao verificar pagamento. Tente novamente.", { id: "manual-check" });
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -503,6 +555,25 @@ export default function CheckoutPage() {
                       </div>
                     )}
 
+                    {/* Botão de verificação manual */}
+                    <Button
+                      onClick={handleManualCheckPayment}
+                      disabled={loading}
+                      className="w-full bg-gradient-to-r from-green-600 to-emerald-700 hover:from-green-700 hover:to-emerald-800 text-white font-bold py-4 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      {loading ? (
+                        <>
+                          <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                          Verificando...
+                        </>
+                      ) : (
+                        <>
+                          <CheckCircle className="mr-2 h-5 w-5" />
+                          Já fiz o pagamento
+                        </>
+                      )}
+                    </Button>
+
                     <Button
                       onClick={() => setPaymentStep('selection')}
                       variant="outline"
@@ -542,6 +613,25 @@ export default function CheckoutPage() {
                         </div>
                       </div>
                     )}
+
+                    {/* Botão de verificação manual */}
+                    <Button
+                      onClick={handleManualCheckPayment}
+                      disabled={loading}
+                      className="w-full bg-gradient-to-r from-green-600 to-emerald-700 hover:from-green-700 hover:to-emerald-800 text-white font-bold py-4 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      {loading ? (
+                        <>
+                          <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                          Verificando...
+                        </>
+                      ) : (
+                        <>
+                          <CheckCircle className="mr-2 h-5 w-5" />
+                          Já fiz o pagamento
+                        </>
+                      )}
+                    </Button>
 
                     <Button
                       onClick={() => setPaymentStep('selection')}
