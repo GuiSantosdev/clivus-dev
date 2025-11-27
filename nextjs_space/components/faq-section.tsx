@@ -83,11 +83,11 @@ export function FaqSection() {
               initial={{ opacity: 0, y: 20 }}
               animate={inView ? { opacity: 1, y: 0 } : {}}
               transition={{ duration: 0.6, delay: index * 0.1 }}
-              className="bg-white rounded-lg shadow-lg border border-gray-100 overflow-hidden"
+              className="bg-card rounded-lg shadow-lg border border-gray-100 overflow-hidden"
             >
               <button
                 onClick={() => toggleItem(index)}
-                className="w-full px-6 py-6 text-left hover:bg-gray-50 transition-colors duration-200 flex items-center justify-between"
+                className="w-full px-6 py-6 text-left hover:bg-muted-soft transition-colors duration-200 flex items-center justify-between"
               >
                 <div className="flex items-center space-x-4">
                   <div className="bg-blue-100 rounded-full p-2">

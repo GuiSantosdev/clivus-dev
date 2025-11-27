@@ -333,7 +333,7 @@ export default function TeamPage() {
                           {member.permissions.map((perm, index) => (
                             <span
                               key={index}
-                              className="px-2 py-0.5 bg-gray-100 text-theme-muted text-xs rounded"
+                              className="px-2 py-0.5 bg-muted-soft text-theme-muted text-xs rounded"
                             >
                               {perm}
                             </span>
@@ -384,7 +384,7 @@ export default function TeamPage() {
                 </ul>
               </div>
 
-              <div className="p-4 bg-gray-50 rounded-lg">
+              <div className="p-4 bg-muted-soft rounded-lg">
                 <h4 className="font-semibold text-theme mb-2">Visualizador</h4>
                 <ul className="text-sm text-theme space-y-1">
                   <li>✓ Visualizar informações financeiras</li>

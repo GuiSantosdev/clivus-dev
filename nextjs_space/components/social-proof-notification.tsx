@@ -244,7 +244,7 @@ export function SocialProofNotification() {
           transition={{ duration: 0.5, ease: "easeOut" }}
           className="fixed bottom-4 sm:bottom-6 left-4 sm:left-6 right-4 sm:right-auto z-50 max-w-sm mx-auto sm:mx-0"
         >
-          <div className={`bg-white rounded-lg shadow-2xl p-4 pr-12 ${
+          <div className={`bg-card rounded-lg shadow-2xl p-4 pr-12 ${
             currentNotification.isUserCity 
               ? "border-2 border-green-400 ring-2 ring-green-200" 
               : "border border-gray-200"

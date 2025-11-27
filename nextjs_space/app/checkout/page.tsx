@@ -467,12 +467,12 @@ export default function CheckoutPage() {
                     </div>
 
                     {/* QR Code */}
-                    <div className="flex justify-center bg-white p-4 rounded-lg">
+                    <div className="flex justify-center bg-card p-4 rounded-lg">
                       <QRCodeSVG value={pixData.qrCode} size={200} />
                     </div>
 
                     {/* Código PIX */}
-                    <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
+                    <div className="bg-muted-soft p-4 rounded-lg border border-gray-200">
                       <p className="text-xs text-gray-600 mb-2 font-semibold">Código PIX:</p>
                       <p className="text-xs font-mono break-all text-gray-800 mb-3">
                         {pixData.qrCodeText}

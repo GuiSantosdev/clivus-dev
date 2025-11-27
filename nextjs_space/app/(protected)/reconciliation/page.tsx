@@ -308,7 +308,7 @@ export default function ReconciliationPage() {
               {parsedTransactions.map((transaction, index) => (
                 <div
                   key={index}
-                  className="p-4 bg-gray-50 rounded-lg border border-theme"
+                  className="p-4 bg-muted-soft rounded-lg border border-theme"
                 >
                   {editingIndex === index ? (
                     // Edit Mode

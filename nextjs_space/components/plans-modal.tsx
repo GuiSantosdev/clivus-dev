@@ -68,11 +68,11 @@ export function PlansModal({ show, onClose }: PlansModalProps) {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in">
-      <div className="relative w-full max-w-6xl max-h-[90vh] overflow-y-auto bg-white rounded-2xl shadow-2xl animate-in zoom-in-95 duration-300">
+      <div className="relative w-full max-w-6xl max-h-[90vh] overflow-y-auto bg-card rounded-2xl shadow-2xl animate-in zoom-in-95 duration-300">
         {/* Botão Fechar */}
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 z-10 p-2 rounded-full bg-gray-100 hover:bg-gray-200 transition-colors"
+          className="absolute top-4 right-4 z-10 p-2 rounded-full bg-muted-soft hover:bg-muted-soft transition-colors"
         >
           <X className="w-5 h-5 text-gray-600" />
         </button>
@@ -109,7 +109,7 @@ export function PlansModal({ show, onClose }: PlansModalProps) {
                     index === 1
                       ? "border-purple-500 shadow-lg scale-105"
                       : "border-gray-200"
-                  } bg-white overflow-hidden transition-all hover:shadow-xl hover:scale-105 duration-300`}
+                  } bg-card overflow-hidden transition-all hover:shadow-xl hover:scale-105 duration-300`}
                 >
                   {/* Badge para plano popular */}
                   {index === 1 && (

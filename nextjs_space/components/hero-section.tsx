@@ -24,7 +24,7 @@ export function HeroSection() {
         <Link href="/login">
           <Button 
             variant="outline" 
-            className="bg-white/95 hover:bg-white shadow-lg border-2 border-blue-600 text-blue-600 hover:text-blue-700 font-semibold"
+            className="bg-card/95 hover:bg-card shadow-lg border-2 border-blue-600 text-blue-600 hover:text-blue-700 font-semibold"
           >
             <LogIn className="h-4 w-4 mr-2" />
             Entrar no Sistema
@@ -115,7 +115,7 @@ export function HeroSection() {
             transition={{ duration: 0.8, delay: 0.2 }}
             className="relative"
           >
-            <div className="bg-white rounded-2xl shadow-2xl p-8 transform rotate-2 hover:rotate-0 transition-transform duration-300">
+            <div className="bg-card rounded-2xl shadow-2xl p-8 transform rotate-2 hover:rotate-0 transition-transform duration-300">
               <div className="bg-gradient-to-br from-blue-500 to-blue-700 rounded-xl p-6 text-white mb-6">
                 <h3 className="text-2xl font-bold mb-4">Dashboard Financeiro</h3>
                 <div className="space-y-3">

@@ -5,7 +5,7 @@ import { ArrowLeft, FileText } from "lucide-react";
 
 export default function TermsOfServicePage() {
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-muted-soft">
       <div className="container mx-auto px-4 py-12 max-w-4xl">
         <Link href="/">
           <Button variant="outline" size="sm" className="mb-8">
@@ -14,7 +14,7 @@ export default function TermsOfServicePage() {
           </Button>
         </Link>
 
-        <div className="bg-white rounded-lg shadow-lg p-8 md:p-12">
+        <div className="bg-card rounded-lg shadow-lg p-8 md:p-12">
           <div className="flex items-center mb-8">
             <FileText className="h-12 w-12 text-blue-600 mr-4" />
             <div>
@@ -170,7 +170,7 @@ export default function TermsOfServicePage() {
               <h2 className="text-2xl font-bold text-gray-900 mb-4">
                 11. Contato
               </h2>
-              <div className="bg-gray-100 p-4 rounded-lg">
+              <div className="bg-muted-soft p-4 rounded-lg">
                 <p className="text-gray-800">
                   <strong>Email:</strong> contato@clivus.com.br<br />
                   <strong>CNPJ:</strong> 39.956.528/0001-74<br />

@@ -5,7 +5,7 @@ import { ArrowLeft, Cookie } from "lucide-react";
 
 export default function CookiesPage() {
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-muted-soft">
       <div className="container mx-auto px-4 py-12 max-w-4xl">
         <Link href="/">
           <Button variant="outline" size="sm" className="mb-8">
@@ -14,7 +14,7 @@ export default function CookiesPage() {
           </Button>
         </Link>
 
-        <div className="bg-white rounded-lg shadow-lg p-8 md:p-12">
+        <div className="bg-card rounded-lg shadow-lg p-8 md:p-12">
           <div className="flex items-center mb-8">
             <Cookie className="h-12 w-12 text-blue-600 mr-4" />
             <div>
@@ -103,7 +103,7 @@ export default function CookiesPage() {
               </h2>
               <table className="w-full border-collapse border border-gray-300 mt-4">
                 <thead>
-                  <tr className="bg-gray-100">
+                  <tr className="bg-muted-soft">
                     <th className="border border-gray-300 p-3 text-left">Cookie</th>
                     <th className="border border-gray-300 p-3 text-left">Duração</th>
                   </tr>
@@ -174,7 +174,7 @@ export default function CookiesPage() {
               <p className="text-gray-700 leading-relaxed mb-4">
                 Dúvidas sobre nossa política de cookies? Entre em contato:
               </p>
-              <div className="bg-gray-100 p-4 rounded-lg">
+              <div className="bg-muted-soft p-4 rounded-lg">
                 <p className="text-gray-800">
                   <strong>Email:</strong> contato@clivus.com.br<br />
                   <strong>CNPJ:</strong> 39.956.528/0001-74

@@ -56,7 +56,7 @@ export function CtaButton({
           {text}
           {showIcon && <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />}
         </span>
-        <div className="absolute inset-0 bg-white/20 transform -skew-x-12 -translate-x-full group-hover:translate-x-full transition-transform duration-700" />
+        <div className="absolute inset-0 bg-card/20 transform -skew-x-12 -translate-x-full group-hover:translate-x-full transition-transform duration-700" />
       </Button>
       
       {subtext && (

@@ -129,7 +129,7 @@ export default function LoginPage() {
               <div className="flex items-center justify-between">
                 <span className="text-theme-muted">Email:</span>
                 <div className="flex items-center gap-2">
-                  <code className="bg-white px-2 py-1 rounded text-xs">admin@clivus.com.br</code>
+                  <code className="bg-card px-2 py-1 rounded text-xs">admin@clivus.com.br</code>
                   <button
                     onClick={() => copyToClipboard("admin@clivus.com.br", "Email")}
                     className="text-primary hover:text-primary/80"
@@ -141,7 +141,7 @@ export default function LoginPage() {
               <div className="flex items-center justify-between">
                 <span className="text-theme-muted">Senha:</span>
                 <div className="flex items-center gap-2">
-                  <code className="bg-white px-2 py-1 rounded text-xs">admin123</code>
+                  <code className="bg-card px-2 py-1 rounded text-xs">admin123</code>
                   <button
                     onClick={() => copyToClipboard("admin123", "Senha")}
                     className="text-primary hover:text-primary/80"
@@ -170,7 +170,7 @@ export default function LoginPage() {
               <div className="flex items-center justify-between">
                 <span className="text-theme-muted">Email:</span>
                 <div className="flex items-center gap-2">
-                  <code className="bg-white px-2 py-1 rounded text-xs">teste@teste.com</code>
+                  <code className="bg-card px-2 py-1 rounded text-xs">teste@teste.com</code>
                   <button
                     onClick={() => copyToClipboard("teste@teste.com", "Email")}
                     className="text-secondary hover:text-secondary/80"
@@ -182,7 +182,7 @@ export default function LoginPage() {
               <div className="flex items-center justify-between">
                 <span className="text-theme-muted">Senha:</span>
                 <div className="flex items-center gap-2">
-                  <code className="bg-white px-2 py-1 rounded text-xs">senha123</code>
+                  <code className="bg-card px-2 py-1 rounded text-xs">senha123</code>
                   <button
                     onClick={() => copyToClipboard("senha123", "Senha")}
                     className="text-secondary hover:text-secondary/80"

@@ -5,7 +5,7 @@ import { ArrowLeft, Shield } from "lucide-react";
 
 export default function PrivacyPolicyPage() {
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-muted-soft">
       <div className="container mx-auto px-4 py-12 max-w-4xl">
         <Link href="/">
           <Button variant="outline" size="sm" className="mb-8">
@@ -14,7 +14,7 @@ export default function PrivacyPolicyPage() {
           </Button>
         </Link>
 
-        <div className="bg-white rounded-lg shadow-lg p-8 md:p-12">
+        <div className="bg-card rounded-lg shadow-lg p-8 md:p-12">
           <div className="flex items-center mb-8">
             <Shield className="h-12 w-12 text-blue-600 mr-4" />
             <div>
@@ -150,7 +150,7 @@ export default function PrivacyPolicyPage() {
               <p className="text-gray-700 leading-relaxed">
                 Para questões sobre privacidade, entre em contato:
               </p>
-              <div className="bg-gray-100 p-4 rounded-lg mt-4">
+              <div className="bg-muted-soft p-4 rounded-lg mt-4">
                 <p className="text-gray-800">
                   <strong>Email:</strong> contato@clivus.com.br<br />
                   <strong>CNPJ:</strong> 39.956.528/0001-74

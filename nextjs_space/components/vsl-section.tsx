@@ -17,7 +17,7 @@ export function VslSection() {
   const videoUrl = "https://www.youtube.com/embed/dQw4w9WgXcQ"; // Placeholder - substitua pelo seu vídeo
 
   return (
-    <section ref={ref} className="py-12 sm:py-16 md:py-20 bg-white">
+    <section ref={ref} className="py-12 sm:py-16 md:py-20 bg-card">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-5xl">
         <motion.div
           initial={{ opacity: 0, y: 30 }}

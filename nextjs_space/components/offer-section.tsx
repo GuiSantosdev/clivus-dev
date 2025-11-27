@@ -86,7 +86,7 @@ export function OfferSection() {
       default:
         return {
           gradient: "from-gray-500 to-gray-700",
-          bg: "bg-gray-50",
+          bg: "bg-muted-soft",
           border: "border-gray-200",
           text: "text-gray-700",
           button: "bg-gray-600 hover:bg-gray-700",
@@ -145,7 +145,7 @@ export function OfferSection() {
                 )}
 
                 <div
-                  className={`bg-white rounded-2xl shadow-xl p-8 border-2 ${
+                  className={`bg-card rounded-2xl shadow-xl p-8 border-2 ${
                     isPopular ? "border-green-400 scale-105" : colors.border
                   } h-full flex flex-col transition-transform hover:scale-105 duration-300`}
                 >

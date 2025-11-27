@@ -326,7 +326,7 @@ export default function DrePage() {
                   {planoContas.map((cat) => (
                     <div
                       key={cat.id}
-                      className="p-3 bg-gray-50 rounded-lg flex items-center justify-between"
+                      className="p-3 bg-muted-soft rounded-lg flex items-center justify-between"
                     >
                       <div>
                         <span className="font-medium">{cat.name}</span>

@@ -51,7 +51,7 @@ export function ProtectedLayout({
   }
 
   return (
-    <div className="flex min-h-screen bg-gray-50">
+    <div className="flex min-h-screen bg-muted-soft">
       <Sidebar />
       <main className="flex-1 p-4 md:p-8 transition-all duration-300">
         <div className="flex gap-6">

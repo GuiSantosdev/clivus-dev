@@ -118,7 +118,7 @@ export function SolutionSection() {
               <h4 className="text-2xl font-bold mb-6">Antes vs Depois</h4>
               
               <div className="space-y-6">
-                <div className="bg-white/10 rounded-lg p-4">
+                <div className="bg-card/10 rounded-lg p-4">
                   <div className="flex items-center justify-between mb-2">
                     <span className="text-red-300">❌ ANTES</span>
                     <span className="text-red-300 font-bold">Risco e Estagnação</span>
@@ -128,7 +128,7 @@ export function SolutionSection() {
                   </p>
                 </div>
                 
-                <div className="bg-white/10 rounded-lg p-4">
+                <div className="bg-card/10 rounded-lg p-4">
                   <div className="flex items-center justify-between mb-2">
                     <span className="text-green-300">✅ DEPOIS</span>
                     <span className="text-green-300 font-bold">Legal e Escalável</span>
@@ -143,7 +143,7 @@ export function SolutionSection() {
                 <Button
                   onClick={scrollToOffer}
                   size="lg"
-                  className="bg-white text-blue-600 hover:bg-gray-100 font-bold px-10 py-4 text-lg shadow-xl"
+                  className="bg-card text-blue-600 hover:bg-muted-soft font-bold px-10 py-4 text-lg shadow-xl"
                 >
                   Regularizar Agora por R$ 97
                 </Button>
