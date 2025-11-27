@@ -84,21 +84,49 @@ export async function GET(request: NextRequest) {
 
     let currentStatus = payment.status;
     let gatewayStatus = null;
+    let errorMessage = null;
+
+    // Log detalhado do pagamento
+    console.log("💳 [Check Payment] Dados do pagamento:", {
+      paymentId: payment.id,
+      gateway: payment.gateway,
+      stripeSessionId: payment.stripeSessionId,
+      currentStatus: payment.status,
+      amount: payment.amount,
+      createdAt: payment.createdAt
+    });
 
     // Se o pagamento ainda está pendente, consultar o gateway em tempo real
     if (currentStatus === "pending" && payment.stripeSessionId) {
       try {
-        console.log("🔍 [Check Payment] Consultando gateway:", payment.gateway);
+        console.log("🔍 [Check Payment] Iniciando consulta ao gateway:", {
+          gateway: payment.gateway,
+          externalId: payment.stripeSessionId
+        });
 
         if (payment.gateway === "asaas") {
           // Consultar status no Asaas
+          console.log("📞 [Check Payment] Chamando API Asaas com ID:", payment.stripeSessionId);
+          
           const asaasPayment = await getAsaasPayment(payment.stripeSessionId);
+          
+          console.log("📥 [Check Payment] Resposta completa do Asaas:", {
+            id: asaasPayment.id,
+            status: asaasPayment.status,
+            value: asaasPayment.value,
+            billingType: asaasPayment.billingType,
+            dateCreated: asaasPayment.dateCreated,
+            dueDate: asaasPayment.dueDate,
+            invoiceUrl: asaasPayment.invoiceUrl
+          });
+          
           gatewayStatus = asaasPayment.status;
           const mappedStatus = mapAsaasStatus(gatewayStatus);
 
           console.log("📊 [Check Payment] Status Asaas:", { 
             original: gatewayStatus, 
-            mapped: mappedStatus 
+            mapped: mappedStatus,
+            wouldUpdate: mappedStatus !== currentStatus
           });
 
           // Se o status mudou, atualizar no banco
@@ -110,7 +138,7 @@ export async function GET(request: NextRequest) {
               data: { status: mappedStatus },
             });
 
-            console.log("✅ [Check Payment] Status atualizado no banco:", mappedStatus);
+            console.log("✅ [Check Payment] Status atualizado no banco de PENDING para:", mappedStatus);
 
             // Se foi confirmado, liberar acesso e enviar emails
             if (mappedStatus === "completed") {
@@ -122,6 +150,8 @@ export async function GET(request: NextRequest) {
                 data: { hasAccess: true },
               });
 
+              console.log("✅ [Check Payment] Acesso liberado para usuário:", payment.userId);
+
               // Gerar senha temporária se necessário
               let tempPassword = "";
               if (!payment.user.password) {
@@ -131,21 +161,34 @@ export async function GET(request: NextRequest) {
                   where: { id: payment.userId },
                   data: { password: hashedPassword },
                 });
+                console.log("🔑 [Check Payment] Senha temporária gerada para usuário");
               }
 
               // Enviar emails
               await processCompletedPayment(payment, tempPassword);
             }
+          } else {
+            console.log("ℹ️ [Check Payment] Status não mudou, permanece como:", currentStatus);
           }
         } else if (payment.gateway === "efi") {
           // Consultar status no EFI
+          console.log("📞 [Check Payment] Chamando API EFI com ID:", payment.stripeSessionId);
+          
           const efiCharge = await getEfiChargeStatus(payment.stripeSessionId);
+          
+          console.log("📥 [Check Payment] Resposta completa do EFI:", {
+            charge_id: efiCharge.charge_id,
+            status: efiCharge.status,
+            total: efiCharge.total
+          });
+          
           gatewayStatus = efiCharge.status;
           const mappedStatus = mapEfiStatus(gatewayStatus);
 
           console.log("📊 [Check Payment] Status EFI:", { 
             original: gatewayStatus, 
-            mapped: mappedStatus 
+            mapped: mappedStatus,
+            wouldUpdate: mappedStatus !== currentStatus
           });
 
           // Se o status mudou, atualizar no banco
@@ -157,7 +200,7 @@ export async function GET(request: NextRequest) {
               data: { status: mappedStatus },
             });
 
-            console.log("✅ [Check Payment] Status atualizado no banco:", mappedStatus);
+            console.log("✅ [Check Payment] Status atualizado no banco de PENDING para:", mappedStatus);
 
             // Se foi confirmado, liberar acesso e enviar emails
             if (mappedStatus === "completed") {
@@ -169,6 +212,8 @@ export async function GET(request: NextRequest) {
                 data: { hasAccess: true },
               });
 
+              console.log("✅ [Check Payment] Acesso liberado para usuário:", payment.userId);
+
               // Gerar senha temporária se necessário
               let tempPassword = "";
               if (!payment.user.password) {
@@ -178,20 +223,42 @@ export async function GET(request: NextRequest) {
                   where: { id: payment.userId },
                   data: { password: hashedPassword },
                 });
+                console.log("🔑 [Check Payment] Senha temporária gerada para usuário");
               }
 
               // Enviar emails
               await processCompletedPayment(payment, tempPassword);
             }
+          } else {
+            console.log("ℹ️ [Check Payment] Status não mudou, permanece como:", currentStatus);
           }
+        } else {
+          console.log("⚠️ [Check Payment] Gateway não suportado para consulta:", payment.gateway);
         }
       } catch (gatewayError: any) {
-        console.error("⚠️ [Check Payment] Erro ao consultar gateway:", gatewayError);
+        console.error("❌ [Check Payment] Erro COMPLETO ao consultar gateway:", {
+          gateway: payment.gateway,
+          externalId: payment.stripeSessionId,
+          errorName: gatewayError.name,
+          errorMessage: gatewayError.message,
+          errorStack: gatewayError.stack,
+          errorResponse: gatewayError.response?.data || gatewayError.response || "N/A"
+        });
+        errorMessage = gatewayError.message;
         // Não falhar a requisição, apenas continuar com o status do banco
       }
+    } else if (!payment.stripeSessionId) {
+      console.log("⚠️ [Check Payment] stripeSessionId não encontrado no pagamento");
+    } else {
+      console.log("ℹ️ [Check Payment] Pagamento não está pendente, status atual:", currentStatus);
     }
 
-    console.log("✅ [Check Payment] Status final:", currentStatus);
+    console.log("✅ [Check Payment] Status final:", {
+      currentStatus,
+      gatewayStatus,
+      errorMessage,
+      hasStripeSessionId: !!payment.stripeSessionId
+    });
 
     return NextResponse.json({
       status: currentStatus,
@@ -200,6 +267,12 @@ export async function GET(request: NextRequest) {
       amount: payment.amount,
       gateway: payment.gateway,
       planName: payment.planDetails?.name || "Plano",
+      errorMessage,
+      debug: {
+        stripeSessionId: payment.stripeSessionId,
+        gateway: payment.gateway,
+        currentStatus: payment.status
+      }
     });
 
   } catch (error: any) {

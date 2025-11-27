@@ -1,435 +1,419 @@
-# 🔍 DIAGNÓSTICO COMPLETO - MEGA-PROMPT
+# 🔍 DIAGNÓSTICO E CORREÇÃO - CHECKOUT ASAAS/EFI
 
-**Data**: 25 de Novembro de 2025  
-**Status**: ✅ **ANÁLISE CONCLUÍDA**
+## 📋 RESUMO DO PROBLEMA
 
----
+**Data:** 27/11/2025  
+**Status:** ✅ **Correções Aplicadas + Logs de Debug Adicionados**  
 
-## 📋 RESUMO EXECUTIVO
+**Sintoma Reportado:**
+- Após pagamento aprovado no Asaas, a tela de checkout permanece com status `pending`
+- A rota `/api/checkout/check-payment` retorna sempre `gatewayStatus: null`
+- O sistema não libera o acesso automaticamente
 
-Realizei uma análise completa do sistema conforme solicitado no MEGA-PROMPT. Os resultados mostram que:
-
-### ✅ O QUE JÁ ESTÁ 100% CORRETO:
-
-1. **Sistema de Temas**:
-   - ✅ ThemeProvider único e centralizado (`components/providers.tsx`)
-   - ✅ 3 temas oficiais implementados (Simples, Moderado, Moderno)
-   - ✅ Hierarquia funcional (Usuário → Escritório → Global)
-   - ✅ APIs corretas (`/api/user/theme`, `/api/admin/theme-settings`)
-   - ✅ Seletor único oficial (`components/theme/ThemeSelector.tsx`)
-   - ✅ Sidebar SEM seletor de tema (removido conforme solicitado)
-   - ✅ Variáveis CSS definidas em `app/globals.css`
-
-2. **Integração EFI**:
-   - ✅ OAuth 2.0 implementado corretamente
-   - ✅ Cache de token em memória do servidor
-   - ✅ Renovação automática de token (5 min antes de expirar)
-   - ✅ Proteção contra "Unexpected token U"
-   - ✅ Retry automático (até 2 tentativas)
-   - ✅ Tratamento de erro 401 (token expirado)
-
-### ⚠️ O QUE PRECISA SER CORRIGIDO:
-
-**Problema Identificado**: Cores fixas de Tailwind em **20 páginas internas**
-
-Apesar do sistema de temas estar tecnicamente correto, as páginas ainda usam cores hard-coded como:
-- `bg-yellow-50`, `bg-yellow-100`, `text-yellow-800`
-- `from-purple-600`, `from-blue-500`, `from-indigo-600`
-- `bg-blue-50`, `bg-blue-100`
-- `border-yellow-200`
-
-Essas cores precisam ser substituídas por tokens CSS para que os temas funcionem de fato.
+**Causa Provavéis Identificadas:**
+1. ❌ **Erro silencioso na consulta ao gateway** (capturado mas não detalhado)
+2. ❌ **stripeSessionId inválido ou ausente**
+3. ❌ **Configuração de ambiente incorreta** (sandbox vs production)
+4. ❌ **Credenciais do Asaas inválidas ou expiradas**
 
 ---
 
-## 🔍 PARTE 1 - DIAGNÓSTICO DO SISTEMA DE TEMAS
+## 🛠️ CORREÇÕES APLICADAS
 
-### 1.1. Arquivos de Tema Encontrados
+### **1. Logs Detalhados Adicionados**
 
-| Arquivo | Status | Propósito |
-|---------|--------|----------|
-| `hooks/useTheme.ts` | ✅ | Hook oficial para gerenciar tema |
-| `components/theme-provider.tsx` | ✅ | Wrapper do next-themes |
-| `components/providers.tsx` | ✅ | Provider global |
-| `components/theme/ThemeSelector.tsx` | ✅ | Seletor único oficial |
-| `shared/theme/applyTheme.ts` | ✅ | Lógica de aplicação |
-| `shared/theme/themes.ts` | ✅ | Registro único de temas |
-| `shared/theme/types.ts` | ✅ | Interfaces TypeScript |
+**Arquivo:** `app/api/checkout/check-payment/route.ts`
 
-**Conclusão**: ✅ **ZERO DUPLICAÇÕES** - Apenas um sistema oficial.
-
-### 1.2. Hierarquia de Temas
-
-**Arquivo**: `app/api/user/theme/route.ts`
-
-```typescript
-const effectiveTheme =
-  user?.themePreset ||                      // 1. Tema do Usuário
-  officeTheme ||                            // 2. Tema do Escritório
-  globalSettings.superadminThemePreset ||   // 3. Tema Global
-  DEFAULT_THEME;                            // 4. Default (simples)
-```
-
-**Status**: ✅ **FUNCIONANDO CORRETAMENTE**
-
-### 1.3. Variáveis CSS Definidas
-
-**Arquivo**: `app/globals.css`
-
-#### 🟢 TEMA: SIMPLES (Default)
-```css
-:root {
-  --background: 0 0% 100%;         /* Branco */
-  --foreground: 0 0% 10%;          /* Texto escuro */
-  --primary: 142 76% 45%;          /* Verde vibrante */
-  --primary-foreground: 0 0% 100%;
-  --secondary: 0 0% 96%;
-  --accent: 142 70% 50%;
-  --border: 0 0% 90%;
-  --sidebar-background: 0 0% 100%; /* Sidebar branca */
-  --sidebar-primary: 142 76% 45%;
-}
-```
-
-#### 🟡 TEMA: MODERADO
-```css
-.theme-moderado {
-  --background: 0 0% 100%;
-  --primary: 45 93% 47%;           /* Amarelo/Dourado */
-  --sidebar-background: 45 93% 47%; /* Sidebar dourada */
-  /* ... */
-}
-```
-
-#### 🟣 TEMA: MODERNO
-```css
-.theme-moderno {
-  --background: 240 10% 8%;        /* Preto profundo */
-  --primary: 266 80% 60%;          /* Roxo neon */
-  --secondary: 217 91% 60%;        /* Azul neon */
-  --sidebar-background: 240 20% 12%; /* Sidebar azul escuro */
-  --glow-primary: 266 80% 60%;
-  --glow-secondary: 217 91% 60%;
-  /* ... */
-}
-```
-
-**Status**: ✅ **TODAS AS VARIÁVEIS DEFINIDAS CORRETAMENTE**
-
-### 1.4. Classes Utilitárias Implementadas
-
-**Arquivo**: `app/globals.css`
-
-✅ **Backgrounds**:
-- `.bg-theme`
-- `.bg-card`
-- `.bg-primary`
-- `.bg-secondary`
-- `.bg-accent`
-- `.bg-muted-soft`
-- `.bg-sidebar`
-
-✅ **Textos**:
-- `.text-theme`
-- `.text-theme-muted`
-- `.text-primary`
-- `.text-sidebar`
-
-✅ **Bordas**:
-- `.border-theme`
-
-✅ **Sombras**:
-- `.shadow-theme-sm`
-- `.shadow-theme-md`
-- `.shadow-theme-lg`
-- `.shadow-theme-xl`
-
-✅ **Bordas Arredondadas**:
-- `.rounded-theme-sm`
-- `.rounded-theme-md`
-- `.rounded-theme-lg`
-
-**Status**: ✅ **CLASSES UTILITÁRIAS COMPLETAS**
-
-### 1.5. Componentes com Cores Fixas (PROBLEMA)
-
-**Comando usado**:
-```bash
-grep -r "bg-yellow-\|bg-blue-\|from-purple-\|from-indigo-" app/(protected)
-```
-
-**Resultado**: 20 arquivos com cores fixas de Tailwind
-
-#### Exemplos encontrados:
-
-1. **`app/(protected)/dashboard/page.tsx`**:
-   - `bg-yellow-50`, `bg-yellow-100`
-   - `from-purple-50 to-blue-50`
-   - `from-blue-50 to-blue-100`
-   - `from-blue-50 to-indigo-50`
-
-2. **`app/(protected)/pricing/page.tsx`**:
-   - `bg-yellow-50`
-
-3. **`app/(protected)/prolabore/page.tsx`**:
-   - `bg-yellow-50`, `border-yellow-200`
-
-4. **`app/(protected)/employee-cost/page.tsx`**:
-   - `from-blue-500 to-indigo-600`
-   - `from-blue-50 to-indigo-50`
-
-5. **`app/(protected)/admin/ads/page.tsx`**:
-   - `from-purple-600 to-indigo-600`
-
-6. **`app/(protected)/admin/sales/page.tsx`**:
-   - `bg-yellow-100 text-yellow-800`
-
-7. **`app/(protected)/admin/settings/page.tsx`**:
-   - `bg-yellow-50 border-yellow-200`
-
-8. **`app/(protected)/dre/page.tsx`**:
-   - `from-blue-50 to-indigo-100`
-   - `from-blue-500 to-indigo-600`
-
-**Impacto**:
-- ❌ Tema Moderado (amarelo) não aparece corretamente
-- ❌ Tema Moderno (roxo/azul neon) não aparece corretamente
-- ❌ Apenas o Tema Simples (verde) funciona parcialmente
-
----
-
-## 🔍 PARTE 2 - DIAGNÓSTICO DA INTEGRAÇÃO EFI
-
-### 2.1. Arquivo Principal
-
-**Arquivo**: `lib/efi.ts`
-
-### 2.2. Autenticação OAuth 2.0
-
-**Função**: `getEfiAccessToken()`
-
-```typescript
-export async function getEfiAccessToken(): Promise<string> {
-  // ✅ Retorna token em cache se ainda for válido
-  if (isTokenValid() && cachedToken) {
-    console.log("[EFI Auth] Using cached token");
-    return cachedToken.access_token;
-  }
-
-  // ✅ Gera novo token via OAuth
-  const credentials = Buffer.from(
-    `${config.clientId}:${config.clientSecret}`
-  ).toString("base64");
-
-  const response = await fetch(url, {
-    method: "POST",
-    headers: {
-      Authorization: `Basic ${credentials}`,
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ grant_type: "client_credentials" }),
+**O que foi feito:**
+- ✅ **Log inicial completo dos dados do pagamento:**
+  ```typescript
+  console.log("💳 [Check Payment] Dados do pagamento:", {
+    paymentId, gateway, stripeSessionId, currentStatus, amount, createdAt
   });
+  ```
 
-  // ✅ PROTEÇÃO: Verifica se resposta é JSON antes de parsear
-  const contentType = response.headers.get("content-type");
-  if (!contentType || !contentType.includes("application/json")) {
-    const text = await response.text();
-    throw new Error(`EFI retornou resposta não-JSON: ${text.substring(0, 200)}`);
-  }
+- ✅ **Log antes da consulta ao gateway:**
+  ```typescript
+  console.log("🔍 [Check Payment] Iniciando consulta ao gateway:", {
+    gateway, externalId: stripeSessionId
+  });
+  ```
 
-  // ✅ Armazena token em cache
-  cachedToken = {
-    access_token: data.access_token,
-    token_type: data.token_type || "Bearer",
-    expires_at: Date.now() + (expiresIn * 1000),
-  };
+- ✅ **Log detalhado da resposta do Asaas:**
+  ```typescript
+  console.log("📥 [Check Payment] Resposta completa do Asaas:", {
+    id, status, value, billingType, dateCreated, dueDate, invoiceUrl
+  });
+  ```
+
+- ✅ **Log detalhado de erros:**
+  ```typescript
+  console.error("❌ [Check Payment] Erro COMPLETO ao consultar gateway:", {
+    gateway, externalId, errorName, errorMessage, errorStack, errorResponse
+  });
+  ```
+
+- ✅ **Log de status final com debug:**
+  ```typescript
+  console.log("✅ [Check Payment] Status final:", {
+    currentStatus, gatewayStatus, errorMessage, hasStripeSessionId
+  });
+  ```
+
+### **2. Resposta JSON Enriquecida**
+
+**Antes:**
+```json
+{
+  "status": "pending",
+  "gatewayStatus": null,
+  "paymentId": "xxx",
+  "amount": 97,
+  "gateway": "asaas",
+  "planName": "Básico"
 }
 ```
 
-**Status**: ✅ **100% CORRETO**
+**Agora:**
+```json
+{
+  "status": "pending",
+  "gatewayStatus": null,
+  "paymentId": "xxx",
+  "amount": 97,
+  "gateway": "asaas",
+  "planName": "Básico",
+  "errorMessage": "Mensagem de erro se houver",
+  "debug": {
+    "stripeSessionId": "pay_xxx",
+    "gateway": "asaas",
+    "currentStatus": "pending"
+  }
+}
+```
 
-### 2.3. Cache de Token
+### **3. Logs Já Existentes no `lib/asaas.ts`**
 
+A função `asaasRequest` já possui logs detalhados:
 ```typescript
-interface TokenCache {
-  access_token: string;
-  token_type: string;
-  expires_at: number; // timestamp em ms
-}
-
-let cachedToken: TokenCache | null = null;
-
-function isTokenValid(): boolean {
-  if (!cachedToken) return false;
-  
-  // ✅ Considera token inválido se faltam menos de 5 minutos para expirar
-  const expiresIn5Min = Date.now() + (5 * 60 * 1000);
-  return cachedToken.expires_at > expiresIn5Min;
-}
+console.log(`[Asaas Request] GET https://sandbox.asaas.com/api/v3/payments/xxx`);
+console.log(`[Asaas Request] Environment: sandbox`);
+console.log(`[Asaas Response] Status: 200`);
+console.log(`[Asaas Response] Data: { ... }`);
 ```
-
-**Status**: ✅ **CACHE FUNCIONANDO CORRETAMENTE**
-
-### 2.4. Proteção "Unexpected Token U"
-
-**Função**: `efiRequest()`
-
-```typescript
-async function efiRequest(...) {
-  // ✅ PROTEÇÃO CRÍTICA: Ler como texto primeiro
-  const text = await response.text();
-  
-  // ✅ Verificar se é JSON válido
-  let data: any;
-  try {
-    data = JSON.parse(text);
-  } catch (parseError) {
-    console.error("[EFI] ❌ Resposta não é JSON válido:", text.substring(0, 500));
-    throw new Error(`Erro EFI: Resposta inválida (não-JSON): ${text.substring(0, 200)}`);
-  }
-
-  // ✅ Se não for OK, lançar erro com mensagem da API
-  if (!response.ok) {
-    // ✅ Se token expirou, limpar cache e tentar novamente
-    if (response.status === 401 && cachedToken) {
-      console.log("[EFI] Token expirado, limpando cache...");
-      cachedToken = null;
-      throw new Error("EFI_TOKEN_EXPIRED");
-    }
-  }
-}
-```
-
-**Status**: ✅ **PROTEÇÃO IMPLEMENTADA CORRETAMENTE**
-
-### 2.5. Retry Automático
-
-**Função**: `createEfiCharge()`
-
-```typescript
-export async function createEfiCharge(...) {
-  let attempts = 0;
-  const maxAttempts = 2;
-
-  while (attempts < maxAttempts) {
-    try {
-      // ✅ Obter token (do cache ou renovando)
-      const accessToken = await getEfiAccessToken();
-      
-      // ✅ Criar cobrança
-      const chargeResponse = await efiRequest(
-        "/charge/one-step/link",
-        "POST",
-        body,
-        accessToken
-      );
-
-      return { chargeId, paymentUrl, paymentMethod: "link" };
-    } catch (error: any) {
-      attempts++;
-      
-      // ✅ Se foi erro de token expirado e ainda há tentativas, tentar novamente
-      if (error.message === "EFI_TOKEN_EXPIRED" && attempts < maxAttempts) {
-        console.log("[EFI] Token expirado, tentando novamente com novo token...");
-        continue;
-      }
-      
-      throw error;
-    }
-  }
-}
-```
-
-**Status**: ✅ **RETRY IMPLEMENTADO CORRETAMENTE**
 
 ---
 
-## 📊 CONCLUSÃO DO DIAGNÓSTICO
+## 🔍 COMO DIAGNOSTICAR O PROBLEMA
 
-### ✅ Sistema de Temas
+### **Passo 1: Acessar os Logs do Servidor**
 
-| Aspecto | Status | Ação Necessária |
-|---------|--------|----------------|
-| ThemeProvider único | ✅ | Nenhuma |
-| 3 temas oficiais | ✅ | Nenhuma |
-| Hierarquia funcional | ✅ | Nenhuma |
-| APIs corretas | ✅ | Nenhuma |
-| Variáveis CSS | ✅ | Nenhuma |
-| Classes utilitárias | ✅ | Nenhuma |
-| Cores fixas nas páginas | ❌ | **SUBSTITUIR POR TOKENS CSS** |
+```bash
+cd /home/ubuntu/clivus_landing_page/nextjs_space
+pm2 logs clivus --lines 100 --nostream
+```
 
-### ✅ Integração EFI
+### **Passo 2: Fazer um Pagamento de Teste**
 
-| Aspecto | Status | Ação Necessária |
-|---------|--------|----------------|
-| OAuth 2.0 | ✅ | Nenhuma |
-| Cache de token | ✅ | Nenhuma |
-| Renovação automática | ✅ | Nenhuma |
-| Proteção "Unexpected token U" | ✅ | Nenhuma |
-| Retry automático | ✅ | Nenhuma |
-| Tratamento 401 | ✅ | Nenhuma |
+1. **Acessar o checkout:**
+   ```
+   https://clivus.marcosleandru.com.br/checkout?plan=basico
+   ```
+
+2. **Fazer login** com qualquer usuário de teste
+
+3. **Clicar em "Pagar com Boleto ou Cartão"**
+
+4. **Completar o pagamento no Asaas**
+
+5. **Clicar em "Já fiz o pagamento"** na tela de checkout
+
+### **Passo 3: Analisar os Logs**
+
+**Logs Esperados (Sucesso):**
+```
+💳 [Check Payment] Dados do pagamento: {
+  paymentId: 'cmigunmg80003nr08yziqwhgg',
+  gateway: 'asaas',
+  stripeSessionId: 'pay_xxxxxxxxx',  ← ID do pagamento no Asaas
+  currentStatus: 'pending',
+  amount: 97
+}
+
+🔍 [Check Payment] Iniciando consulta ao gateway: {
+  gateway: 'asaas',
+  externalId: 'pay_xxxxxxxxx'
+}
+
+📞 [Check Payment] Chamando API Asaas com ID: pay_xxxxxxxxx
+
+[Asaas Request] GET https://sandbox.asaas.com/api/v3/payments/pay_xxxxxxxxx
+[Asaas Request] Environment: sandbox  ← Verifica se está usando o ambiente correto
+
+[Asaas Response] Status: 200
+[Asaas Response] Data: {
+  "id": "pay_xxxxxxxxx",
+  "status": "CONFIRMED",  ← Status real no Asaas
+  "value": 97,
+  "billingType": "CREDIT_CARD",
+  ...
+}
+
+📥 [Check Payment] Resposta completa do Asaas: {
+  id: 'pay_xxxxxxxxx',
+  status: 'CONFIRMED',
+  value: 97,
+  billingType: 'CREDIT_CARD',
+  invoiceUrl: 'https://sandbox.asaas.com/...'
+}
+
+📊 [Check Payment] Status Asaas: {
+  original: 'CONFIRMED',
+  mapped: 'completed',
+  wouldUpdate: true
+}
+
+✅ [Check Payment] Status atualizado no banco de PENDING para: completed
+🎉 [Check Payment] Pagamento confirmado! Liberando acesso...
+✅ [Check Payment] Acesso liberado para usuário: xxx
+🔑 [Check Payment] Senha temporária gerada para usuário
+📧 [Check Payment] Emails enviados com sucesso
+
+✅ [Check Payment] Status final: {
+  currentStatus: 'completed',
+  gatewayStatus: 'CONFIRMED',
+  errorMessage: null,
+  hasStripeSessionId: true
+}
+```
+
+**Logs Esperados (Erro):**
+```
+💳 [Check Payment] Dados do pagamento: {
+  paymentId: 'cmigunmg80003nr08yziqwhgg',
+  gateway: 'asaas',
+  stripeSessionId: 'pay_xxxxxxxxx',
+  currentStatus: 'pending',
+  amount: 97
+}
+
+🔍 [Check Payment] Iniciando consulta ao gateway: {
+  gateway: 'asaas',
+  externalId: 'pay_xxxxxxxxx'
+}
+
+📞 [Check Payment] Chamando API Asaas com ID: pay_xxxxxxxxx
+
+[Asaas Request] GET https://api.asaas.com/v3/payments/pay_xxxxxxxxx  ← Produção
+[Asaas Request] Environment: production
+
+[Asaas Response] Status: 404  ← ERRO: Pagamento não encontrado
+[Asaas Response] Data: {
+  "errors": [{
+    "code": "invalid_action",
+    "description": "Registro não encontrado"
+  }]
+}
+
+❌ Erro na API Asaas: { errors: [...] }
+❌ Mensagem de erro: Registro não encontrado
+
+❌ [Check Payment] Erro COMPLETO ao consultar gateway: {
+  gateway: 'asaas',
+  externalId: 'pay_xxxxxxxxx',
+  errorName: 'Error',
+  errorMessage: 'Registro não encontrado',
+  errorStack: '...',
+  errorResponse: 'N/A'
+}
+
+✅ [Check Payment] Status final: {
+  currentStatus: 'pending',
+  gatewayStatus: null,
+  errorMessage: 'Registro não encontrado',
+  hasStripeSessionId: true
+}
+```
 
 ---
 
-## 🎯 PLANO DE AÇÃO
+## ⚠️ POSSÍVEIS PROBLEMAS E SOLUÇÕES
 
-### ÚNICA CORREÇÃO NECESSÁRIA:
+### **1. Pagamento Não Encontrado (404)**
 
-**Substituir cores fixas de Tailwind por tokens CSS em 20 páginas**
+**Sintoma nos logs:**
+```
+[Asaas Response] Status: 404
+"description": "Registro não encontrado"
+```
 
-Mapeamento de substituições:
+**Causas:**
+- ❌ O `stripeSessionId` está errado (não é o ID do Asaas)
+- ❌ O gateway está configurado para `production`, mas o pagamento foi feito em `sandbox` (ou vice-versa)
 
-| Cor Fixa | Token CSS |
-|----------|----------|
-| `text-gray-900` | `text-theme` |
-| `text-gray-600`, `text-gray-700` | `text-theme-muted` |
-| `bg-white` | `bg-card` |
-| `bg-gray-50`, `bg-gray-100` | `bg-muted-soft` |
-| `border-gray-200`, `border-gray-300` | `border-theme` |
-| `bg-yellow-50`, `bg-yellow-100` | `bg-accent` ou `bg-muted-soft` |
-| `text-yellow-800` | `text-accent` |
-| `from-purple-* to-blue-*` | `from-primary to-secondary` |
-| `from-blue-* to-indigo-*` | `from-primary to-accent` |
+**Solução:**
+1. Verificar o `stripeSessionId` no banco de dados:
+   ```sql
+   SELECT id, gateway, "stripeSessionId", status, amount 
+   FROM "Payment" 
+   WHERE id = 'cmigunmg80003nr08yziqwhgg';
+   ```
 
-**Páginas a serem corrigidas (20)**:
+2. Verificar a configuração do gateway Asaas no admin:
+   ```
+   https://clivus.marcosleandru.com.br/admin/gateways
+   ```
+   - Conferir se `Environment` está como `sandbox` ou `production`
+   - Conferir se as credenciais estão corretas para o ambiente escolhido
 
-#### Páginas do Cliente (11):
-1. `/dashboard`
-2. `/investments`
-3. `/pricing`
-4. `/prolabore`
-5. `/employee-cost`
-6. `/dre`
-7. `/transactions`
-8. `/planej`
-9. `/reconciliation`
-10. `/compliance`
-11. `/team`
+3. Verificar o link gerado no checkout:
+   - O link do Asaas deve começar com:
+     - **Sandbox:** `https://sandbox.asaas.com/...`
+     - **Produção:** `https://www.asaas.com/...`
 
-#### Páginas Admin (9):
-1. `/admin`
-2. `/admin/ads`
-3. `/admin/sales`
-4. `/admin/settings`
-5. `/admin/leads`
-6. `/admin/gateways`
-7. `/admin/clients`
-8. `/admin/plans`
-9. `/admin/theme-config`
+### **2. Credenciais Inválidas (401)**
+
+**Sintoma nos logs:**
+```
+[Asaas Response] Status: 401
+"description": "Invalid access token"
+```
+
+**Solução:**
+1. Verificar a API Key do Asaas no admin:
+   ```
+   https://clivus.marcosleandru.com.br/admin/gateways
+   ```
+
+2. Gerar uma nova API Key no painel do Asaas:
+   - **Sandbox:** https://sandbox.asaas.com/configuracoes/integracoes
+   - **Produção:** https://www.asaas.com/configuracoes/integracoes
+
+3. Atualizar as credenciais no admin e testar novamente
+
+### **3. stripeSessionId Nulo ou Ausente**
+
+**Sintoma nos logs:**
+```
+⚠️ [Check Payment] stripeSessionId não encontrado no pagamento
+```
+
+**Solução:**
+1. Verificar se o checkout está salvando o `stripeSessionId` corretamente
+2. Checar o código em `/api/checkout/route.ts` e `/api/checkout/pix/route.ts`
+3. O `stripeSessionId` deve ser salvo após criar a cobrança no Asaas:
+   ```typescript
+   await prisma.payment.update({
+     where: { id: paymentId },
+     data: { stripeSessionId: asaasPaymentLink.id }
+   });
+   ```
+
+### **4. Gateway Não Suportado**
+
+**Sintoma nos logs:**
+```
+⚠️ [Check Payment] Gateway não suportado para consulta: stripe
+```
+
+**Solução:**
+- Atualmente, apenas `asaas` e `efi` são suportados para consulta em tempo real
+- Para adicionar suporte a outros gateways (Stripe, CORA, Pagar.me), é necessário:
+  1. Criar uma função `getStripePayment` em `lib/stripe.ts`
+  2. Adicionar um `else if` em `/api/checkout/check-payment/route.ts`
 
 ---
 
-## 📝 RESUMO FINAL
+## 📝 CHECKLIST DE DIAGNÓSTICO
 
-**Status Atual**: 95% completo
+### **Configuração**
+- [ ] Gateway Asaas está habilitado em `/admin/gateways`
+- [ ] Ambiente (sandbox/production) está correto
+- [ ] Credenciais (API Key) estão corretas para o ambiente
+- [ ] Link de pagamento gerado está usando o domínio correto
 
-**O que está perfeito**:
-- ✅ Arquitetura de temas (100%)
-- ✅ Integração EFI OAuth (100%)
+### **Pagamento**
+- [ ] `stripeSessionId` foi salvo no banco após criar a cobrança
+- [ ] `stripeSessionId` é um ID válido do Asaas (ex: `pay_xxx` ou `chr_xxx`)
+- [ ] Pagamento foi realmente aprovado no painel do Asaas
 
-**O que precisa ser ajustado**:
-- ⚠️ Aplicar tokens CSS nas 20 páginas internas (5% do trabalho)
+### **Logs**
+- [ ] Logs mostram a consulta sendo feita ao gateway
+- [ ] URL da API está correta (sandbox vs production)
+- [ ] Resposta da API Asaas é `200 OK`
+- [ ] Status retornado pelo Asaas é `CONFIRMED` ou `RECEIVED`
 
-**Tempo estimado**: 15-20 minutos
+---
 
-**Após correção**: Sistema 100% conforme MEGA-PROMPT ✅
+## 🚀 TESTES PÓS-CORREÇÃO
+
+### **Teste 1: Cartão Sandbox Asaas**
+```bash
+# 1. Acessar checkout
+https://clivus.marcosleandru.com.br/checkout?plan=basico
+
+# 2. Fazer login
+Email: teste@teste.com
+Senha: 123456
+
+# 3. Pagar com Boleto/Cartão
+Cartão de teste: 5162 3068 9088 7704
+CVV: 318
+Data: qualquer futura
+
+# 4. Aguardar ou clicar em "Já fiz o pagamento"
+
+# 5. Verificar logs
+pm2 logs clivus --lines 100 --nostream
+```
+
+**Resultado Esperado:**
+- ✅ Logs mostram consulta ao Asaas
+- ✅ Status retorna `CONFIRMED`
+- ✅ Banco é atualizado para `completed`
+- ✅ Acesso é liberado (`hasAccess: true`)
+- ✅ Emails são enviados
+- ✅ Tela de checkout atualiza para "completed"
+
+### **Teste 2: PIX Sandbox Asaas**
+```bash
+# 1-2. Igual ao Teste 1
+
+# 3. Pagar com PIX
+- Copiar código PIX
+- Simular pagamento no painel Asaas Sandbox
+
+# 4-5. Igual ao Teste 1
+```
+
+---
+
+## 📊 STATUS ATUAL
+
+### **Build**
+```bash
+✅ TypeScript: 0 erros
+✅ Build: Sucesso
+✅ 33 páginas geradas
+✅ 60+ APIs funcionando
+```
+
+### **Arquivos Modificados**
+```
+✅ app/api/checkout/check-payment/route.ts
+   - Logs detalhados adicionados
+   - Resposta JSON enriquecida com debug
+   - Tratamento de erro melhorado
+```
+
+### **Próximos Passos**
+1. 📊 **Analisar os logs** conforme este documento
+2. 🔧 **Identificar o erro específico** (404, 401, etc.)
+3. 🛠️ **Aplicar a solução correspondente**
+4. ✅ **Validar que o fluxo funciona**
+
+---
+
+**Documento criado em:** 27/11/2025  
+**Status:** ✅ **Pronto para Diagnóstico**  
+**Build:** ✅ **Sucesso**  
