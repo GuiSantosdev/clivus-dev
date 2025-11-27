@@ -251,10 +251,10 @@ Gerado em ${new Date().toLocaleDateString('pt-BR')} pelo Clivus
                   </div>
                 </div>
 
-                <div className="bg-primary bg-opacity-5 border border-primary border-opacity-30 rounded-lg p-4">
+                <div className="bg-primary/5 dark:bg-primary/20 border border-primary/30 dark:border-primary/40 rounded-lg p-4">
                   <div className="flex gap-2">
                     <AlertCircle className="h-5 w-5 text-primary flex-shrink-0 mt-0.5" />
-                    <div className="text-sm text-primary">
+                    <div className="text-sm text-primary dark:text-blue-300">
                       <strong>Encargos Obrigatórios:</strong> INSS Patronal (20%), FGTS (8%), RAT (3%), 
                       Salário Educação (2,5%), Sistema S (3,58%), Férias, 13º Salário.
                     </div>
@@ -447,7 +447,7 @@ Gerado em ${new Date().toLocaleDateString('pt-BR')} pelo Clivus
               <CardContent className="pt-6">
                 <div className="flex gap-2">
                   <AlertCircle className="h-5 w-5 text-orange-600 flex-shrink-0 mt-0.5" />
-                  <div className="text-sm text-orange-800">
+                  <div className="text-sm text-orange-800 dark:text-orange-200">
                     <p className="font-semibold mb-2">Importante:</p>
                     <ul className="space-y-1 list-disc list-inside">
                       <li>RAT varia de 1% a 3% conforme o risco da atividade</li>

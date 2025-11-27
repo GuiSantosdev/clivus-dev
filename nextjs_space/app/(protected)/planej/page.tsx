@@ -558,19 +558,19 @@ export default function PlanejPage() {
 
         {/* Receitas Planejadas */}
         <Card>
-          <CardHeader className="bg-green-50">
+          <CardHeader className="bg-green-50 dark:bg-green-950/30">
             <div className="flex items-center justify-between">
               <CardTitle className="flex items-center gap-2">
-                <TrendingUp className="w-6 h-6 text-green-600" />
+                <TrendingUp className="w-6 h-6 text-green-600 dark:text-green-400" />
                 💰 RECEITAS PLANEJADAS
               </CardTitle>
               <div className="text-right">
                 <div className="text-sm text-theme-muted">Previsto</div>
-                <div className="text-2xl font-bold text-green-600">
+                <div className="text-2xl font-bold text-green-600 dark:text-green-400">
                   R$ {totalIncomeExpected.toFixed(2)}
                 </div>
                 <div className="text-sm text-theme-muted mt-1">Realizado</div>
-                <div className="text-xl font-semibold text-green-700">
+                <div className="text-xl font-semibold text-green-700 dark:text-green-300">
                   R$ {totalIncomeActual.toFixed(2)} (
                   {totalIncomeExpected > 0
                     ? ((totalIncomeActual / totalIncomeExpected) * 100).toFixed(1)
@@ -660,19 +660,19 @@ export default function PlanejPage() {
 
         {/* Despesas Planejadas */}
         <Card>
-          <CardHeader className="bg-red-50">
+          <CardHeader className="bg-red-50 dark:bg-red-950/30">
             <div className="flex items-center justify-between">
               <CardTitle className="flex items-center gap-2">
-                <TrendingDown className="w-6 h-6 text-red-600" />
+                <TrendingDown className="w-6 h-6 text-red-600 dark:text-red-400" />
                 💸 DESPESAS PLANEJADAS
               </CardTitle>
               <div className="text-right">
                 <div className="text-sm text-theme-muted">Previsto</div>
-                <div className="text-2xl font-bold text-red-600">
+                <div className="text-2xl font-bold text-red-600 dark:text-red-400">
                   R$ {totalExpenseExpected.toFixed(2)}
                 </div>
                 <div className="text-sm text-theme-muted mt-1">Realizado</div>
-                <div className="text-xl font-semibold text-red-700">
+                <div className="text-xl font-semibold text-red-700 dark:text-red-300">
                   R$ {totalExpenseActual.toFixed(2)} (
                   {totalExpenseExpected > 0
                     ? ((totalExpenseActual / totalExpenseExpected) * 100).toFixed(1)

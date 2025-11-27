@@ -275,10 +275,10 @@ export default function DashboardPage() {
             </CardContent>
           </Card>
         ) : (
-          <Card className="border-green-200 bg-green-50 mb-8">
+          <Card className="border-green-500/30 bg-card mb-8">
             <CardContent className="p-6">
               <div className="flex items-center space-x-3">
-                <CheckCircle className="h-6 w-6 text-green-600" />
+                <CheckCircle className="h-6 w-6 text-green-600 dark:text-green-400" />
                 <div>
                   <h3 className="font-semibold text-theme">Acesso Liberado</h3>
                   <p className="text-sm text-theme-muted">

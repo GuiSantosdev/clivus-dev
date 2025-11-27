@@ -152,7 +152,7 @@ export default function TeamPage() {
           </Button>
         </div>
 
-        <Card className="mb-6 border-primary border-opacity-30 bg-primary bg-opacity-5">
+        <Card className="mb-6 border-primary/30 dark:border-primary/40 bg-primary/5 dark:bg-primary/15">
           <CardContent className="p-4">
             <div className="flex items-start space-x-3">
               <AlertCircle className="h-5 w-5 text-primary mt-0.5" />
@@ -304,12 +304,12 @@ export default function TeamPage() {
                   className={`p-4 rounded-lg border-2 ${
                     member.status === "active"
                       ? "bg-card border-theme"
-                      : "bg-accent bg-opacity-10 border-accent border-opacity-30"
+                      : "bg-accent/10 dark:bg-accent/20 border-accent/30 dark:border-accent/40"
                   }`}
                 >
                   <div className="flex items-center justify-between">
                     <div className="flex items-center space-x-4 flex-1">
-                      <div className="h-12 w-12 rounded-full bg-primary bg-opacity-10 flex items-center justify-center">
+                      <div className="h-12 w-12 rounded-full bg-primary/10 dark:bg-primary/20 flex items-center justify-center">
                         <span className="text-primary font-semibold text-lg">
                           {member.name.charAt(0).toUpperCase()}
                         </span>
@@ -318,7 +318,7 @@ export default function TeamPage() {
                         <div className="flex items-center space-x-2">
                           <h3 className="font-semibold text-theme">{member.name}</h3>
                           {member.status === "pending" && (
-                            <span className="px-2 py-0.5 bg-accent bg-opacity-20 text-yellow-700 text-xs rounded-full">
+                            <span className="px-2 py-0.5 bg-accent/20 dark:bg-accent/30 text-yellow-700 text-xs rounded-full">
                               Pendente
                             </span>
                           )}
@@ -374,7 +374,7 @@ export default function TeamPage() {
                 </ul>
               </div>
 
-              <div className="p-4 bg-primary bg-opacity-5 rounded-lg">
+              <div className="p-4 bg-primary/5 dark:bg-primary/15 rounded-lg">
                 <h4 className="font-semibold text-theme mb-2">Editor</h4>
                 <ul className="text-sm text-theme space-y-1">
                   <li>✓ Visualizar todas as informações financeiras</li>

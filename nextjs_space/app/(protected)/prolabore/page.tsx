@@ -205,7 +205,7 @@ export default function ProlaborePage() {
             <CardContent>
               {resultado ? (
                 <div className="space-y-4">
-                  <div className="p-4 bg-green-50 rounded-lg">
+                  <div className="p-4 bg-green-50 dark:bg-green-950/30 rounded-lg">
                     <p className="text-sm text-theme-muted mb-1">Pró-labore Bruto</p>
                     <p className="text-3xl font-bold text-green-600">
                       R$ {resultado.prolabore.toFixed(2)}
@@ -227,7 +227,7 @@ export default function ProlaborePage() {
                       </span>
                     </div>
 
-                    <div className="flex justify-between items-center p-4 bg-primary bg-opacity-5 rounded-lg border-2 border-primary border-opacity-30">
+                    <div className="flex justify-between items-center p-4 bg-primary/5 dark:bg-primary/20 rounded-lg border-2 border-primary/30 dark:border-primary/40">
                       <span className="font-semibold text-theme">Valor Líquido</span>
                       <span className="text-xl font-bold text-primary">
                         R$ {resultado.liquido.toFixed(2)}
@@ -235,7 +235,7 @@ export default function ProlaborePage() {
                     </div>
                   </div>
 
-                  <div className="flex items-start space-x-2 p-3 bg-accent bg-opacity-10 rounded border border-accent border-opacity-30">
+                  <div className="flex items-start space-x-2 p-3 bg-accent/10 dark:bg-accent/20 rounded border border-accent/30 dark:border-accent/40">
                     <AlertCircle className="h-4 w-4 text-accent mt-0.5" />
                     <p className="text-xs text-theme-muted">
                       Este cálculo é uma estimativa. Consulte seu contador para valores exatos

@@ -336,9 +336,9 @@ export default function InvestmentsPage() {
 
         <div className="grid md:grid-cols-2 gap-6">
           <Card>
-            <CardHeader className="bg-green-50">
+            <CardHeader className="bg-green-50 dark:bg-green-950/30">
               <CardTitle className="flex items-center space-x-2">
-                <PieChart className="h-5 w-5 text-green-600" />
+                <PieChart className="h-5 w-5 text-green-600 dark:text-green-400" />
                 <span>Investimentos CPF (Pessoal)</span>
               </CardTitle>
             </CardHeader>

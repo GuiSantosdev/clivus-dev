@@ -671,10 +671,10 @@ export default function PricingPage() {
                   </div>
                 )}
 
-                <div className="bg-primary bg-opacity-5 border border-primary border-opacity-30 rounded-lg p-4">
+                <div className="bg-primary/5 dark:bg-primary/20 border border-primary/30 dark:border-primary/40 rounded-lg p-4">
                   <div className="flex gap-2">
                     <AlertCircle className="h-5 w-5 text-primary flex-shrink-0 mt-0.5" />
-                    <div className="text-sm text-primary">
+                    <div className="text-sm text-primary dark:text-blue-300">
                       <strong>Cálculo Automático:</strong> O sistema calcula automaticamente todos os encargos trabalhistas 
                       (INSS, FGTS, férias, 13º, RAT, etc.) para mostrar o custo REAL do funcionário.
                     </div>
@@ -737,10 +737,10 @@ export default function PricingPage() {
                   </div>
                 </div>
 
-                <div className="bg-primary bg-opacity-5 border border-primary border-opacity-30 rounded-lg p-4">
+                <div className="bg-primary/5 dark:bg-primary/20 border border-primary/30 dark:border-primary/40 rounded-lg p-4">
                   <div className="flex gap-2">
                     <AlertCircle className="h-5 w-5 text-primary flex-shrink-0 mt-0.5" />
-                    <div className="text-sm text-primary">
+                    <div className="text-sm text-primary dark:text-blue-300">
                       <strong>Dica:</strong> A margem de lucro varia por segmento. Comércio: 20-40%, Serviços: 30-50%, 
                       Indústria: 15-30%. Sempre considere a concorrência e o valor percebido pelo cliente.
                     </div>
