@@ -125,6 +125,7 @@ interface AsaasPaymentLink {
   billingType: "UNDEFINED" | "BOLETO" | "CREDIT_CARD" | "PIX";
   chargeType: "DETACHED";
   value?: number;
+  dueDateLimitDays?: number; // Dias úteis para vencimento do boleto
   externalReference?: string;
 }
 

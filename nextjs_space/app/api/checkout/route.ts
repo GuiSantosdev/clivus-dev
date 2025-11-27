@@ -181,6 +181,7 @@ export async function POST(request: Request) {
           billingType: "UNDEFINED", // Permite PIX, Boleto ou Cartão
           chargeType: "DETACHED",
           value: plan.price,
+          dueDateLimitDays: 3, // 3 dias úteis para vencimento do boleto
           externalReference: payment.id,
         });
         console.log("✅ [Checkout API] Link criado:", { id: paymentLink.id, url: paymentLink.url });
