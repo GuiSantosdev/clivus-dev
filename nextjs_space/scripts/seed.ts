@@ -31,9 +31,73 @@ async function main() {
 
   console.log("✅ SuperAdmin user created:", superAdmin.email);
 
-  // Create test client user (Clivus customer with access)
+  // Create test client users (one for each plan)
   const hashedTestPassword = await bcrypt.hash("senha123", 10);
   
+  // Cliente Plano Básico
+  const basicUser = await prisma.user.upsert({
+    where: { email: "basico@teste.com" },
+    update: {
+      password: hashedTestPassword,
+      role: "user",
+      hasAccess: true,
+    },
+    create: {
+      email: "basico@teste.com",
+      password: hashedTestPassword,
+      name: "Cliente Plano Básico",
+      role: "user",
+      hasAccess: true,
+      cpf: "111.111.111-11",
+      cnpj: "11.111.111/0001-11",
+      businessArea: "Comércio",
+    },
+  });
+  console.log("✅ Basic plan client user created:", basicUser.email);
+
+  // Cliente Plano Intermediário
+  const intermediateUser = await prisma.user.upsert({
+    where: { email: "intermediario@teste.com" },
+    update: {
+      password: hashedTestPassword,
+      role: "user",
+      hasAccess: true,
+    },
+    create: {
+      email: "intermediario@teste.com",
+      password: hashedTestPassword,
+      name: "Cliente Plano Intermediário",
+      role: "user",
+      hasAccess: true,
+      cpf: "222.222.222-22",
+      cnpj: "22.222.222/0001-22",
+      businessArea: "Serviços",
+    },
+  });
+  console.log("✅ Intermediate plan client user created:", intermediateUser.email);
+
+  // Cliente Plano Avançado
+  const advancedUser = await prisma.user.upsert({
+    where: { email: "avancado@teste.com" },
+    update: {
+      password: hashedTestPassword,
+      role: "user",
+      hasAccess: true,
+    },
+    create: {
+      email: "avancado@teste.com",
+      password: hashedTestPassword,
+      name: "Cliente Plano Avançado",
+      role: "user",
+      hasAccess: true,
+      cpf: "333.333.333-33",
+      cnpj: "33.333.333/0001-33",
+      businessArea: "Indústria",
+    },
+  });
+  console.log("✅ Advanced plan client user created:", advancedUser.email);
+
+  // Cliente Teste (legado - mantido para compatibilidade)
   const testUser = await prisma.user.upsert({
     where: { email: "teste@teste.com" },
     update: {
@@ -47,13 +111,12 @@ async function main() {
       name: "Cliente Teste",
       role: "user",
       hasAccess: true,
-      cpf: "111.111.111-11",
-      cnpj: "11.111.111/0001-11",
+      cpf: "444.444.444-44",
+      cnpj: "44.444.444/0001-44",
       businessArea: "Comércio",
     },
   });
-
-  console.log("✅ Client user created:", testUser.email);
+  console.log("✅ Legacy test user created:", testUser.email);
 
   // Create plans
   const plansData = [
@@ -472,6 +535,66 @@ async function main() {
     console.log(`✅ Payment created for ${testUser.name}`);
   }
 
+  // Create payments for plan-specific test users
+  console.log("\n💳 Creating payments for plan-specific test users...");
+  
+  // Payment for Basic Plan User
+  const basicPlanRef = createdPlans.find(p => p.slug === "basic");
+  if (basicPlanRef) {
+    await prisma.payment.upsert({
+      where: { stripeSessionId: "test_session_basic_user" },
+      update: {},
+      create: {
+        userId: basicUser.id,
+        planId: basicPlanRef.id,
+        plan: basicPlanRef.slug,
+        amount: basicPlanRef.price,
+        status: "completed",
+        stripeSessionId: "test_session_basic_user",
+        createdAt: new Date(),
+      },
+    });
+    console.log(`✅ Payment created for ${basicUser.name} - ${basicPlanRef.name}`);
+  }
+
+  // Payment for Intermediate Plan User
+  const intermediatePlanRef = createdPlans.find(p => p.slug === "intermediate");
+  if (intermediatePlanRef) {
+    await prisma.payment.upsert({
+      where: { stripeSessionId: "test_session_intermediate_user" },
+      update: {},
+      create: {
+        userId: intermediateUser.id,
+        planId: intermediatePlanRef.id,
+        plan: intermediatePlanRef.slug,
+        amount: intermediatePlanRef.price,
+        status: "completed",
+        stripeSessionId: "test_session_intermediate_user",
+        createdAt: new Date(),
+      },
+    });
+    console.log(`✅ Payment created for ${intermediateUser.name} - ${intermediatePlanRef.name}`);
+  }
+
+  // Payment for Advanced Plan User
+  const advancedPlanRef = createdPlans.find(p => p.slug === "advanced");
+  if (advancedPlanRef) {
+    await prisma.payment.upsert({
+      where: { stripeSessionId: "test_session_advanced_user" },
+      update: {},
+      create: {
+        userId: advancedUser.id,
+        planId: advancedPlanRef.id,
+        plan: advancedPlanRef.slug,
+        amount: advancedPlanRef.price,
+        status: "completed",
+        stripeSessionId: "test_session_advanced_user",
+        createdAt: new Date(),
+      },
+    });
+    console.log(`✅ Payment created for ${advancedUser.name} - ${advancedPlanRef.name}`);
+  }
+
   // Payments for additional clients
   for (let i = 0; i < createdClients.length; i++) {
     const client = createdClients[i];
@@ -503,8 +626,11 @@ async function main() {
 
   console.log("\n🌱 Seed completed successfully!");
   console.log("\n📝 Test credentials:");
-  console.log("   SuperAdmin: admin@clivus.com.br / admin123");
-  console.log("   Client: teste@teste.com / senha123");
+  console.log("   🔑 SuperAdmin: admin@clivus.com.br / admin123");
+  console.log("   👤 Cliente Básico: basico@teste.com / senha123");
+  console.log("   ⭐ Cliente Intermediário: intermediario@teste.com / senha123");
+  console.log("   👑 Cliente Avançado: avancado@teste.com / senha123");
+  console.log("   📦 Cliente Teste (legado): teste@teste.com / senha123");
 }
 
 main()

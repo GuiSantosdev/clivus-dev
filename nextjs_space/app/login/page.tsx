@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
 import toast from "react-hot-toast";
-import { User, Shield, Copy } from "lucide-react";
+import { User, Shield, Copy, Star, Crown, Zap } from "lucide-react";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -53,6 +53,29 @@ export default function LoginPage() {
   const fillCredentials = (email: string, password: string) => {
     setFormData({ email, password });
     toast.success("Credenciais preenchidas!");
+  };
+
+  const quickLogin = async (email: string, password: string, roleName: string) => {
+    setLoading(true);
+
+    try {
+      const result = await signIn("credentials", {
+        email,
+        password,
+        redirect: false,
+      });
+
+      if (result?.error) {
+        toast.error("Erro ao fazer login automático");
+      } else {
+        toast.success(`Bem-vindo, ${roleName}!`);
+        router.push(redirectUrl);
+      }
+    } catch (error) {
+      toast.error("Erro ao fazer login");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -114,90 +137,96 @@ export default function LoginPage() {
         </p>
 
         {/* Acessos de Teste */}
-        <div className="mt-6 pt-6 border-t border-gray-200">
-          <h3 className="text-sm font-semibold text-center mb-4 text-gray-700">
-            🔑 Acessos de Teste
+        <div className="mt-6 pt-6 border-t border-theme">
+          <h3 className="text-sm font-semibold text-center mb-4 text-theme">
+            🔑 Login Rápido para Testes
           </h3>
           
           {/* SuperAdmin */}
-          <div className="mb-4 p-4 bg-gradient-to-r from-primary/5 to-accent/5 rounded-lg border border-primary/20">
-            <div className="flex items-center gap-2 mb-2">
-              <Shield className="w-4 h-4 text-primary" />
-              <span className="font-semibold text-theme">SuperAdmin</span>
+          <div className="mb-3 p-3 bg-gradient-to-r from-purple-50 to-pink-50 dark:from-purple-950/30 dark:to-pink-950/30 rounded-lg border border-purple-200 dark:border-purple-800">
+            <div className="flex items-center justify-between mb-2">
+              <div className="flex items-center gap-2">
+                <Shield className="w-4 h-4 text-purple-600 dark:text-purple-400" />
+                <span className="font-semibold text-sm text-theme">SuperAdmin</span>
+              </div>
+              <span className="text-xs text-theme-muted">Gestão Total</span>
             </div>
-            <div className="space-y-2 text-sm">
-              <div className="flex items-center justify-between">
-                <span className="text-theme-muted">Email:</span>
-                <div className="flex items-center gap-2">
-                  <code className="bg-card px-2 py-1 rounded text-xs">admin@clivus.com.br</code>
-                  <button
-                    onClick={() => copyToClipboard("admin@clivus.com.br", "Email")}
-                    className="text-primary hover:text-primary/80"
-                  >
-                    <Copy className="w-3 h-3" />
-                  </button>
-                </div>
-              </div>
-              <div className="flex items-center justify-between">
-                <span className="text-theme-muted">Senha:</span>
-                <div className="flex items-center gap-2">
-                  <code className="bg-card px-2 py-1 rounded text-xs">admin123</code>
-                  <button
-                    onClick={() => copyToClipboard("admin123", "Senha")}
-                    className="text-primary hover:text-primary/80"
-                  >
-                    <Copy className="w-3 h-3" />
-                  </button>
-                </div>
-              </div>
+            <div className="text-xs space-y-1 mb-2 text-theme-muted">
+              <div><strong>Email:</strong> admin@clivus.com.br</div>
+              <div><strong>Senha:</strong> admin123</div>
             </div>
             <Button
-              onClick={() => fillCredentials("admin@clivus.com.br", "admin123")}
-              className="w-full mt-3 bg-primary hover:bg-primary/90 text-white text-xs"
-              size="sm"
+              onClick={() => quickLogin("admin@clivus.com.br", "admin123", "SuperAdmin")}
+              disabled={loading}
+              className="w-full bg-purple-600 hover:bg-purple-700 text-white text-xs h-8"
             >
-              Preencher Credenciais
+              Entrar como SuperAdmin
             </Button>
           </div>
 
-          {/* Cliente */}
-          <div className="p-4 bg-gradient-to-r from-secondary/5 to-accent/5 rounded-lg border border-secondary/20">
-            <div className="flex items-center gap-2 mb-2">
-              <User className="w-4 h-4 text-secondary" />
-              <span className="font-semibold text-theme">Cliente</span>
+          {/* Cliente - Plano Básico */}
+          <div className="mb-3 p-3 bg-gradient-to-r from-blue-50 to-cyan-50 dark:from-blue-950/30 dark:to-cyan-950/30 rounded-lg border border-blue-200 dark:border-blue-800">
+            <div className="flex items-center justify-between mb-2">
+              <div className="flex items-center gap-2">
+                <User className="w-4 h-4 text-blue-600 dark:text-blue-400" />
+                <span className="font-semibold text-sm text-theme">Plano Básico</span>
+              </div>
+              <span className="text-xs text-theme-muted">R$ 97/mês</span>
             </div>
-            <div className="space-y-2 text-sm">
-              <div className="flex items-center justify-between">
-                <span className="text-theme-muted">Email:</span>
-                <div className="flex items-center gap-2">
-                  <code className="bg-card px-2 py-1 rounded text-xs">teste@teste.com</code>
-                  <button
-                    onClick={() => copyToClipboard("teste@teste.com", "Email")}
-                    className="text-secondary hover:text-secondary/80"
-                  >
-                    <Copy className="w-3 h-3" />
-                  </button>
-                </div>
-              </div>
-              <div className="flex items-center justify-between">
-                <span className="text-theme-muted">Senha:</span>
-                <div className="flex items-center gap-2">
-                  <code className="bg-card px-2 py-1 rounded text-xs">senha123</code>
-                  <button
-                    onClick={() => copyToClipboard("senha123", "Senha")}
-                    className="text-secondary hover:text-secondary/80"
-                  >
-                    <Copy className="w-3 h-3" />
-                  </button>
-                </div>
-              </div>
+            <div className="text-xs space-y-1 mb-2 text-theme-muted">
+              <div><strong>Email:</strong> basico@teste.com</div>
+              <div><strong>Senha:</strong> senha123</div>
             </div>
             <Button
-              onClick={() => fillCredentials("teste@teste.com", "senha123")}
-              className="w-full mt-3 bg-secondary hover:bg-secondary/90 text-white text-xs"
-              size="sm"
+              onClick={() => quickLogin("basico@teste.com", "senha123", "Cliente - Plano Básico")}
+              disabled={loading}
+              className="w-full bg-blue-600 hover:bg-blue-700 text-white text-xs h-8"
             >
-              Preencher Credenciais
+              Entrar como Básico
+            </Button>
+          </div>
+
+          {/* Cliente - Plano Intermediário */}
+          <div className="mb-3 p-3 bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-950/30 dark:to-emerald-950/30 rounded-lg border border-green-200 dark:border-green-800">
+            <div className="flex items-center justify-between mb-2">
+              <div className="flex items-center gap-2">
+                <Star className="w-4 h-4 text-green-600 dark:text-green-400" />
+                <span className="font-semibold text-sm text-theme">Plano Intermediário</span>
+              </div>
+              <span className="text-xs text-theme-muted">R$ 147/mês</span>
+            </div>
+            <div className="text-xs space-y-1 mb-2 text-theme-muted">
+              <div><strong>Email:</strong> intermediario@teste.com</div>
+              <div><strong>Senha:</strong> senha123</div>
+            </div>
+            <Button
+              onClick={() => quickLogin("intermediario@teste.com", "senha123", "Cliente - Plano Intermediário")}
+              disabled={loading}
+              className="w-full bg-green-600 hover:bg-green-700 text-white text-xs h-8"
+            >
+              Entrar como Intermediário
+            </Button>
+          </div>
+
+          {/* Cliente - Plano Avançado */}
+          <div className="p-3 bg-gradient-to-r from-orange-50 to-red-50 dark:from-orange-950/30 dark:to-red-950/30 rounded-lg border border-orange-200 dark:border-orange-800">
+            <div className="flex items-center justify-between mb-2">
+              <div className="flex items-center gap-2">
+                <Crown className="w-4 h-4 text-orange-600 dark:text-orange-400" />
+                <span className="font-semibold text-sm text-theme">Plano Avançado</span>
+              </div>
+              <span className="text-xs text-theme-muted">R$ 297/mês</span>
+            </div>
+            <div className="text-xs space-y-1 mb-2 text-theme-muted">
+              <div><strong>Email:</strong> avancado@teste.com</div>
+              <div><strong>Senha:</strong> senha123</div>
+            </div>
+            <Button
+              onClick={() => quickLogin("avancado@teste.com", "senha123", "Cliente - Plano Avançado")}
+              disabled={loading}
+              className="w-full bg-orange-600 hover:bg-orange-700 text-white text-xs h-8"
+            >
+              Entrar como Avançado
             </Button>
           </div>
         </div>
