@@ -6,6 +6,8 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import Stripe from "stripe";
 import prisma from "@/lib/db";
+import { createAsaasPayment } from "@/lib/asaas";
+
 import {
   createOrGetAsaasCustomer,
   createAsaasPaymentLink,
@@ -48,6 +50,16 @@ export async function POST(request: Request) {
     const body = await request.json();
     const { plan: planSlug, gateway = "asaas" } = body; // Default para Asaas
     console.log("📦 [Checkout API] Dados recebidos:", { planSlug, gateway });
+
+    if (gateway === "asaas") {
+      if (!process.env.ASAAS_API_KEY) {
+        console.error("ERRO CRÍTICO: ASAAS_API_KEY não encontrada no process.env");
+        return NextResponse.json(
+            { error: "Erro de configuração no servidor", details: "Chave API do Asaas ausente" },
+            { status: 500 }
+        );
+      }
+    }
 
     if (!planSlug) {
       console.error("❌ [Checkout API] Plano não especificado");
