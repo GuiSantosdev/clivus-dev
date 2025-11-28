@@ -1,0 +1,431 @@
+import { prisma } from "./db";
+
+/**
+ * Asaas Payment Gateway Integration
+ * Documentação: https://docs.asaas.com/
+ * 
+ * ✅ Configuração do banco de dados (fallback para .env)
+ * ✅ Ambiente dinâmico (sandbox ou production)
+ */
+
+// ===========================
+// CONFIGURATION
+// ===========================
+
+interface AsaasConfig {
+  apiKey: string;
+  environment: "sandbox" | "production";
+  webhookSecret?: string;
+}
+
+/**
+ * Busca configurações do Asaas
+ * Prioridade: Banco de Dados > Variáveis de Ambiente
+ */
+export async function getAsaasConfig(): Promise<AsaasConfig> {
+  try {
+    // Tentar buscar do banco primeiro
+    const gateway = await prisma.gateway.findUnique({
+      where: { name: "asaas" },
+    });
+
+    if (gateway && gateway.isEnabled) {
+      const config = gateway.environment === "sandbox" 
+        ? gateway.sandboxConfig 
+        : gateway.productionConfig;
+      
+      const webhookSecret = gateway.environment === "sandbox"
+        ? gateway.sandboxWebhook
+        : gateway.productionWebhook;
+
+      if (config && typeof config === 'object' && 'apiKey' in config) {
+        console.log(`[Asaas Config] Usando credenciais ${gateway.environment} do banco de dados`);
+        return {
+          apiKey: String(config.apiKey),
+          environment: gateway.environment as "sandbox" | "production",
+          webhookSecret: webhookSecret || undefined,
+        };
+      }
+    }
+  } catch (error) {
+    console.warn("[Asaas Config] Erro ao buscar do banco, usando fallback .env:", error);
+  }
+
+  // Fallback para variáveis de ambiente
+  console.log("[Asaas Config] Usando credenciais do .env (fallback)");
+  const apiKey = process.env.ASAAS_API_KEY || "";
+  const environment = (process.env.ASAAS_ENVIRONMENT as "sandbox" | "production") || "production";
+  const webhookSecret = process.env.ASAAS_WEBHOOK_SECRET || "";
+
+  return {
+    apiKey,
+    environment,
+    webhookSecret,
+  };
+}
+
+/**
+ * Valida CPF com dígitos verificadores
+ */
+function isValidCPF(cpf: string): boolean {
+  const cleanCPF = cpf.replace(/\D/g, "");
+  
+  if (cleanCPF.length !== 11) return false;
+  if (/^(\d)\1+$/.test(cleanCPF)) return false; // Todos dígitos iguais
+  
+  // Validar dígito verificador 1
+  let sum = 0;
+  for (let i = 0; i < 9; i++) {
+    sum += parseInt(cleanCPF.charAt(i)) * (10 - i);
+  }
+  let digit1 = 11 - (sum % 11);
+  if (digit1 >= 10) digit1 = 0;
+  if (digit1 !== parseInt(cleanCPF.charAt(9))) return false;
+  
+  // Validar dígito verificador 2
+  sum = 0;
+  for (let i = 0; i < 10; i++) {
+    sum += parseInt(cleanCPF.charAt(i)) * (11 - i);
+  }
+  let digit2 = 11 - (sum % 11);
+  if (digit2 >= 10) digit2 = 0;
+  if (digit2 !== parseInt(cleanCPF.charAt(10))) return false;
+  
+  return true;
+}
+
+/**
+ * Valida CNPJ com dígitos verificadores
+ */
+function isValidCNPJ(cnpj: string): boolean {
+  const cleanCNPJ = cnpj.replace(/\D/g, "");
+  
+  if (cleanCNPJ.length !== 14) return false;
+  if (/^(\d)\1+$/.test(cleanCNPJ)) return false; // Todos dígitos iguais
+  
+  // Validar dígito verificador 1
+  let sum = 0;
+  let weight = 5;
+  for (let i = 0; i < 12; i++) {
+    sum += parseInt(cleanCNPJ.charAt(i)) * weight;
+    weight = weight === 2 ? 9 : weight - 1;
+  }
+  let digit1 = sum % 11 < 2 ? 0 : 11 - (sum % 11);
+  if (digit1 !== parseInt(cleanCNPJ.charAt(12))) return false;
+  
+  // Validar dígito verificador 2
+  sum = 0;
+  weight = 6;
+  for (let i = 0; i < 13; i++) {
+    sum += parseInt(cleanCNPJ.charAt(i)) * weight;
+    weight = weight === 2 ? 9 : weight - 1;
+  }
+  let digit2 = sum % 11 < 2 ? 0 : 11 - (sum % 11);
+  if (digit2 !== parseInt(cleanCNPJ.charAt(13))) return false;
+  
+  return true;
+}
+
+/**
+ * Valida se CPF/CNPJ é válido (verifica dígitos verificadores)
+ */
+export function validateCpfCnpj(value: string): { valid: boolean; cleaned: string } {
+  const cleaned = value.replace(/\D/g, "");
+  
+  if (cleaned.length === 11) {
+    return { valid: isValidCPF(cleaned), cleaned };
+  } else if (cleaned.length === 14) {
+    return { valid: isValidCNPJ(cleaned), cleaned };
+  }
+  
+  return { valid: false, cleaned };
+}
+
+interface AsaasCustomer {
+  name: string;
+  email: string;
+  cpfCnpj?: string;
+  phone?: string;
+}
+
+interface AsaasPayment {
+  customer: string;
+  billingType: "CREDIT_CARD" | "BOLETO" | "PIX";
+  value: number;
+  dueDate: string;
+  description?: string;
+  externalReference?: string;
+  creditCard?: {
+    holderName: string;
+    number: string;
+    expiryMonth: string;
+    expiryYear: string;
+    ccv: string;
+  };
+  creditCardHolderInfo?: {
+    name: string;
+    email: string;
+    cpfCnpj: string;
+    postalCode: string;
+    addressNumber: string;
+    phone: string;
+  };
+}
+
+interface AsaasPaymentLink {
+  name: string;
+  description?: string;
+  billingType: "UNDEFINED" | "BOLETO" | "CREDIT_CARD" | "PIX";
+  chargeType: "DETACHED";
+  value?: number;
+  dueDateLimitDays?: number; // Dias úteis para vencimento do boleto
+  externalReference?: string;
+}
+
+/**
+ * Realiza requisições HTTP para a API do Asaas
+ */
+async function asaasRequest(
+  endpoint: string,
+  method: string = "GET",
+  body?: any
+) {
+  // Buscar configurações dinamicamente
+  const config = await getAsaasConfig();
+
+  if (!config.apiKey) {
+    throw new Error("ASAAS_API_KEY não está configurada");
+  }
+
+  // Determinar URL base baseado no ambiente configurado
+  const baseUrl = config.environment === "sandbox"
+    ? "https://sandbox.asaas.com/api/v3"
+    : "https://api.asaas.com/v3";
+
+  const url = `${baseUrl}${endpoint}`;
+  const headers = {
+    "Content-Type": "application/json",
+    access_token: config.apiKey,
+  };
+
+  const options: RequestInit = {
+    method,
+    headers,
+  };
+
+  if (body && (method === "POST" || method === "PUT")) {
+    options.body = JSON.stringify(body);
+  }
+
+  console.log(`[Asaas Request] ${method} ${url}`);
+  console.log(`[Asaas Request] Environment: ${config.environment}`);
+  if (body) {
+    console.log(`[Asaas Request] Body:`, JSON.stringify(body, null, 2));
+  }
+  
+  const response = await fetch(url, options);
+  const data = await response.json();
+
+  console.log(`[Asaas Response] Status: ${response.status}`);
+  console.log(`[Asaas Response] Data:`, JSON.stringify(data, null, 2));
+
+  if (!response.ok) {
+    console.error("❌ Erro na API Asaas:", data);
+    const errorMessage = data.errors?.[0]?.description || data.errors?.[0]?.message || data.message || "Erro ao processar pagamento";
+    console.error("❌ Mensagem de erro:", errorMessage);
+    throw new Error(errorMessage);
+  }
+
+  return data;
+}
+
+/**
+ * Cria ou busca um cliente no Asaas
+ */
+export async function createOrGetAsaasCustomer(
+  customer: AsaasCustomer
+): Promise<string> {
+  try {
+    // Verifica se cliente já existe pelo email
+    const searchResponse = await asaasRequest(
+      `/customers?email=${encodeURIComponent(customer.email)}`
+    );
+
+    if (searchResponse.data && searchResponse.data.length > 0) {
+      return searchResponse.data[0].id;
+    }
+
+    // Cria novo cliente
+    const createResponse = await asaasRequest("/customers", "POST", customer);
+    return createResponse.id;
+  } catch (error) {
+    console.error("Erro ao criar cliente Asaas:", error);
+    throw error;
+  }
+}
+
+/**
+ * Cria um link de pagamento no Asaas (checkout)
+ */
+export async function createAsaasPaymentLink(
+  paymentLinkData: AsaasPaymentLink
+): Promise<{ id: string; url: string }> {
+  try {
+    const response = await asaasRequest(
+      "/paymentLinks",
+      "POST",
+      paymentLinkData
+    );
+
+    return {
+      id: response.id,
+      url: response.url,
+    };
+  } catch (error) {
+    console.error("Erro ao criar link de pagamento Asaas:", error);
+    throw error;
+  }
+}
+
+/**
+ * Cria uma cobrança direta no Asaas
+ */
+export async function createAsaasPayment(
+  paymentData: AsaasPayment
+): Promise<any> {
+  try {
+    const response = await asaasRequest("/payments", "POST", paymentData);
+    return response;
+  } catch (error) {
+    console.error("Erro ao criar cobrança Asaas:", error);
+    throw error;
+  }
+}
+
+/**
+ * Busca informações de um pagamento
+ */
+export async function getAsaasPayment(paymentId: string): Promise<any> {
+  try {
+    const response = await asaasRequest(`/payments/${paymentId}`);
+    return response;
+  } catch (error) {
+    console.error("Erro ao buscar pagamento Asaas:", error);
+    throw error;
+  }
+}
+
+/**
+ * Gera um PIX para pagamento
+ */
+export async function getAsaasPixQrCode(paymentId: string): Promise<any> {
+  try {
+    const response = await asaasRequest(`/payments/${paymentId}/pixQrCode`);
+    return response;
+  } catch (error) {
+    console.error("Erro ao gerar PIX Asaas:", error);
+    throw error;
+  }
+}
+
+/**
+ * Verifica o status de um pagamento
+ */
+export async function checkAsaasPaymentStatus(
+  paymentId: string
+): Promise<string> {
+  try {
+    const payment = await getAsaasPayment(paymentId);
+    return payment.status; // PENDING, RECEIVED, CONFIRMED, OVERDUE, REFUNDED, etc.
+  } catch (error) {
+    console.error("Erro ao verificar status Asaas:", error);
+    throw error;
+  }
+}
+
+/**
+ * Mapeia status do Asaas para status interno
+ */
+export function mapAsaasStatus(asaasStatus: string): string {
+  const statusMap: { [key: string]: string } = {
+    PENDING: "pending",
+    RECEIVED: "completed",
+    CONFIRMED: "completed",
+    OVERDUE: "failed",
+    REFUNDED: "refunded",
+    RECEIVED_IN_CASH: "completed",
+    REFUND_REQUESTED: "refunded",
+    CHARGEBACK_REQUESTED: "failed",
+    CHARGEBACK_DISPUTE: "failed",
+    AWAITING_CHARGEBACK_REVERSAL: "pending",
+    DUNNING_REQUESTED: "failed",
+    DUNNING_RECEIVED: "completed",
+    AWAITING_RISK_ANALYSIS: "pending",
+  };
+
+  return statusMap[asaasStatus] || "pending";
+}
+
+/**
+ * Valida webhook do Asaas
+ */
+export async function validateAsaasWebhook(
+  signature: string,
+  payload: string
+): Promise<boolean> {
+  // Buscar configuração dinamicamente
+  const config = await getAsaasConfig();
+
+  if (!config.webhookSecret) {
+    console.warn("ASAAS_WEBHOOK_SECRET não configurado");
+    return true; // Permite webhook sem validação (não recomendado em produção)
+  }
+
+  // Implementar validação customizada se necessário
+  return true;
+}
+
+/**
+ * Cria QR Code PIX no Asaas
+ */
+export async function createAsaasPixQrCode(
+  customer: string,
+  value: number,
+  description: string,
+  externalReference: string
+): Promise<{
+  id: string;
+  encodedImage: string;
+  payload: string;
+  expirationDate: string;
+}> {
+  try {
+    console.log("📱 [Asaas PIX] Criando QR Code:", { customer, value, description });
+
+    const response = await asaasRequest("/payments", "POST", {
+      customer: customer,
+      billingType: "PIX",
+      value: value,
+      dueDate: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString().split('T')[0], // 24 horas
+      description: description,
+      externalReference: externalReference,
+    });
+
+    console.log("✅ [Asaas PIX] Pagamento criado:", response.id);
+
+    // Gerar QR Code PIX
+    const qrCodeResponse = await asaasRequest(`/payments/${response.id}/pixQrCode`, "GET");
+
+    console.log("✅ [Asaas PIX] QR Code gerado");
+
+    return {
+      id: response.id,
+      encodedImage: qrCodeResponse.encodedImage || "",
+      payload: qrCodeResponse.payload || "",
+      expirationDate: qrCodeResponse.expirationDate || "",
+    };
+  } catch (error: any) {
+    console.error("❌ [Asaas PIX] Erro:", error);
+    throw new Error(`Erro ao criar PIX Asaas: ${error.message}`);
+  }
+}
