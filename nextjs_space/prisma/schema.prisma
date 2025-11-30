@@ -1,12 +1,12 @@
 generator client {
-    provider = "prisma-client-js"
-    binaryTargets = ["native", "linux-musl-arm64-openssl-3.0.x"]
-    output = "/home/ubuntu/clivus_landing_page/nextjs_space/node_modules/.prisma/client"
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "linux-musl-arm64-openssl-3.0.x"]
+  // output = "/home/ubuntu/clivus_landing_page/nextjs_space/node_modules/.prisma/client"
 }
 
 datasource db {
-    provider = "postgresql"
-    url      = env("DATABASE_URL")
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
 }
 
 model Lead {
@@ -54,32 +54,32 @@ model Session {
 }
 
 model User {
-  id                    String              @id @default(cuid())
-  name                  String
-  email                 String              @unique
-  password              String
-  cpf                   String?
-  cnpj                  String?
-  businessArea          String?
-  emailVerified         DateTime?
-  image                 String?
-  role                  String              @default("user") // user, admin, superadmin
-  hasAccess             Boolean             @default(false)
-  planningEnabled       Boolean             @default(false) // Habilita/desabilita planejamento financeiro
-  leadStatus            String              @default("registered") // registered, checkout_started, payment_pending, active, inactive
-  lastCheckoutAttempt   DateTime?           // Última tentativa de checkout para remarketing
-  themePreset           String?             // Tema pessoal do usuário (padrao, simples, moderado, moderno)
-  officeId              String?             // ID do escritório (para futura implementação)
-  allowThemeOverride    Boolean             @default(false) // Permite que membros do escritório alterem tema (para donos de escritório)
-  createdAt             DateTime            @default(now())
-  updatedAt             DateTime            @updatedAt
-  accounts              Account[]
-  sessions              Session[]
-  transactions          Transaction[]
-  payments              Payment[]
-  categories            Category[]
-  paymentMethods        PaymentMethod[]
-  plannedTransactions   PlannedTransaction[]
+  id                  String               @id @default(cuid())
+  name                String
+  email               String               @unique
+  password            String
+  cpf                 String?
+  cnpj                String?
+  businessArea        String?
+  emailVerified       DateTime?
+  image               String?
+  role                String               @default("user") // user, admin, superadmin
+  hasAccess           Boolean              @default(false)
+  planningEnabled     Boolean              @default(false) // Habilita/desabilita planejamento financeiro
+  leadStatus          String               @default("registered") // registered, checkout_started, payment_pending, active, inactive
+  lastCheckoutAttempt DateTime? // Última tentativa de checkout para remarketing
+  themePreset         String? // Tema pessoal do usuário (padrao, simples, moderado, moderno)
+  officeId            String? // ID do escritório (para futura implementação)
+  allowThemeOverride  Boolean              @default(false) // Permite que membros do escritório alterem tema (para donos de escritório)
+  createdAt           DateTime             @default(now())
+  updatedAt           DateTime             @updatedAt
+  accounts            Account[]
+  sessions            Session[]
+  transactions        Transaction[]
+  payments            Payment[]
+  categories          Category[]
+  paymentMethods      PaymentMethod[]
+  plannedTransactions PlannedTransaction[]
 
   @@map("users")
 }
@@ -95,35 +95,35 @@ model VerificationToken {
 
 // Financial Models
 model Transaction {
-  id                   String              @id @default(cuid())
-  userId               String
-  type                 String // income, expense
-  category             String
-  description          String
-  amount               Float
-  date                 DateTime
-  accountType          String // CPF, CNPJ
-  paymentMethod        String? // Forma de pagamento
-  
+  id            String   @id @default(cuid())
+  userId        String
+  type          String // income, expense
+  category      String
+  description   String
+  amount        Float
+  date          DateTime
+  accountType   String // CPF, CNPJ
+  paymentMethod String? // Forma de pagamento
+
   // Campos para compra/venda a prazo
-  isInstallment        Boolean             @default(false)
-  installmentNumber    Int? // Número da parcela atual (ex: 1, 2, 3)
-  totalInstallments    Int? // Total de parcelas (ex: 12)
-  installmentAmount    Float? // Valor de cada parcela
-  dueDate              DateTime? // Data de vencimento da parcela
-  
+  isInstallment     Boolean   @default(false)
+  installmentNumber Int? // Número da parcela atual (ex: 1, 2, 3)
+  totalInstallments Int? // Total de parcelas (ex: 12)
+  installmentAmount Float? // Valor de cada parcela
+  dueDate           DateTime? // Data de vencimento da parcela
+
   // Vinculação ao planejamento financeiro
   plannedTransactionId String?
   plannedTransaction   PlannedTransaction? @relation("PlannedTransactionLink", fields: [plannedTransactionId], references: [id], onDelete: SetNull)
-  
-  attachments          Attachment[]
-  user                 User                @relation(fields: [userId], references: [id], onDelete: Cascade)
-  reconciled           Boolean             @default(false)
-  reconciliationDate   DateTime?
-  bankStatementId      String?
-  autoImported         Boolean             @default(false)
-  createdAt            DateTime            @default(now())
-  updatedAt            DateTime            @updatedAt
+
+  attachments        Attachment[]
+  user               User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  reconciled         Boolean      @default(false)
+  reconciliationDate DateTime?
+  bankStatementId    String?
+  autoImported       Boolean      @default(false)
+  createdAt          DateTime     @default(now())
+  updatedAt          DateTime     @updatedAt
 
   @@index([userId])
   @@index([accountType])
@@ -171,17 +171,17 @@ model Payment {
 
 // Plans Model
 model Plan {
-  id          String        @id @default(cuid())
-  name        String        // Básico, Intermediário, Avançado
-  slug        String        @unique // basic, intermediate, advanced
-  price       Float         // 97, 147, 297
-  currency    String        @default("brl")
-  isActive    Boolean       @default(true)
-  features    String[]      // Array de funcionalidades (texto para landing page)
-  order       Int           @default(0) // Ordem de exibição
-  createdAt   DateTime      @default(now())
-  updatedAt   DateTime      @updatedAt
-  payments    Payment[]
+  id           String        @id @default(cuid())
+  name         String // Básico, Intermediário, Avançado
+  slug         String        @unique // basic, intermediate, advanced
+  price        Float // 97, 147, 297
+  currency     String        @default("brl")
+  isActive     Boolean       @default(true)
+  features     String[] // Array de funcionalidades (texto para landing page)
+  order        Int           @default(0) // Ordem de exibição
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  payments     Payment[]
   planFeatures PlanFeature[]
 
   @@map("plans")
@@ -191,9 +191,9 @@ model Plan {
 model PlanFeature {
   id          String   @id @default(cuid())
   planId      String
-  featureKey  String   // transactions, team_members, dre_reports, exports, etc.
-  featureName String   // Nome amigável da funcionalidade
-  limit       Int      // -1 = ilimitado, 0 = desabilitado, >0 = limite
+  featureKey  String // transactions, team_members, dre_reports, exports, etc.
+  featureName String // Nome amigável da funcionalidade
+  limit       Int // -1 = ilimitado, 0 = desabilitado, >0 = limite
   enabled     Boolean  @default(true)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
@@ -206,97 +206,97 @@ model PlanFeature {
 
 // Advertisement System
 model Advertisement {
-  id            String   @id @default(cuid())
-  title         String   // Nome do anúncio (interno)
-  type          String   // "adsense", "banner"
-  
+  id    String @id @default(cuid())
+  title String // Nome do anúncio (interno)
+  type  String // "adsense", "banner"
+
   // Para Google AdSense
-  adsenseCode   String?  @db.Text // Código do AdSense
-  
+  adsenseCode String? @db.Text // Código do AdSense
+
   // Para banners próprios
-  bannerUrl     String?  // URL da imagem do banner
-  linkUrl       String?  // URL de destino ao clicar
-  
+  bannerUrl String? // URL da imagem do banner
+  linkUrl   String? // URL de destino ao clicar
+
   // Posicionamento
-  position      String   // "top", "sidebar", "between_content", "footer", "modal"
-  pages         String[] // Array de páginas onde exibir: ["dashboard", "transactions", "all"]
-  
+  position String // "top", "sidebar", "between_content", "footer", "modal"
+  pages    String[] // Array de páginas onde exibir: ["dashboard", "transactions", "all"]
+
   // Segmentação por plano
-  targetPlans   String[] @default(["all"]) // ["all", "basic", "intermediate", "advanced"]
-  
+  targetPlans String[] @default(["all"]) // ["all", "basic", "intermediate", "advanced"]
+
   // Status e controle
-  isActive      Boolean  @default(true)
-  priority      Int      @default(0) // Ordem de exibição (maior = prioridade)
-  startDate     DateTime?
-  endDate       DateTime?
-  
+  isActive  Boolean   @default(true)
+  priority  Int       @default(0) // Ordem de exibição (maior = prioridade)
+  startDate DateTime?
+  endDate   DateTime?
+
   // Estatísticas
-  impressions   Int      @default(0)
-  clicks        Int      @default(0)
-  
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
-  
+  impressions Int @default(0)
+  clicks      Int @default(0)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
   @@index([isActive])
   @@index([position])
   @@map("advertisements")
 }
 
 model Gateway {
-  id                 String   @id @default(cuid())
-  name               String   @unique // "asaas", "stripe", "efi", "cora", "pagarme"
-  displayName        String   // "Asaas", "Stripe", "EFI", etc.
-  isEnabled          Boolean  @default(true)
-  environment        String   @default("sandbox") // "sandbox" ou "production"
-  
+  id          String  @id @default(cuid())
+  name        String  @unique // "asaas", "stripe", "efi", "cora", "pagarme"
+  displayName String // "Asaas", "Stripe", "EFI", etc.
+  isEnabled   Boolean @default(true)
+  environment String  @default("sandbox") // "sandbox" ou "production"
+
   // Credenciais Sandbox (JSON flexível por gateway)
-  sandboxConfig      Json?    // Ex: {"clientId": "...", "clientSecret": "...", "apiKey": "..."}
-  
+  sandboxConfig Json? // Ex: {"clientId": "...", "clientSecret": "...", "apiKey": "..."}
+
   // Credenciais Production (JSON flexível por gateway)
-  productionConfig   Json?    // Ex: {"clientId": "...", "clientSecret": "...", "apiKey": "..."}
-  
+  productionConfig Json? // Ex: {"clientId": "...", "clientSecret": "...", "apiKey": "..."}
+
   // Webhook Secret (pode ser diferente por ambiente)
-  sandboxWebhook     String?
-  productionWebhook  String?
-  
+  sandboxWebhook    String?
+  productionWebhook String?
+
   // Status da última verificação de conexão
   lastConnectionTest DateTime?
-  connectionStatus   String?  @default("untested") // "untested", "success", "failed"
-  connectionError    String?  // Mensagem de erro se falhou
-  
-  createdAt          DateTime @default(now())
-  updatedAt          DateTime @updatedAt
-  
+  connectionStatus   String?   @default("untested") // "untested", "success", "failed"
+  connectionError    String? // Mensagem de erro se falhou
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
   @@map("gateways")
 }
 
 // Planned Transactions (Planejamento Financeiro)
 model PlannedTransaction {
-  id                String        @id @default(cuid())
-  userId            String
-  user              User          @relation(fields: [userId], references: [id], onDelete: Cascade)
-  
-  type              String        // "income" ou "expense"
-  accountType       String        // "CPF" ou "CNPJ"
-  category          String
-  description       String
-  
-  expectedAmount    Float         // Valor previsto
-  expectedDate      DateTime      // Data prevista
-  
-  actualAmount      Float?        // Valor realizado (soma das transações vinculadas)
-  actualDate        DateTime?     // Data da primeira transação vinculada
-  
-  isRecurring       Boolean       @default(false) // Se repete todo mês
-  month             Int           // Mês do planejamento (1-12)
-  year              Int           // Ano do planejamento
-  
+  id     String @id @default(cuid())
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  type        String // "income" ou "expense"
+  accountType String // "CPF" ou "CNPJ"
+  category    String
+  description String
+
+  expectedAmount Float // Valor previsto
+  expectedDate   DateTime // Data prevista
+
+  actualAmount Float? // Valor realizado (soma das transações vinculadas)
+  actualDate   DateTime? // Data da primeira transação vinculada
+
+  isRecurring Boolean @default(false) // Se repete todo mês
+  month       Int // Mês do planejamento (1-12)
+  year        Int // Ano do planejamento
+
   // Relacionamento com transações reais
   linkedTransactions Transaction[] @relation("PlannedTransactionLink")
-  
-  createdAt         DateTime      @default(now())
-  updatedAt         DateTime      @updatedAt
-  
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
   @@index([userId])
   @@index([month, year])
   @@index([userId, month, year])
@@ -304,27 +304,27 @@ model PlannedTransaction {
 }
 
 model Category {
-  id          String   @id @default(cuid())
-  name        String
-  type        String   // "income" ou "expense"
-  userId      String
-  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  
+  id        String   @id @default(cuid())
+  name      String
+  type      String // "income" ou "expense"
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
   @@unique([userId, name, type])
   @@index([userId])
   @@map("categories")
 }
 
 model PaymentMethod {
-  id          String   @id @default(cuid())
-  name        String
-  userId      String
-  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  
+  id        String   @id @default(cuid())
+  name      String
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
   @@unique([userId, name])
   @@index([userId])
   @@map("payment_methods")
@@ -332,12 +332,12 @@ model PaymentMethod {
 
 // Configurações Globais do Sistema (Gerenciadas pelo SuperAdmin)
 model GlobalSettings {
-  id                     Int      @id @default(1)
-  superadminThemePreset  String   @default("padrao") // Tema padrão do sistema (padrao, simples, moderado, moderno)
-  allowOfficeOverride    Boolean  @default(false)    // Permite que donos de escritório definam tema (futura implementação)
-  allowUserOverride      Boolean  @default(true)     // Permite que usuários definam tema pessoal
-  createdAt              DateTime @default(now())
-  updatedAt              DateTime @updatedAt
-  
+  id                    Int      @id @default(1)
+  superadminThemePreset String   @default("padrao") // Tema padrão do sistema (padrao, simples, moderado, moderno)
+  allowOfficeOverride   Boolean  @default(false) // Permite que donos de escritório definam tema (futura implementação)
+  allowUserOverride     Boolean  @default(true) // Permite que usuários definam tema pessoal
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+
   @@map("global_settings")
 }
